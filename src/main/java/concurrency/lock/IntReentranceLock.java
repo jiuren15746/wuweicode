@@ -35,6 +35,7 @@ public class IntReentranceLock {
                 // 被当前线程占用。重入加锁
                 if (isHeldByCurrentThread()) {
                     lockCount.incrementAndGet();
+                    printLog("lock success. value=" + lockCount.get());
                     return;
                 } else {
                     // 锁仍在被其他线程占用
