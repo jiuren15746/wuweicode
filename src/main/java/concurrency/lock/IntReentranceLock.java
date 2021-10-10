@@ -25,13 +25,14 @@ public class IntReentranceLock {
         for (int tryCount = 0;; tryCount++) {
             // 尝试10次，休息一会
             if (tryCount > 0 && tryCount % 10 == 0) {
+//                printLog("tryCount=" + tryCount + ", have a sleep.");
                 Thread.sleep(randomValueWithin(3));
             }
 
             // 不能根据lockCount来判断锁状态。因为解锁时，先减count，再清空线程引用。
             // 如果通过lockCount来判断状态，线程解锁时在这两步中间可能被另一个线程插入，导致清除线程引用时出错。
             // 所以，必须根据解锁最后一步的特征，来判断状态。
-            if (null != holdingThread) {
+            if (!isFree()) {
                 // 被当前线程占用。重入加锁
                 if (isHeldByCurrentThread()) {
                     lockCount.incrementAndGet();
@@ -66,6 +67,16 @@ public class IntReentranceLock {
 
     public boolean isHeldByCurrentThread() {
         return Thread.currentThread() == holdingThread;
+    }
+
+    /**
+     * 返回锁是否空闲。
+     * 不能根据lockCount来判断锁状态。因为解锁时，先减count，再清空线程引用。
+     * 如果通过lockCount来判断状态，线程解锁时在这两步中间可能被另一个线程插入，导致清除线程引用时出错。
+     * 所以，必须根据解锁最后一步的特征，来判断状态。
+     */
+    public boolean isFree() {
+        return holdingThread == null;
     }
 
     // 返回 [0, maxValue) 的随机值
