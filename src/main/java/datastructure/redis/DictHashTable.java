@@ -17,13 +17,31 @@ public class DictHashTable {
     private long bucketSize;
     private long sizeMask;
     // number of entries
-    private long size;
+    private int size;
 
     public DictHashTable() {
         this.buckets = new DictEntry[INITIAL_SIZE];
         this.bucketSize = INITIAL_SIZE;
         this.sizeMask = INITIAL_SIZE - 1;
         this.size = 0;
+    }
+
+    public DictHashTable(int capacity) {
+        // assert capacity is power of 2
+        int realCapacity = nearestPowerOf2(capacity);
+
+        this.buckets = new DictEntry[realCapacity];
+        this.bucketSize = realCapacity;
+        this.sizeMask = realCapacity - 1;
+        this.size = 0;
+    }
+
+    static int nearestPowerOf2(int size) {
+        for (int n = 2; ; n++) {
+            if (Math.pow(2, n) >= size) {
+                return (int) Math.pow(2, n);
+            }
+        }
     }
 
     @Data
@@ -38,6 +56,9 @@ public class DictHashTable {
         }
     }
 
+    public int size() {
+        return size;
+    }
 
     public void put(Object key, Object value) {
         Assert.assertNotNull(key, "key is null");
@@ -55,8 +76,8 @@ public class DictHashTable {
             DictEntry entry = new DictEntry(key, value);
             entry.setNext(head);
             buckets[idx] = entry;
+            size++;
         }
-        size++;
     }
 
     /**
@@ -71,6 +92,17 @@ public class DictHashTable {
         } else {
             return null;
         }
+    }
+
+    DictEntry[] getBuckets() {
+        return this.buckets;
+    }
+
+    void clear() {
+        this.buckets = new DictEntry[INITIAL_SIZE];
+        this.bucketSize = INITIAL_SIZE;
+        this.sizeMask = INITIAL_SIZE - 1;
+        this.size = 0;
     }
 
     /**
@@ -108,7 +140,10 @@ public class DictHashTable {
         ht.put("bbb", "bbb-value2");
         ht.put("ccc", "ccc-value3");
 
-        ht.put(null, "abc");
-        Thread.sleep(Integer.MAX_VALUE);
+        Assert.assertEquals(ht.size(), 10003);
+
+        Assert.assertEquals(ht.get("aaa"), "aaa-value1");
+        Assert.assertEquals(ht.get("bbb"), "bbb-value2");
+        Assert.assertEquals(ht.get("ccc"), "ccc-value3");
     }
 }
