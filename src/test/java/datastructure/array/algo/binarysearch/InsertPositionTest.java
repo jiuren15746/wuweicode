@@ -7,6 +7,7 @@ import static datastructure.array.algo.binarysearch.InsertPosition.findInsertPos
 import static org.testng.Assert.assertEquals;
 
 public class InsertPositionTest {
+
     @Test
     public void target在数组头() {
         int[] array = new int[]{1, 4, 4, 5, 7, 7, 8, 9, 9, 10};
@@ -49,5 +50,20 @@ public class InsertPositionTest {
 
         assertEquals(result.isExist(), false);
         assertEquals(result.getPosition(), array.length);
+    }
+
+    @Test
+    public void target在数组中() {
+        int[] array = new int[]{1, 5, 7, 9, 15, 17, 20};
+        int target = 4;
+
+        InsertPositionResult result = findInsertPosition(array, target);
+        assertEquals(result.isExist(), false);
+        assertEquals(result.getPosition(), 1);
+
+        target = 10;
+        result = findInsertPosition(array, target);
+        assertEquals(result.isExist(), false);
+        assertEquals(result.getPosition(), 4);
     }
 }
