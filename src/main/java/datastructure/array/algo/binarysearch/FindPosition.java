@@ -67,4 +67,40 @@ public class FindPosition {
 
         throw new RuntimeException("不可能");
     }
+
+    /**
+     * 数组中插入元素的结果。包括：新数组，插入元素在新数组中的位置。
+     */
+    @Data
+    static public class InsertResult {
+        private final int[] newArray;
+        // 插入的元素在新数组中的位置
+        private final int position;
+
+        public InsertResult(int[] newArray, int position) {
+            this.newArray = newArray;
+            this.position = position;
+        }
+    }
+
+    /**
+     * 把value插入array数组，返回新插入的数组，和value在新数组中的位置。
+     * @param array
+     * @param value
+     * @return
+     */
+    static public InsertResult insert(int[] array, int value) {
+        int pos = findInsertPosition(array, value).getPosition();
+
+        int[] newArray = new int[array.length + 1];
+        newArray[pos] = value;
+        for (int i = 0; i < array.length; ++i) {
+            if (i < pos) {
+                newArray[i] = array[i];
+            } else {
+                newArray[i+1] = array[i];
+            }
+        }
+        return new InsertResult(newArray, pos);
+    }
 }

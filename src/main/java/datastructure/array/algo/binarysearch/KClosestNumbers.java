@@ -1,5 +1,9 @@
 package datastructure.array.algo.binarysearch;
 
+import datastructure.array.algo.binarysearch.FindPosition.PositionResult;
+
+import java.util.Comparator;
+
 /**
  * https://www.lintcode.com/problem/460/
  *
@@ -14,12 +18,26 @@ package datastructure.array.algo.binarysearch;
 public class KClosestNumbers {
 
 
-//    public static int[] kClosestNumbers(int[] array, int target, int k) {
-//
-//        InsertPositionResult insertPositionResult = InsertPosition.findInsertPosition(array, target);
-//        int insertPosition = insertPositionResult.getPosition();
-//        System.out.println("insert position: " + insertPosition);
-//
-//
-//    }
+    public static int[] kClosestNumbers(int[] array, int target, int k) {
+
+        PositionResult insertPositionResult = FindPosition.findInsertPosition(array, target);
+        int targetPos = insertPositionResult.getPosition();
+        System.out.println("target position: " + targetPos);
+
+        int left = targetPos - 1;
+        int right = targetPos + 1;
+        int[] kclosestNumbers = new int[]{};
+        Comparator<Integer> compareFunc = (a, b) ->
+                Math.abs(a - target) - Math.abs(b - target);
+
+        for (;;) {
+            if (left >= 0) {
+                FindPosition.findInsertPosition(kclosestNumbers, array[left], compareFunc);
+            }
+        }
+
+
+
+
+    }
 }

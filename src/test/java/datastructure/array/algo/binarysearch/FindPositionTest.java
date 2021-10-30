@@ -6,7 +6,7 @@ import static datastructure.array.algo.binarysearch.FindPosition.PositionResult;
 import static datastructure.array.algo.binarysearch.FindPosition.findInsertPosition;
 import static org.testng.Assert.assertEquals;
 
-public class InsertPositionTest {
+public class FindPositionTest {
 
     @Test
     public void target在数组头() {
