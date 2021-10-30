@@ -89,7 +89,7 @@ public class FindPosition {
      * @param value
      * @return
      */
-    static public InsertResult insert(int[] array, int value) {
+    static public InsertResult insertValue(int[] array, int value) {
         int pos = findInsertPosition(array, value).getPosition();
 
         int[] newArray = new int[array.length + 1];

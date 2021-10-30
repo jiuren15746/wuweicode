@@ -2,8 +2,7 @@ package datastructure.array.algo.binarysearch;
 
 import org.testng.annotations.Test;
 
-import static datastructure.array.algo.binarysearch.FindPosition.PositionResult;
-import static datastructure.array.algo.binarysearch.FindPosition.findInsertPosition;
+import static datastructure.array.algo.binarysearch.FindPosition.*;
 import static org.testng.Assert.assertEquals;
 
 public class FindPositionTest {
@@ -107,4 +106,25 @@ public class FindPositionTest {
         assertEquals(result.getPosition(), 2);
     }
 
+    @Test
+    public void insert_target比数组头还小() {
+        int[] array = new int[]{1, 4, 4, 5, 7, 7, 8, 9, 9, 10};
+        int target = -100;
+
+        InsertResult result = insertValue(array, target);
+
+        assertEquals(result.getNewArray().length, array.length + 1);
+        assertEquals(result.getPosition(), 0);
+    }
+
+    @Test
+    public void insert_target比数组尾还大() {
+        int[] array = new int[]{1, 4, 4, 5, 7, 7, 8, 9, 9, 10};
+        int target = 20;
+
+        InsertResult result = insertValue(array, target);
+
+        assertEquals(result.getNewArray().length, array.length + 1);
+        assertEquals(result.getPosition(), array.length);
+    }
 }
