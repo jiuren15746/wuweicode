@@ -34,7 +34,7 @@ public class BinarySearchTemplateTest {
     @Test
     public void target比数组头还小() {
         int[] array = new int[]{1, 4, 4, 5, 7, 7, 8, 9, 9, 10};
-        int target = -2;
+        int target = -100;
 
         Assert.assertEquals(binarySearch(array, target), -1);
     }

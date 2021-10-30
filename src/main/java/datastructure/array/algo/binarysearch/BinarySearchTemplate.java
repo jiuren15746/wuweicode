@@ -1,7 +1,7 @@
 package datastructure.array.algo.binarysearch;
 
 /**
- * 二分查找算法的模板。
+ * 二分查找算法的模板。背下来。
  */
 public class BinarySearchTemplate {
 
@@ -22,22 +22,24 @@ public class BinarySearchTemplate {
         int end = array.length - 1;
 
         while (start <= end) {
+            // target值在数组范围外
+            if (target < array[start] || target > array[end]) {
+                return -1;
+            }
+
             // mid位置
             int mid = start + (end - start) / 2;
 
+            // 比较，缩小范围
             if (target == array[mid]) {
                 return mid;
-            }
-            // 范围缩小到右半边, start右移
-            else if (target > array[mid]) {
+            } else if (target > array[mid]) {
                 start = mid + 1;
-            }
-            // 范围缩小到左半边，end左移
-            else {
+            } else {
                 end = mid - 1;
             }
         }
-        // 没找到
-        return -1;
+
+        throw new RuntimeException("不可能");
     }
 }
