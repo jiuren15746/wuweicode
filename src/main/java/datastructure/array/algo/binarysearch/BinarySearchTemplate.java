@@ -1,6 +1,4 @@
-package algo.binarysearch;
-
-import org.testng.Assert;
+package datastructure.array.algo.binarysearch;
 
 /**
  * 二分查找算法的模板。

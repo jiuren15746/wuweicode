@@ -1,9 +1,9 @@
-package algo.binarysearch;
+package datastructure.array.algo.binarysearch;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import static algo.binarysearch.BinarySearchTemplate.*;
+import static datastructure.array.algo.binarysearch.BinarySearchTemplate.*;
 
 public class BinarySearchTemplateTest {
 
