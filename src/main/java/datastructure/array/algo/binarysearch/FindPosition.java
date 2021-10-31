@@ -98,14 +98,10 @@ public class FindPosition {
         int pos = findInsertPosition(array, value, compareFunc).getPosition();
 
         int[] newArray = new int[array.length + 1];
+        System.arraycopy(array, 0, newArray, 0, pos);
+        System.arraycopy(array, pos, newArray, pos+1, array.length-pos);
         newArray[pos] = value;
-        for (int i = 0; i < array.length; ++i) {
-            if (i < pos) {
-                newArray[i] = array[i];
-            } else {
-                newArray[i+1] = array[i];
-            }
-        }
+
         return new InsertResult(newArray, pos);
     }
 }
