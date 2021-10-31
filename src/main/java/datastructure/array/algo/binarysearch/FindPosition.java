@@ -54,7 +54,7 @@ public class FindPosition {
             }
 
             // 与mid位置比较，缩小范围
-            int mid = start + (end - start) / 2;
+            int mid = (start + end) / 2;
             int midCompareResult = compareFunc.compare(target, array[mid]);
             if (midCompareResult == 0) {
                 return new PositionResult(true, mid);

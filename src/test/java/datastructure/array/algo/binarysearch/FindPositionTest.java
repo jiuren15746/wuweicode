@@ -1,9 +1,6 @@
 package datastructure.array.algo.binarysearch;
 
 import org.testng.annotations.Test;
-import org.testng.collections.Lists;
-
-import java.util.Arrays;
 
 import static datastructure.array.algo.binarysearch.FindPosition.*;
 import static org.testng.Assert.assertEquals;

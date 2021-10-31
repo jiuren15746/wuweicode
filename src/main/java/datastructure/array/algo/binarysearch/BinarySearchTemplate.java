@@ -28,7 +28,7 @@ public class BinarySearchTemplate {
             }
 
             // mid位置
-            int mid = start + (end - start) / 2;
+            int mid = (start + end) / 2;
 
             // 比较，缩小范围
             if (target == array[mid]) {
