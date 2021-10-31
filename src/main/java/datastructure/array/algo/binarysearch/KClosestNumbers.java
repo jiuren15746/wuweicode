@@ -1,7 +1,8 @@
 package datastructure.array.algo.binarysearch;
 
-import datastructure.array.algo.binarysearch.FindPosition.PositionResult;
+import datastructure.array.algo.binarysearch.FindPosition.*;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 /**
@@ -17,27 +18,39 @@ import java.util.Comparator;
  */
 public class KClosestNumbers {
 
-
     public static int[] kClosestNumbers(int[] array, int target, int k) {
 
-        PositionResult insertPositionResult = FindPosition.findInsertPosition(array, target);
-        int targetPos = insertPositionResult.getPosition();
-        System.out.println("target position: " + targetPos);
-
-        int left = targetPos - 1;
-        int right = targetPos + 1;
+        int targetPos = FindPosition.findInsertPosition(array, target).getPosition();
         int[] kclosestNumbers = new int[]{};
         Comparator<Integer> compareFunc = (a, b) ->
                 Math.abs(a - target) - Math.abs(b - target);
 
-        for (;;) {
-            if (left >= 0) {
-                FindPosition.findInsertPosition(kclosestNumbers, array[left], compareFunc);
+        for (int i = 1; i <= k; ++i) {
+            InsertResult insertResult = null;
+            if (targetPos - i >= 0) {
+                insertResult = FindPosition.insertValue(
+                        kclosestNumbers, array[targetPos - i], compareFunc);
+                kclosestNumbers = insertResult.getNewArray();
+            }
+            if (targetPos+i-1 < array.length) {
+                insertResult = FindPosition.insertValue(
+                        kclosestNumbers, array[targetPos+i-1], compareFunc);
+                kclosestNumbers = insertResult.getNewArray();
             }
         }
 
+        // 取前面k个元素
+        int[] result = new int[k];
+        System.arraycopy(kclosestNumbers, 0, result, 0, k);
+        return result;
+    }
 
 
+    static public void main(String[] args) {
+        int[] array = new int[]{1,4,6,8};
+        int target = 3;
+        int k = 3;
 
+        int[] result = kClosestNumbers(array, target, k);
     }
 }

@@ -85,12 +85,17 @@ public class FindPosition {
 
     /**
      * 把value插入array数组，返回新插入的数组，和value在新数组中的位置。
-     * @param array
-     * @param value
-     * @return
      */
     static public InsertResult insertValue(int[] array, int value) {
-        int pos = findInsertPosition(array, value).getPosition();
+        return insertValue(array, value, (a, b) -> a - b);
+    }
+
+    /**
+     * 把value插入array数组，使用指定的比较函数。返回新插入的数组，和value在新数组中的位置。
+     */
+    static public InsertResult insertValue(int[] array, int value,
+                                           Comparator<Integer> compareFunc) {
+        int pos = findInsertPosition(array, value, compareFunc).getPosition();
 
         int[] newArray = new int[array.length + 1];
         newArray[pos] = value;
