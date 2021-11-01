@@ -1,13 +1,7 @@
 package datastructure.array.algo.twopointers;
 
-import org.testng.collections.Lists;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * 快排序。相向双指针。
