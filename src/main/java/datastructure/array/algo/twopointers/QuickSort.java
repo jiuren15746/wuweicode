@@ -5,6 +5,10 @@ import java.util.stream.Collectors;
 
 /**
  * 快排序。相向双指针。
+ * 重点：
+ * 1. 哨兵j循环条件为大于guard。哨兵i循环条件为小于等于guard。
+ * 2. 哨兵j先出动。最终哨兵j撞上哨兵i，这样在碰撞位置的数字一定小于等于guard。
+ * 3. 在一次循环内，哨兵i和j各自找到不满足条件的位置，交换一次数据。
  */
 public class QuickSort {
 
@@ -20,8 +24,10 @@ public class QuickSort {
         // 两个哨兵i、j
         int i = begin;
         int j = end;
-        for (;;) {
-            // 哨兵j先出动
+
+        // 1. 在一次循环内，哨兵i和j各自找到不满足条件的位置，交换一次数据。
+        while (i < j) {
+            // 哨兵j先出动，直到找到一个数<=guard
             while (i < j && array[j] > guard) {
                 j--;
             }
@@ -35,14 +41,11 @@ public class QuickSort {
             if (i < j) {
                 swap(array, begin, end, i, j);
             }
-            // 相遇，与array[begin]交换。结束本轮循环。
-            // !!! 相遇位置的数字一定小于等于array[begin]. 因为哨兵j先出动。
-            else {
-                System.out.println("i and j meet at idx=" + i);
-                swap(array, begin, end, begin, i);
-                break;
-            }
         }
+        // 相遇，与array[begin]交换。结束本轮循环。
+        // !!! 相遇位置的数字一定小于等于array[begin].
+        System.out.println("i and j meet at idx=" + i);
+        swap(array, begin, end, begin, i);
 
         // 在i的左侧、右侧分别进行快排.
         // !!! 踩过的坑：如果i和j在end位置相遇，那么右侧不存在。所以这里一定要判断新范围两个下标的关系。
@@ -65,17 +68,10 @@ public class QuickSort {
         System.out.println("After swap, array=" + toString(array, begin, end));
     }
 
-
-    static public void main(String[] args) {
-
-        int[] array = {6, 1, 2, 7, 9, 3, 9, 6, 4, 5, 10, 8};
-        quickSort(array, 0, array.length - 1);
-        System.out.println("result: " + toString(array, 0, array.length - 1));
-    }
-
     static public String toString(int[] array, int begin, int end) {
         return Arrays.stream(array, begin, end + 1)
                 .boxed()
-                .collect(Collectors.toList()).toString();
+                .collect(Collectors.toList())
+                .toString();
     }
 }
