@@ -18,22 +18,23 @@ public class BinarySearchTemplate {
             return -1;
         }
 
+        // 1. 使用循环，不断缩小范围. 注意循环条件，和循环内的退出条件。
         int start = 0;
         int end = array.length - 1;
 
         while (start <= end) {
+            // 2. target和三个位置的数字比较：start、end，mid
             // target值在数组范围外
             if (target < array[start] || target > array[end]) {
                 return -1;
             }
 
-            // mid位置
+            // 与mid位置比较，并缩小范围
             int mid = (start + end) / 2;
-
-            // 比较，缩小范围
-            if (target == array[mid]) {
+            int compareResult = target - array[mid];
+            if (compareResult == 0) {
                 return mid;
-            } else if (target > array[mid]) {
+            } else if (compareResult > 0) {
                 start = mid + 1;
             } else {
                 end = mid - 1;
