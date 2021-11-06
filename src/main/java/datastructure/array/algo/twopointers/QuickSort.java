@@ -8,7 +8,8 @@ import java.util.stream.Collectors;
  * 重点：
  * 1. 哨兵j循环条件为大于guard。哨兵i循环条件为小于等于guard。
  * 2. 哨兵j先出动。最终哨兵j撞上哨兵i，这样在碰撞位置的数字一定小于等于guard。
- * 3. 在一次循环内，哨兵i和j各自找到不满足条件的位置，交换一次数据。
+ * 3. 在一次循环内，哨兵i和j各自找到不满足条件的位置，交换一次数据。直到i和j相遇。
+ * 4. i和j相遇后，相遇位置数据和guard交换。然后在左右两个区域分别进行快排。递归调用。
  */
 public class QuickSort {
 
@@ -25,7 +26,7 @@ public class QuickSort {
         int i = begin;
         int j = end;
 
-        // 1. 在一次循环内，哨兵i和j各自找到不满足条件的位置，交换一次数据。
+        // 1. 在一次循环内，哨兵i和j各自找到不满足条件的位置，交换一次数据。直到i和j相遇。
         while (i < j) {
             // 哨兵j先出动，直到找到一个数<=guard
             while (i < j && array[j] > guard) {
