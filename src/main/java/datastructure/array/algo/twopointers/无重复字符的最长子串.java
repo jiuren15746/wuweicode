@@ -3,6 +3,10 @@ package datastructure.array.algo.twopointers;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 使用滑动窗口。
+ * https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/solution/hua-dong-chuang-kou-by-powcai/
+ */
 public class 无重复字符的最长子串 {
 
     static public String solution(String str) {
