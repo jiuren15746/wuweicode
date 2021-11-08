@@ -17,8 +17,9 @@ public class 无重复字符的最长子串 {
 
         // 右指针一个字符一个字符向右移
         for (int j = 0; j < str.length(); j++) {
-            Integer firstIdx = windowChars.get(str.charAt(j));
+            // 判断左指针是否需要向右移动.
             // 发现重复字符。左指针右移到firstIdx+1，同时清除窗口字符
+            Integer firstIdx = windowChars.get(str.charAt(j));
             if (firstIdx != null) {
                 while (i < firstIdx + 1) {
                     windowChars.remove(str.charAt(i));
