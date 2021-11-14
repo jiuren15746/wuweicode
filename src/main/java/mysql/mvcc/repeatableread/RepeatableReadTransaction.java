@@ -14,7 +14,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 
-// TODO 内部使用一个单线程的线程池
+/**
+ * Repeatable Read 隔离级别下的事务
+ */
 public class RepeatableReadTransaction {
 
     static public final AtomicInteger systemVersion = new AtomicInteger(0);
@@ -74,7 +76,7 @@ public class RepeatableReadTransaction {
     /**
      * 查询数据。数据的创建版本需要小于等于事务版本。
      * !!! MVCC+RR机制下，普通select数据时增加的两个隐含条件:
-     *   createVersion>=事务版本 && (deleteVersion为空 或 deleteVersion>事务版本)
+     * createVersion>=事务版本 && (deleteVersion为空 或 deleteVersion>事务版本)
      *
      * @param table
      * @param id
@@ -91,6 +93,7 @@ public class RepeatableReadTransaction {
 
     /**
      * 插入数据，以当前事务版本号作为数据的创建版本。
+     *
      * @param table
      * @param id
      * @param data
@@ -107,6 +110,7 @@ public class RepeatableReadTransaction {
 
     /**
      * 删除数据，以当前事务版本号作为数据的删除版本。
+     *
      * @param table
      * @param id
      */
@@ -123,6 +127,7 @@ public class RepeatableReadTransaction {
 
     /**
      * 更新数据。新VersionData的版本等于事务版本。
+     *
      * @param table
      * @param id
      * @param data
@@ -141,6 +146,8 @@ public class RepeatableReadTransaction {
 
 
     private void execute(Runnable task) {
+        // 断言事务状态
+        Assert.assertEquals(status, TransactionStatus.STARTED);
         try {
             executor.submit(task).get();
         } catch (Exception ire) {
@@ -149,6 +156,8 @@ public class RepeatableReadTransaction {
     }
 
     private <T> T execute(Callable<T> task) {
+        // 断言事务状态
+        Assert.assertEquals(status, TransactionStatus.STARTED);
         try {
             return executor.submit(task).get();
         } catch (Exception ire) {
