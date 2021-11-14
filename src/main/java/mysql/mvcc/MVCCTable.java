@@ -48,9 +48,10 @@ public class MVCCTable {
         if (dataMap.containsKey(id)) {
             throw new RuntimeException();
         }
-
+        // Insert record and lock it
         VersionData versionData = new VersionData(id, data, version, null);
         versionData.lockedBy = version;
+        // Expose record
         dataMap.put(id, versionData);
     }
 
@@ -59,19 +60,15 @@ public class MVCCTable {
      * @param id
      * @param version 创建版本
      */
-    public boolean delete(String id, int version) {
-        try {
-            // 加锁
-            VersionData current = lock(id, version);
-            if (null == current) {
-                return false;
-            }
-            // (MVCC) 设置deleteVersion
-            current.deleteVersion = version;
-            return true;
-        } catch (InterruptedException ire) {
-            throw new RuntimeException(ire);
+    public boolean delete(String id, int version) throws InterruptedException {
+        // Lock current version
+        VersionData current = lock(id, version);
+        if (null == current) {
+            return false;
         }
+        // (MVCC) Set deleteVersion
+        current.deleteVersion = version;
+        return true;
     }
 
     /**
@@ -82,31 +79,26 @@ public class MVCCTable {
      * @param version 发起更新操作的事务版本
      * @return
      */
-    public boolean update(String id, Object value, Integer version) {
-        try {
-            // Lock current version
-            VersionData current = lock(id, version);
-            if (null == current) {
-                return false;
-            }
-            VersionData previous = current;
-
-            // Insert new version and lock it
-            VersionData newVersion = new VersionData(id, value, version, current);
-            newVersion.lockedBy = version;
-
-            // For previous version, record deleteVersion and release lock
-            previous.setDeleteVersion(version);
-            previous.lockedBy = null;
-
-            // Expose new version
-            dataMap.put(id, newVersion);
-            return true;
-
-        } catch (InterruptedException ire) {
-            ire.printStackTrace();
+    public boolean update(String id, Object value, Integer version)
+            throws InterruptedException {
+        // Lock current version
+        VersionData current = lock(id, version);
+        if (null == current) {
             return false;
         }
+        VersionData previous = current;
+
+        // Insert new version and lock it
+        VersionData newVersion = new VersionData(id, value, version, current);
+        newVersion.lockedBy = version;
+
+        // For previous version, record deleteVersion and release lock
+        previous.setDeleteVersion(version);
+        previous.lockedBy = null;
+
+        // Expose new version
+        dataMap.put(id, newVersion);
+        return true;
     }
 
     /**
