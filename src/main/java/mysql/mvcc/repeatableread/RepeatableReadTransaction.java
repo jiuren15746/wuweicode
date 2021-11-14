@@ -113,7 +113,7 @@ public class RepeatableReadTransaction {
     public boolean delete(MVCCTable table, String id) {
         return execute(new Callable<Boolean>() {
             @Override
-            public Boolean call() throws InterruptedException {
+            public Boolean call() throws Exception {
                 boolean result = table.delete(id, version);
                 processingRecords.put(id, table);
                 return result;
