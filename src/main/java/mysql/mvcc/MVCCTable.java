@@ -5,8 +5,10 @@ import org.testng.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Predicate;
 
+/**
+ * MVCC机制的表。
+ */
 public class MVCCTable {
     // key = id
     private Map<String, VersionData> dataMap = new HashMap<>();
@@ -57,15 +59,16 @@ public class MVCCTable {
      * @param id
      * @param version 创建版本
      */
-    public void delete(String id, int version) {
+    public boolean delete(String id, int version) {
         try {
             // 加锁
             VersionData current = lock(id, version);
             if (null == current) {
-                return;
+                return false;
             }
             // (MVCC) 设置deleteVersion
             current.deleteVersion = version;
+            return true;
         } catch (InterruptedException ire) {
             throw new RuntimeException(ire);
         }
@@ -109,34 +112,29 @@ public class MVCCTable {
     /**
      * 查询id对应的数据，且数据版本要符合versionCond指定的条件。
      */
-    public Object select(String id, Predicate<VersionData> versionCond) {
-        VersionData versionData = select0(id, versionCond);
-        return (versionData != null) ? versionData.getData() : null;
-    }
-
-    /**
-     * 查询id对应的数据，且数据版本要符合versionCond指定的条件。
-     * 如果不指定versionCond，总是查询最新版本的数据。
-     */
-    private VersionData select0(String id, Predicate<VersionData> versionCond) {
-        VersionData versionData = dataMap.get(id);
-        if (null == versionData) {
+    public Object select(String id, Integer version) {
+        VersionData current = dataMap.get(id);
+        if (null == current) {
             return null;
         }
 
-        // 如果不指定versionCond，总是查询最新版本的数据。
-        if (versionCond == null) {
-            return versionData;
+        // 只能查询已提交的记录，或本事务中的记录
+        if (!(current.lockedBy == null || current.lockedBy == version)) {
+            return null;
         }
 
-        for (; versionData != null; versionData = versionData.getPreviousVersion()) {
-            if (versionCond.test(versionData)) {
-                return versionData;
+        // MVCC隐式条件：
+        // 1.记录createVersion <= 事务版本
+        // 2.记录deleteVersion为空 || deleteVersion > 事务版本
+        for (VersionData item = current; item != null; item = item.getPreviousVersion()) {
+            if (item.getCreateVersion() <= version
+                    && (item.getDeleteVersion() == null
+                    || item.getDeleteVersion() > version)) {
+                return item.getData();
             }
         }
         return null;
     }
-
 
     /**
      * 对id对应的记录加锁。如果记录被其他事务锁定，当前线程会阻塞，直到其他事务释放锁。
@@ -145,7 +143,7 @@ public class MVCCTable {
      * @param version 加锁的事务版本
      */
     private VersionData lock(String id, Integer version) throws InterruptedException {
-        VersionData current = select0(id, null);
+        VersionData current = dataMap.get(id);
         if (null == current) {
             return null;
         }
@@ -165,7 +163,7 @@ public class MVCCTable {
      * @param version
      */
     public void unlock(String id, Integer version) {
-        VersionData current = select0(id, null);
+        VersionData current = dataMap.get(id);
         // 断言：记录被当前事务锁定
         Assert.assertTrue(current.lockedBy == version);
 

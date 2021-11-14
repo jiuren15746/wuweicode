@@ -73,7 +73,7 @@ public class RepeatableReadTransaction {
 
     /**
      * 查询数据。数据的创建版本需要小于等于事务版本。
-     * MVCC+RR机制下，普通select数据时增加的两个隐含条件:
+     * !!! MVCC+RR机制下，普通select数据时增加的两个隐含条件:
      *   createVersion>=事务版本 && (deleteVersion为空 或 deleteVersion>事务版本)
      *
      * @param table
@@ -81,20 +81,10 @@ public class RepeatableReadTransaction {
      * @return
      */
     public Object select(MVCCTable table, String id) {
-        // MVCC+RR机制下，普通select数据时增加的两个隐含条件
-        Predicate<VersionData> versionCond = new Predicate<VersionData>() {
-            @Override
-            public boolean test(VersionData versionData) {
-                return versionData.getCreateVersion() <= version
-                        && (versionData.getDeleteVersion() == null
-                        || versionData.getDeleteVersion() > version);
-            }
-        };
-
         return execute(new Callable<Object>() {
             @Override
             public Object call() {
-                return table.select(id, versionCond);
+                return table.select(id, version);
             }
         });
     }
@@ -111,6 +101,22 @@ public class RepeatableReadTransaction {
             public void run() {
                 table.insert(id, data, version);
                 processingRecords.put(id, table);
+            }
+        });
+    }
+
+    /**
+     * 删除数据，以当前事务版本号作为数据的删除版本。
+     * @param table
+     * @param id
+     */
+    public boolean delete(MVCCTable table, String id) {
+        return execute(new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+                boolean result = table.delete(id, version);
+                processingRecords.put(id, table);
+                return result;
             }
         });
     }
