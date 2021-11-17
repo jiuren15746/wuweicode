@@ -6,10 +6,12 @@ import java.util.stream.Collectors;
 /**
  * 快排序。相向双指针。
  * 重点：
- * 1. 哨兵j循环条件为大于guard。哨兵i循环条件为小于等于guard。
- * 2. 哨兵j先出动。最终哨兵j撞上哨兵i，这样在碰撞位置的数字一定小于等于guard。
- * 3. 在一次循环内，哨兵i和j各自找到不满足条件的位置，交换一次数据。直到i和j相遇。
- * 4. i和j相遇后，相遇位置数据和guard交换。然后在左右两个区域分别进行快排。递归调用。
+ * <li> 两个哨兵i和j。i从左向右走，j从右向左走。
+ * <li> 哨兵j循环条件为大于guard。哨兵i循环条件为小于等于guard。
+ * <li> 哨兵j先出动。最终哨兵j撞上哨兵i，这样在碰撞位置的数字一定小于等于guard。
+ * <li> 在一次循环内，哨兵i和j各自找到不满足条件的位置，交换一次数据。直到i和j相遇。
+ * <li> i和j相遇后，相遇位置数据和guard交换。然后在左右两个区域分别进行快排。递归调用。
+ * <li> 循环 + 递归。
  */
 public class QuickSort {
 
@@ -20,6 +22,11 @@ public class QuickSort {
      * @param end 结束位置，包含
      */
     static public void quickSort(int[] array, int begin, int end) {
+        // !!!退出条件
+        if (begin >= end) {
+            return;
+        }
+
         System.out.println("quick sort array: " + toString(array, begin, end));
         int guard = array[begin];
         // 两个哨兵i、j
@@ -41,21 +48,18 @@ public class QuickSort {
             // 没有相遇，i/j交换
             if (i < j) {
                 swap(array, begin, end, i, j);
+            } else {
+                // 相遇，与array[begin]交换。结束本轮循环。
+                // !!! 相遇位置的数字一定小于等于array[begin].
+                System.out.println("i and j meet at idx=" + i);
+                swap(array, begin, end, begin, i);
             }
         }
-        // 相遇，与array[begin]交换。结束本轮循环。
-        // !!! 相遇位置的数字一定小于等于array[begin].
-        System.out.println("i and j meet at idx=" + i);
-        swap(array, begin, end, begin, i);
 
         // 在i的左侧、右侧分别进行快排.
-        // !!! 踩过的坑：如果i和j在end位置相遇，那么右侧不存在。所以这里一定要判断新范围两个下标的关系。
-        if (begin < i-1) {
-            quickSort(array, begin, i - 1);
-        }
-        if (i + 1 < end) {
-            quickSort(array, i + 1, end);
-        }
+        // !!! 踩过的坑：如果i和j在end位置相遇，那么右侧不存在。所以入口出要做判断。
+        quickSort(array, begin, i - 1);
+        quickSort(array, i + 1, end);
     }
 
     /**
