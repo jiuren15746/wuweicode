@@ -17,22 +17,25 @@ public class MVCCTable {
     static public class VersionData {
         private String id;
         private Object data;
+        // 删除标记
+        private final boolean isDelete;
+
+        // (MVCC) InnoDB给每条记录增加的版本号
+        private final Integer createVersion;  // 创建该版本的事务的版本号
+        private Integer deleteVersion;  // 删除该版本的事务的版本号
+        // 上一个版本的数据
+        private final VersionData previousVersion;
 
         // 锁住该记录的事务版本. null表示没有被锁定。
         private Integer lockedBy;
 
-        // (MVCC) InnoDB给每条记录增加的两个版本号
-        private final Integer createVersion;
-        private Integer deleteVersion;
-
-        // 上一个版本的数据
-        private final VersionData previousVersion;
-
         public VersionData(String id, Object data,
+                           boolean isDelete,
                            Integer version,
                            VersionData previous) {
             this.id = id;
             this.data = data;
+            this.isDelete = isDelete;
             this.createVersion = version;
             this.previousVersion = previous;
         }
@@ -49,7 +52,7 @@ public class MVCCTable {
             throw new RuntimeException();
         }
         // Insert record and lock it
-        VersionData versionData = new VersionData(id, data, version, null);
+        VersionData versionData = new VersionData(id, data, false, version, null);
         versionData.lockedBy = version;
         // Expose record
         dataMap.put(id, versionData);
@@ -57,6 +60,8 @@ public class MVCCTable {
 
     /**
      * 在事务中删除记录。同时给记录加锁。
+     * (MVCC) 给记录增加一个版本，标记为删除。
+     *
      * @param id
      * @param version 创建版本
      */
@@ -66,8 +71,17 @@ public class MVCCTable {
         if (null == current) {
             return false;
         }
-        // (MVCC) Set deleteVersion
-        current.deleteVersion = version;
+        VersionData previous = current;
+        // Update deleteVersion
+        previous.setDeleteVersion(version);
+
+        // Create new version, lock it and expose it.
+        VersionData newVersion = new VersionData(id, null, true, version, previous);
+        newVersion.lockedBy = version;
+        dataMap.put(id, newVersion);
+
+        // Release lock for previous version
+        previous.lockedBy = null;
         return true;
     }
 
@@ -87,17 +101,16 @@ public class MVCCTable {
             return false;
         }
         VersionData previous = current;
-
-        // Insert new version and lock it
-        VersionData newVersion = new VersionData(id, value, version, current);
-        newVersion.lockedBy = version;
-
-        // For previous version, record deleteVersion and release lock
+        // Update deleteVersion
         previous.setDeleteVersion(version);
-        previous.lockedBy = null;
 
-        // Expose new version
+        // Insert new version, lock it and expose it
+        VersionData newVersion = new VersionData(id, value, false, version, previous);
+        newVersion.lockedBy = version;
         dataMap.put(id, newVersion);
+
+        // Release lock for previous version.
+        previous.lockedBy = null;
         return true;
     }
 
@@ -115,21 +128,24 @@ public class MVCCTable {
             return null;
         }
 
+        if (current.lockedBy == version) {
+            return current;
+        }
+
         // MVCC隐式条件：
-        // 1.记录createVersion <= 事务版本
-        // 2.记录deleteVersion为空 || deleteVersion > 事务版本
+        // 1. createVersion <= 事务版本
+        // 2. deleteVersion为空 || deleteVersion > 事务版本
         for (VersionData item = current; item != null; item = item.getPreviousVersion()) {
             if (item.getCreateVersion() <= version
-                    && (item.getDeleteVersion() == null
-                    || item.getDeleteVersion() > version)) {
-                return item.getData();
+                    && (item.getDeleteVersion() == null || item.getDeleteVersion() > version)) {
+                return item.isDelete() ? null : item.getData();
             }
         }
         return null;
     }
 
     /**
-     * 对id对应的记录加锁。如果记录被其他事务锁定，当前线程会阻塞，直到其他事务释放锁。
+     * 对id记录的最新版本加锁。如果记录被其他事务锁定，当前线程会阻塞，直到其他事务释放锁。
      * 如果事务已经获得该记录的锁，该方法立即返回。即该方法是可重入的。
      * @param id
      * @param version 加锁的事务版本

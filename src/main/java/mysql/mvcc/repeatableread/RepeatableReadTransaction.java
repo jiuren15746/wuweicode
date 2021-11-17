@@ -1,7 +1,6 @@
 package mysql.mvcc.repeatableread;
 
 import mysql.mvcc.MVCCTable;
-import mysql.mvcc.MVCCTable.VersionData;
 import mysql.mvcc.TransactionStatus;
 import org.testng.Assert;
 
@@ -11,7 +10,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 
 
 /**
@@ -28,15 +26,15 @@ public class RepeatableReadTransaction {
     // 事务处理的记录id
     private Map<String, MVCCTable> processingRecords = new HashMap<>();
 
-    // MVCC+RR机制下，普通select数据时增加的两个隐含条件
-    private Predicate<VersionData> versionCond = new Predicate<VersionData>() {
-        @Override
-        public boolean test(VersionData versionData) {
-            return versionData.getCreateVersion() <= version
-                    && (versionData.getDeleteVersion() == null
-                    || versionData.getDeleteVersion() > version);
-        }
-    };
+//    // MVCC+RR机制下，普通select数据时增加的两个隐含条件
+//    private Predicate<VersionData> versionCond = new Predicate<VersionData>() {
+//        @Override
+//        public boolean test(VersionData versionData) {
+//            return versionData.getCreateVersion() <= version
+//                    && (versionData.getDeleteVersion() == null
+//                    || versionData.getDeleteVersion() > version);
+//        }
+//    };
 
     // 执行事务的单线程
     private ExecutorService executor = Executors.newFixedThreadPool(1);
