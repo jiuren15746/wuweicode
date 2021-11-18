@@ -116,4 +116,8 @@ public class RepeatableReadTransactionTest {
         RepeatableReadTransaction tc = begin();
         Assert.assertEquals(tc.select(table, "ttt"), null);
     }
+
+    // TODO 添加用例：事务a先创建，事务b后创建。
+    // 事务b修改数据。事务a只能看到修改前数据。
+    // 然后事务a对数据加锁，再次select，可以看到最新的数据。
 }
