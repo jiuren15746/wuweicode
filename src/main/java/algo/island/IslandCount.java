@@ -3,6 +3,11 @@ package algo.island;
 /**
  * 岛屿数量问题。难度：中等
  * https://leetcode-cn.com/problems/number-of-islands/
+ *
+ * 难点：
+ * 1. 避免重复访问
+ * 2. 深度优先，递归
+ * 3. 最外层使用循环
  */
 public class IslandCount {
 
