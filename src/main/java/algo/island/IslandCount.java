@@ -6,7 +6,7 @@ package algo.island;
  *
  * 难点：
  * 1. 避免重复访问
- * 2. 深度优先，递归
+ * 2. 探索矩阵采用深度优先递归策略
  * 3. 最外层使用循环
  */
 public class IslandCount {
