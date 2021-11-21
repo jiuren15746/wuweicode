@@ -31,7 +31,7 @@ public class RepeatableReadTransaction {
 
 
     // 私有构造函数，只能通过静态方法begin()来创建事务
-    private RepeatableReadTransaction() {
+    protected RepeatableReadTransaction() {
         status = TransactionStatus.STARTED;
         version = systemVersion.incrementAndGet();
     }
@@ -74,7 +74,7 @@ public class RepeatableReadTransaction {
         return execute(new Callable<Object>() {
             @Override
             public Object call() {
-                return table.select(id, version);
+                return table.select(id, RepeatableReadTransaction.this);
             }
         });
     }
@@ -133,7 +133,7 @@ public class RepeatableReadTransaction {
     }
 
 
-    private void execute(Runnable task) {
+    protected void execute(Runnable task) {
         // 断言事务状态
         Assert.assertEquals(status, TransactionStatus.STARTED);
         try {
@@ -143,7 +143,7 @@ public class RepeatableReadTransaction {
         }
     }
 
-    private <T> T execute(Callable<T> task) {
+    protected <T> T execute(Callable<T> task) {
         // 断言事务状态
         Assert.assertEquals(status, TransactionStatus.STARTED);
         try {
@@ -153,4 +153,16 @@ public class RepeatableReadTransaction {
         }
     }
 
+    public int getVersion() {
+        return version;
+    }
+
+    // MVCC隐式条件：
+    // 1. createVersion <= 事务版本
+    // 2. deleteVersion为空 || deleteVersion > 事务版本
+    public boolean isDataVisible(MVCCTable.VersionData item) {
+        return (item.getLockedBy() == null || item.getLockedBy() == version)
+                && item.getCreateVersion() <= version
+                && (item.getDeleteVersion() == null || item.getDeleteVersion() > version);
+    }
 }
