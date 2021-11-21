@@ -136,32 +136,35 @@ public class MVCCTable {
      * 对id记录的最新版本加锁。如果记录被其他事务锁定，当前线程会阻塞，直到其他事务释放锁。
      * 如果事务已经获得该记录的锁，该方法立即返回。即该方法是可重入的。
      * @param id
-     * @param version 加锁的事务版本
+     * @param txVersion 加锁的事务版本
      */
-    private VersionData lock(String id, Integer version) throws InterruptedException {
-        VersionData current = dataMap.get(id);
-        if (null == current) {
-            return null;
-        }
-
-        synchronized (current) {
-            while (!(current.lockedBy == null || current.lockedBy == version)) {
-                current.wait();
+    private VersionData lock(String id, Integer txVersion) throws InterruptedException {
+        for (;;) {
+            VersionData current = dataMap.get(id);
+            if (null == current) {
+                return null;
             }
-            current.lockedBy = version;
-            return current;
+
+            synchronized (current) {
+                if (!(current.lockedBy == null || current.lockedBy == txVersion)) {
+                    current.wait();
+                    continue;
+                }
+                current.lockedBy = txVersion;
+                return current;
+            }
         }
     }
 
     /**
      * 对id对应的记录释放锁。同时通知其他正在等待锁的事务。
      * @param id
-     * @param version
+     * @param txVersion
      */
-    public void unlock(String id, Integer version) {
+    public void unlock(String id, Integer txVersion) {
         VersionData current = dataMap.get(id);
         // 断言：记录被当前事务锁定
-        Assert.assertTrue(current.lockedBy == version);
+        Assert.assertTrue(current.lockedBy == txVersion);
 
         synchronized (current) {
             current.lockedBy = null;
