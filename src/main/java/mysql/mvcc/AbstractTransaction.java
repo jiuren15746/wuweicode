@@ -13,6 +13,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 事务父类。
  */
 public abstract class AbstractTransaction {
+    /**
+     * 事务状态枚举
+     */
+    static public enum TransactionStatus {
+        INIT,
+        STARTED,
+        COMMIT,
+        ROLLBACK
+    }
 
     static public final AtomicInteger systemVersion = new AtomicInteger(0);
 
