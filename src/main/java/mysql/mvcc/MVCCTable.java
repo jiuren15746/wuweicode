@@ -1,7 +1,6 @@
 package mysql.mvcc;
 
 import lombok.Data;
-import mysql.mvcc.repeatableread.RepeatableReadTransaction;
 import org.testng.Assert;
 
 import java.util.HashMap;
@@ -118,7 +117,7 @@ public class MVCCTable {
     /**
      * 查询id对应的数据，且数据版本要符合versionCond指定的条件。
      */
-    public Object select(String id, RepeatableReadTransaction tx) {
+    public Object select(String id, AbstractTransaction tx) {
         VersionData current = dataMap.get(id);
         if (null == current) {
             return null;

@@ -1,14 +1,14 @@
-package mysql.mvcc.readcommitted;
+package mysql.mvcc;
 
 import mysql.mvcc.MVCCTable;
-import mysql.mvcc.readcommited.ReadCommittedTransaction;
+import mysql.mvcc.ReadCommittedTransaction;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.UUID;
 
-import static mysql.mvcc.readcommited.ReadCommittedTransaction.begin;
+import static mysql.mvcc.ReadCommittedTransaction.begin;
 
 public class ReadCommittedTransactionTest {
 

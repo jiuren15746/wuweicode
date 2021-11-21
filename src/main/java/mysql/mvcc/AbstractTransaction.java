@@ -1,7 +1,5 @@
-package mysql.mvcc.repeatableread;
+package mysql.mvcc;
 
-import mysql.mvcc.MVCCTable;
-import mysql.mvcc.TransactionStatus;
 import org.testng.Assert;
 
 import java.util.HashMap;
@@ -11,11 +9,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
 /**
- * Repeatable Read 隔离级别下的事务
+ * 事务父类。
  */
-public class RepeatableReadTransaction {
+public abstract class AbstractTransaction {
 
     static public final AtomicInteger systemVersion = new AtomicInteger(0);
 
@@ -31,16 +28,9 @@ public class RepeatableReadTransaction {
 
 
     // 私有构造函数，只能通过静态方法begin()来创建事务
-    protected RepeatableReadTransaction() {
+    protected AbstractTransaction() {
         status = TransactionStatus.STARTED;
         version = systemVersion.incrementAndGet();
-    }
-
-    /**
-     * 开始事务
-     */
-    static public RepeatableReadTransaction begin() {
-        return new RepeatableReadTransaction();
     }
 
     /**
@@ -62,29 +52,19 @@ public class RepeatableReadTransaction {
     }
 
     /**
-     * 查询数据。数据的创建版本需要小于等于事务版本。
-     * !!! MVCC+RR机制下，普通select数据时增加的两个隐含条件:
-     * createVersion>=事务版本 && (deleteVersion为空 或 deleteVersion>事务版本)
-     *
-     * @param table
-     * @param id
-     * @return
+     * 查询数据。
      */
     public Object select(MVCCTable table, String id) {
         return execute(new Callable<Object>() {
             @Override
             public Object call() {
-                return table.select(id, RepeatableReadTransaction.this);
+                return table.select(id, AbstractTransaction.this);
             }
         });
     }
 
     /**
      * 插入数据，以当前事务版本号作为数据的创建版本。
-     *
-     * @param table
-     * @param id
-     * @param data
      */
     public void insert(MVCCTable table, String id, Object data) {
         execute(new Runnable() {
@@ -98,9 +78,6 @@ public class RepeatableReadTransaction {
 
     /**
      * 删除数据，以当前事务版本号作为数据的删除版本。
-     *
-     * @param table
-     * @param id
      */
     public boolean delete(MVCCTable table, String id) {
         return execute(new Callable<Boolean>() {
@@ -115,11 +92,6 @@ public class RepeatableReadTransaction {
 
     /**
      * 更新数据。新VersionData的版本等于事务版本。
-     *
-     * @param table
-     * @param id
-     * @param data
-     * @return
      */
     public boolean update(MVCCTable table, String id, Object data) {
         return execute(new Callable<Boolean>() {
@@ -132,7 +104,6 @@ public class RepeatableReadTransaction {
         });
     }
 
-
     protected void execute(Runnable task) {
         // 断言事务状态
         Assert.assertEquals(status, TransactionStatus.STARTED);
@@ -142,7 +113,6 @@ public class RepeatableReadTransaction {
             throw new RuntimeException(ire);
         }
     }
-
     protected <T> T execute(Callable<T> task) {
         // 断言事务状态
         Assert.assertEquals(status, TransactionStatus.STARTED);
@@ -157,12 +127,10 @@ public class RepeatableReadTransaction {
         return version;
     }
 
-    // MVCC隐式条件：
-    // 1. createVersion <= 事务版本
-    // 2. deleteVersion为空 || deleteVersion > 事务版本
-    public boolean isDataVisible(MVCCTable.VersionData item) {
-        return (item.getLockedBy() == null || item.getLockedBy() == version)
-                && item.getCreateVersion() <= version
-                && (item.getDeleteVersion() == null || item.getDeleteVersion() > version);
-    }
+    /**
+     * MVCC隐式条件，数据是否可以被该事务看见。
+     * @param item
+     * @return
+     */
+    abstract public boolean isDataVisible(MVCCTable.VersionData item);
 }

@@ -1,13 +1,14 @@
-package mysql.mvcc.repeatableread;
+package mysql.mvcc;
 
 import mysql.mvcc.MVCCTable;
+import mysql.mvcc.RepeatableReadTransaction;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.UUID;
 
-import static mysql.mvcc.repeatableread.RepeatableReadTransaction.begin;
+import static mysql.mvcc.RepeatableReadTransaction.begin;
 
 public class RepeatableReadTransactionTest {
 
