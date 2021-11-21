@@ -71,11 +71,11 @@ public class MVCCTable {
         if (null == current) {
             return false;
         }
-        VersionData previous = current;
         // Update deleteVersion
-        previous.setDeleteVersion(version);
+        current.setDeleteVersion(version);
 
         // Create new version, lock it and expose it.
+        VersionData previous = current;
         VersionData newVersion = new VersionData(id, null, true, version, previous);
         newVersion.lockedBy = version;
         dataMap.put(id, newVersion);
@@ -100,11 +100,11 @@ public class MVCCTable {
         if (null == current) {
             return false;
         }
-        VersionData previous = current;
         // Update deleteVersion
-        previous.setDeleteVersion(version);
+        current.setDeleteVersion(version);
 
         // Insert new version, lock it and expose it
+        VersionData previous = current;
         VersionData newVersion = new VersionData(id, value, false, version, previous);
         newVersion.lockedBy = version;
         dataMap.put(id, newVersion);
@@ -123,16 +123,12 @@ public class MVCCTable {
             return null;
         }
 
-        // 只能查询已提交的记录，或本事务中的记录
-        if (!(current.lockedBy == null || current.lockedBy == version)) {
-            return null;
-        }
-
-        // MVCC隐式条件：
-        // 1. createVersion <= 事务版本
-        // 2. deleteVersion为空 || deleteVersion > 事务版本
         for (VersionData item = current; item != null; item = item.getPreviousVersion()) {
-            if (item.getCreateVersion() <= version
+            if ((item.lockedBy == null || item.lockedBy == version)
+                    // MVCC隐式条件：
+                    // 1. createVersion <= 事务版本
+                    // 2. deleteVersion为空 || deleteVersion > 事务版本
+                    && item.getCreateVersion() <= version
                     && (item.getDeleteVersion() == null || item.getDeleteVersion() > version)) {
                 return item.isDelete() ? null : item.getData();
             }

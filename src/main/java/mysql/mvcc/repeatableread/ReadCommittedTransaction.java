@@ -13,9 +13,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
- * Repeatable Read 隔离级别下的事务
+ * Read Committed 隔离级别下的事务
  */
-public class RepeatableReadTransaction {
+public class ReadCommittedTransaction {
 
     static public final AtomicInteger systemVersion = new AtomicInteger(0);
 
@@ -31,7 +31,7 @@ public class RepeatableReadTransaction {
 
 
     // 私有构造函数，只能通过静态方法begin()来创建事务
-    private RepeatableReadTransaction() {
+    private ReadCommittedTransaction() {
         status = TransactionStatus.STARTED;
         version = systemVersion.incrementAndGet();
     }
@@ -39,8 +39,8 @@ public class RepeatableReadTransaction {
     /**
      * 开始事务
      */
-    static public RepeatableReadTransaction begin() {
-        return new RepeatableReadTransaction();
+    static public ReadCommittedTransaction begin() {
+        return new ReadCommittedTransaction();
     }
 
     /**
@@ -74,7 +74,7 @@ public class RepeatableReadTransaction {
         return execute(new Callable<Object>() {
             @Override
             public Object call() {
-                return table.select(id, version);
+                return table.select(id, Integer.MAX_VALUE);
             }
         });
     }

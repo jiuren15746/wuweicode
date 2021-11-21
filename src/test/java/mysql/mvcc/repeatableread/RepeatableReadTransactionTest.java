@@ -105,6 +105,26 @@ public class RepeatableReadTransactionTest {
         Assert.assertEquals(ta.select(table, id), "ttt");
     }
 
+    // 事务a先创建。事务b更新记录但不提交。事务a只能看到更新前的值。
+    @Test
+    public void test_查询和更新并发_事务a先创建_事务b更新但不提交_a只能看到更新前的版本() {
+        RepeatableReadTransaction t = begin();
+        String id = UUID.randomUUID().toString();
+        t.insert(table, id, "ttt");
+        t.commit();
+
+        // 事务A先创建
+        RepeatableReadTransaction ta = begin();
+        RepeatableReadTransaction tb = begin();
+
+        // 事务B更新记录
+        tb.update(table, id, "bbb");
+//        tb.commit();
+
+        // 事务A只能看到旧版本
+        Assert.assertEquals(ta.select(table, id), "ttt");
+    }
+
     // 事务a先创建。事务b删除记录。事务a能看到删除前的值。
     @Test
     public void test_查询和删除并发_事务a先创建_事务b删除记录_a仍可以看到记录() {
