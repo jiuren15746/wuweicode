@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * MVCC机制的表。
+ * MVCC机制的表。！！！最核心。
  */
 public class MVCCTable {
     // key = id
