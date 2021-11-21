@@ -128,10 +128,6 @@ public class MVCCTable {
             return null;
         }
 
-        if (current.lockedBy == version) {
-            return current;
-        }
-
         // MVCC隐式条件：
         // 1. createVersion <= 事务版本
         // 2. deleteVersion为空 || deleteVersion > 事务版本
