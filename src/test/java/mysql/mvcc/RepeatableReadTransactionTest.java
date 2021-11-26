@@ -1,7 +1,5 @@
 package mysql.mvcc;
 
-import mysql.mvcc.MVCCTable;
-import mysql.mvcc.RepeatableReadTransaction;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

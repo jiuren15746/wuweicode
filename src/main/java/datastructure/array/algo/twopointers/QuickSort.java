@@ -27,32 +27,24 @@ public class QuickSort {
             return;
         }
 
-        System.out.println("quick sort array: " + toString(array, begin, end));
-        int guard = array[begin];
         // 两个哨兵i、j
+        int base = array[begin];
         int i = begin;
         int j = end;
 
         // 1. 在一次循环内，哨兵i和j各自找到不满足条件的位置，交换一次数据。直到i和j相遇。
         while (i < j) {
-            // 哨兵j先出动，直到找到一个数<=guard
-            while (i < j && array[j] > guard) {
-                j--;
-            }
+            // 哨兵j先出动，直到找到一个数<=base
             // 哨兵i后出动. 哨兵i的比较条件是小于等于。而哨兵j的比较条件是大于
             // 效果就是右边小于的数抛到左边，左边大于等于的数抛到右边。
-            while (i < j && array[i] <= guard) {
-                i++;
-            }
+            while (i < j && array[j] > base) j--;
+            while (i < j && array[i] <= base) i++;
 
-            // 没有相遇，i/j交换
             if (i < j) {
-                swap(array, begin, end, i, j);
+                swap(array, i, j);
             } else {
-                // 相遇，与array[begin]交换。结束本轮循环。
                 // !!! 相遇位置的数字一定小于等于array[begin].
-                System.out.println("i and j meet at idx=" + i);
-                swap(array, begin, end, begin, i);
+                swap(array, begin, i);
             }
         }
 
@@ -62,15 +54,10 @@ public class QuickSort {
         quickSort(array, i + 1, end);
     }
 
-    /**
-     * 在数组中交换位置i和j的元素。begin和end只是用来打印日志。
-     */
-    static private void swap(int[] array, int begin, int end, int i, int j) {
-        System.out.println("In " + toString(array, begin, end) + ", swap: " + array[i] + ", " + array[j]);
+    static private void swap(int[] array, int i, int j) {
         int temp = array[i];
         array[i] = array[j];
         array[j] = temp;
-        System.out.println("After swap, array=" + toString(array, begin, end));
     }
 
     static public String toString(int[] array, int begin, int end) {
