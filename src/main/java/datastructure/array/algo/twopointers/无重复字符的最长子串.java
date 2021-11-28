@@ -13,45 +13,48 @@ public class 无重复字符的最长子串 {
     static public String solution(String str) {
         String maxSubstr = "";
         int i = 0;
+        // 使用Map保存字符穿线的位置
         Map<Character, Integer> windowChars = new HashMap<>();
 
         // 右指针一个字符一个字符向右移
         for (int j = 0; j < str.length(); j++) {
-            // 判断左指针是否需要向右移动.
-            // 发现重复字符。左指针右移到firstIdx+1，同时清除窗口字符
-            Integer firstIdx = windowChars.get(str.charAt(j));
-            if (firstIdx != null) {
-                while (i < firstIdx + 1) {
-                    windowChars.remove(str.charAt(i));
-                    i++;
-                }
-            }
-            windowChars.put(str.charAt(j), j);
+            // 查找是否是重复字符。如果是，左指针右移到firstIdx+1，同时清除窗口字符
+            Integer firstIdx = windowChars.put(str.charAt(j), j);
 
-            // 窗口内的字符串长度，如果是最长子串，保存下来
-            if (j - i + 1 > maxSubstr.length()) {
-                maxSubstr = str.substring(i, j+1);
+            if (firstIdx != null && firstIdx >= i) {
+                // 发现重复字符，窗口收缩，左指针向右移动
+                i = firstIdx + 1;
+                continue;
+            } else {
+                // 窗口扩张，保存窗口长度
+                if (j-i+1 > maxSubstr.length()) {
+                    maxSubstr = str.substring(i, j + 1);
+                }
             }
         }
         return maxSubstr;
     }
 
-//    static public String solution(String s) {
-//        if (s.length() == 0) return "";
-//        HashMap<Character, Integer> map = new HashMap<Character, Integer>();
-//        String maxSubstr = "";
-//        int left = 0;
-//        for (int i = 0; i < s.length(); i++) {
-//            if (map.containsKey(s.charAt(i))) {
-//                left = Math.max(left, map.get(s.charAt(i)) + 1);
-//            }
-//            map.put(s.charAt(i), i);
-//            if (i - left + 1 > maxSubstr.length()) {
-//                maxSubstr = s.substring(left, i);
-//            }
-//        }
-//        return maxSubstr;
-//    }
+    // 只返回长度  "nfpdmpi"
+    static public int solution2(String str) {
+        int maxLength = 0;
+        int i = 0;
+        // 使用Map保存字符穿线的位置
+        Map<Character, Integer> windowChars = new HashMap<>();
 
+        // 右指针一个字符一个字符向右移。每前进一步，都要判断是否存在重复字符。
+        for (int j = 0; j < str.length(); j++) {
+            Integer firstIdx = windowChars.put(str.charAt(j), j);
+            if (firstIdx != null && firstIdx >= i) {
+                // 发现重复字符，窗口收缩，左指针向右移动
+                i = firstIdx + 1;
+                continue;
+            } else {
+                // 窗口扩张，保存窗口长度
+                maxLength = Math.max(maxLength, j-i+1);
+            }
+        }
+        return maxLength;
+    }
 
 }
