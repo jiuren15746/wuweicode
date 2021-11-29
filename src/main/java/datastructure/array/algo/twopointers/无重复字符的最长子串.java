@@ -7,6 +7,13 @@ import java.util.Map;
  * 难度：中等
  * 使用滑动窗口。
  * https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/solution/hua-dong-chuang-kou-by-powcai/
+ *
+ * 思路：
+ *   指针j向右移，step=1。每次移动后都要判断是否有重复字符。
+ *   如果有重复字符，指针i向右移到重复字符位置的右边。右指针不动。
+ *
+ * 时间复杂度：O(N)
+ *
  */
 public class 无重复字符的最长子串 {
 
@@ -24,7 +31,6 @@ public class 无重复字符的最长子串 {
             if (firstIdx != null && firstIdx >= i) {
                 // 发现重复字符，窗口收缩，左指针向右移动
                 i = firstIdx + 1;
-                continue;
             } else {
                 // 窗口扩张，保存窗口长度
                 if (j-i+1 > maxSubstr.length()) {
@@ -48,7 +54,6 @@ public class 无重复字符的最长子串 {
             if (firstIdx != null && firstIdx >= i) {
                 // 发现重复字符，窗口收缩，左指针向右移动
                 i = firstIdx + 1;
-                continue;
             } else {
                 // 窗口扩张，保存窗口长度
                 maxLength = Math.max(maxLength, j-i+1);
