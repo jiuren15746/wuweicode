@@ -12,6 +12,10 @@ import java.util.Queue;
  * 二叉树层序遍历。给你一个二叉树，请你返回其按 层序遍历 得到的节点值。 （即逐层地，从左到右访问所有节点）。
  * https://leetcode-cn.com/problems/binary-tree-level-order-traversal/
  * 难度：中等
+ *
+ * 思路：层序遍历，即广度优先搜索，英文叫BFS（Breath First Search).
+ *  + 使用Queue。
+ *  + 两层循环。外层表示从上到下一层层的循环。内层表示一层内的循环。
  */
 public class LevelOrderTraverse {
 
@@ -91,7 +95,6 @@ public class LevelOrderTraverse {
                 }
             }
         }
-
         return result;
     }
 
