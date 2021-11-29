@@ -4,8 +4,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * 原地反转链表。考察对指针的理解。反转一个节点，要调整三个指针。
- * 每次反转，把head右边第一个节点，放到左边链表头。直到head右边没有节点。
+ * 原地反转链表。
+ * https://leetcode-cn.com/problems/reverse-linked-list/
+ * 难度：简单
+ *
+ * 思路：
+ *  + 每次反转，把head右边第一个节点，放到左边链表头。直到head右边没有节点。
+ *  + 考察对指针的理解。反转一个节点，要调整三个指针。
  *
  * 时间复杂度: O(n)
  * 空间复杂度: O(1)
