@@ -28,23 +28,21 @@ public class 爱吃香蕉的可可 {
         // 最低速度和最高速度
         int low = 1;
         int high = findMax(piles);
-        if (ifCanFinishAtSpeed(piles, low, limitHours)) {
+        if (calculateHours(piles, low) <= limitHours) {
             return low;
         }
 
         // 选择的速度范围：最低速度吃不完，最高速度能吃完
         // 结束条件：范围的边界相邻
-        for (;;) {
-            if (low + 1 == high) {
-                return high;
-            }
+        while (!(low + 1 == high)) {
             int midSpeed = (low + high) / 2;
-            if (ifCanFinishAtSpeed(piles, midSpeed, limitHours)) {
+            if (calculateHours(piles, midSpeed) <= limitHours) {
                 high = midSpeed;
             } else {
                 low = midSpeed;
             }
         }
+        return high;
     }
 
     static private int findMax(int[] piles) {
@@ -57,14 +55,14 @@ public class 爱吃香蕉的可可 {
         return max;
     }
 
-    // 以speed速度，吃掉所有香蕉需要的时间。如果小于limitHours，表示可以吃完，返回true。
-    static private boolean ifCanFinishAtSpeed(int[] piles, int speed, int limitHours) {
+    // 以speed速度，吃掉所有香蕉需要的时间。
+    static private long calculateHours(int[] piles, int speed) {
         // 为了避免越界，使用long类型
         long hours = 0;
         for (int pile : piles) {
             hours += (int) Math.ceil(pile*1.0/speed); // 用double除法，否则结果会错误
         }
-        return hours <= limitHours;
+        return hours;
     }
 
     @Test
