@@ -16,7 +16,7 @@ public interface ReentrantLockJiuren {
 
     /**
      * 释放锁。
-     * <li>如果线程没有获得锁，调用该方法会导致抛出IllegalStateException。
+     * <li>如果线程没有获得锁，调用该方法会导致抛出 IllegalMonitorStateException。
      * <li>线程unlock次数只有和lock次数相等，才能真正释放掉锁。
      */
     void unlock();

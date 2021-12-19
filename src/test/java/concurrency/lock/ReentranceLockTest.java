@@ -1,40 +1,49 @@
 package concurrency.lock;
 
 import concurrency.lock.impl.IntReentranceLock;
+import concurrency.lock.impl.ReentrantLock2;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 
 import java.util.List;
 
-public class IntReentranceLockTest {
+public class ReentranceLockTest {
+
+    @Test
+    public void unlock_但是没有持有锁() throws Exception {
+        ReentrantLockJiuren lock = new ReentrantLock2();
+        try {
+            lock.unlock();
+        } catch (IllegalMonitorStateException ex) {
+            // expectation, do nothing
+        }
+    }
 
     @Test
     public void lock_单线程_多次加锁() throws Exception {
+//        IntReentranceLock lock = new IntReentranceLock();
+        ReentrantLockJiuren lock = new ReentrantLock2();
 
-        IntReentranceLock lock = new IntReentranceLock();
-
-        lock.lock();
-        Assert.assertTrue(lock.isHeldByCurrentThread());
-        lock.lock();
-        Assert.assertTrue(lock.isHeldByCurrentThread());
-        lock.lock();
-        Assert.assertTrue(lock.isHeldByCurrentThread());
-
-        lock.unlock();
-        Assert.assertTrue(lock.isHeldByCurrentThread());
-
-        lock.unlock();
-        Assert.assertTrue(lock.isHeldByCurrentThread());
-
-        lock.unlock();
-        Assert.assertFalse(lock.isHeldByCurrentThread());
+        for (int i = 0; i < 10; ++i) {
+            lock.lock();
+            Assert.assertTrue(lock.isHeldByCurrentThread());
+        }
+        for (int i = 0; i < 10; ++i) {
+            lock.unlock();
+            if (i < 9) {
+                Assert.assertTrue(lock.isHeldByCurrentThread());
+            } else {
+                Assert.assertFalse(lock.isHeldByCurrentThread());
+            }
+        }
     }
 
     @Test
     public void lock_多线程() throws Exception {
 
-        final IntReentranceLock lock = new IntReentranceLock();
+//        final IntReentranceLock lock = new IntReentranceLock();
+        ReentrantLockJiuren lock = new ReentrantLock2();
 
         Runnable task = new Runnable() {
             @Override
@@ -66,8 +75,6 @@ public class IntReentranceLockTest {
         for (Thread t : threads) {
             t.join();
         }
-
-        Assert.assertTrue(lock.isFree());
     }
 
 }

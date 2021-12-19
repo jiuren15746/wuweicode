@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static concurrency.PrintLog.printLog;
 
 /**
- * 可重入锁。仅使用CAS实现。
+ * 可重入锁。仅使用CAS实现。第一次实现，比较冗长。
  */
 public class IntReentranceLock {
 
