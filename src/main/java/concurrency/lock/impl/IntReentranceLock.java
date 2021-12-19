@@ -1,4 +1,4 @@
-package concurrency.lock;
+package concurrency.lock.impl;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import static concurrency.PrintLog.printLog;

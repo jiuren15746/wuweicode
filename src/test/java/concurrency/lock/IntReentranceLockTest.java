@@ -1,5 +1,6 @@
 package concurrency.lock;
 
+import concurrency.lock.impl.IntReentranceLock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
