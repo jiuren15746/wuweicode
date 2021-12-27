@@ -1,6 +1,5 @@
 package concurrency.blockingqueue;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 
@@ -33,13 +32,16 @@ public class FairnessBoundedBlockingQueueTest {
 
         for (int i = 0; i < 10; ++i) {
             Thread producer = new Thread(produce);
-            producer.setName("producer " + i);
+            producer.setName("P" + i);
             producer.start();
             threads.add(producer);
         }
+
+        Thread.sleep(5000L);
+
         for (int i = 0; i < 10; ++i) {
             Thread consumer = new Thread(consume);
-            consumer.setName("consumer " + i);
+            consumer.setName("C" + i);
             consumer.start();
             threads.add(consumer);
         }

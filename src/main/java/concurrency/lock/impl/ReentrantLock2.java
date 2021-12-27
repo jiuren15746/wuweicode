@@ -46,6 +46,11 @@ public class ReentrantLock2 implements ReentrantLockJiuren {
         return lockStatus.get() > 0 && holdingThread == Thread.currentThread();
     }
 
+    @Override
+    public String toString() {
+        return "ReentrantLock2(lockStatus=" + lockStatus + ", holdingThread=" + holdingThread + ")";
+    }
+
     // 返回 [0, maxValue) 的随机值
     private long randomValueWithin(long maxValue) {
         return System.nanoTime() % maxValue;
