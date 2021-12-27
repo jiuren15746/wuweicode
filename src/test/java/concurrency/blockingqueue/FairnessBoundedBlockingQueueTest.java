@@ -9,7 +9,7 @@ public class FairnessBoundedBlockingQueueTest {
 
     @Test
     public void test() throws Exception {
-        FairnessBoundedBlockingQueue queue = new FairnessBoundedBlockingQueue(5);
+        FairBlockingQueueImpl queue = new FairBlockingQueueImpl(5);
 
         Runnable produce = () -> {
             long time = System.nanoTime();

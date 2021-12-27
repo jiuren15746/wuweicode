@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FairnessBoundedBlockingQueue implements Queue {
+public class FairBlockingQueueImpl implements FairBlockingQueue {
     class Node {
         Object value;
         Node next;
@@ -32,7 +32,7 @@ public class FairnessBoundedBlockingQueue implements Queue {
     ReentrantLockJiuren lock = new ReentrantLock2();
     private WaitQueue waitQueue = new WaitQueue();
 
-    public FairnessBoundedBlockingQueue(int capacity) {
+    public FairBlockingQueueImpl(int capacity) {
         this.capacity = capacity;
         this.head = new Node(null);
         this.tail = head;
