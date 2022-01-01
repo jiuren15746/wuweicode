@@ -6,6 +6,15 @@ import org.testng.annotations.Test;
 public class BinaryMaxHeapTest {
 
     @Test
+    public void check() {
+        BinaryMaxHeap heap = new BinaryMaxHeap(new int[]{14, 1, 8, 3, 2});
+        Assert.assertEquals(heap.check(), false);
+
+        heap = new BinaryMaxHeap(new int[]{14, 3, 8, 1, 2});
+        Assert.assertEquals(heap.check(), true);
+    }
+
+    @Test
     public void test() {
         BinaryMaxHeap heap = new BinaryMaxHeap(20);
         heap.offer(10);

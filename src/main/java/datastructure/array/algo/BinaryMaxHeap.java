@@ -2,6 +2,7 @@ package datastructure.array.algo;
 
 /**
  * 二叉堆（最大堆，父节点比子节点大）。可以用来实现优先级队列。
+ * 最大堆定义：1. 是完全二叉树，2. 每个节点都比子节点大。
  */
 public class BinaryMaxHeap {
 
@@ -13,12 +14,10 @@ public class BinaryMaxHeap {
         this.size = 0;
     }
 
-//    public BinaryMaxHeap(int[] elements) {
-//        this.array = elements;
-//        this.size = elements.length;
-//
-//        // TODO CHECK
-//    }
+    public BinaryMaxHeap(int[] elements) {
+        this.array = elements;
+        this.size = elements.length;
+    }
 
     public void offer(int value) {
         int i = size;
@@ -79,5 +78,23 @@ public class BinaryMaxHeap {
         int[] copy = new int[size];
         System.arraycopy(array, 0, copy, 0, size);
         return copy;
+    }
+
+    /**
+     * 检查是否满足最大堆定义。
+     * @return
+     */
+    public boolean check() {
+        for (int i = 0; i < size; ++i) {
+            int childl = 2*i + 1;
+            int childr = 2*i + 2;
+            if (childl < size && array[i] < array[childl]) {
+                return false;
+            }
+            if (childr < size && array[i] < array[childr]) {
+                return false;
+            }
+        }
+        return true;
     }
 }
