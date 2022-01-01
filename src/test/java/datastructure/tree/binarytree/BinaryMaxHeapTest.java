@@ -1,4 +1,4 @@
-package datastructure.array.algo;
+package datastructure.tree.binarytree;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
