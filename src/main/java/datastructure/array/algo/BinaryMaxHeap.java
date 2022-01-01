@@ -2,7 +2,7 @@ package datastructure.array.algo;
 
 /**
  * 二叉堆（最大堆，父节点比子节点大）。可以用来实现优先级队列。
- * 最大堆定义：1. 是完全二叉树，2. 每个节点都比子节点大。
+ * 最大堆定义：1. 是完全二叉树，2. 每个节点>=子节点。
  */
 public class BinaryMaxHeap {
 
@@ -43,29 +43,33 @@ public class BinaryMaxHeap {
         array[0] = array[size - 1];
         size--;
 
-        // array[0]下沉
-        for (int i = 0;;) {
-            int leftChild = 2*i + 1;
-            int rightChild =2*i + 2;
-            int biggerChildIdx;
-
-            // 没有子节点
-            if (leftChild >= size) {
-                break;
-            } else if (rightChild >= size) { // 只有左子节点
-                biggerChildIdx = leftChild;
-            } else { // 左右子节点都有
-                biggerChildIdx = array[leftChild] >= array[rightChild] ? leftChild : rightChild;
-            }
-
-            if (array[i] < array[biggerChildIdx]) {
-                swap(i, biggerChildIdx);
-                i = biggerChildIdx;
-            } else {
-                break;
-            }
-        }
+        maxHeapify(0);
         return result;
+    }
+
+    /**
+     * 最大堆合法化操作。idx位置的节点如果小于子节点，和最大的子节点交换。并循环，直到满足最大堆定义。
+     * @param idx
+     */
+    private void maxHeapify(int idx) {
+        for (; ; ) {
+            int childl = 2 * idx + 1;
+            int childr = 2 * idx + 2;
+
+            if (childr < size) { // 两个子节点
+                int biggerChildIdx = array[childl] > array[childr] ? childl : childr;
+                if (array[idx] < array[biggerChildIdx]) {
+                    swap(idx, biggerChildIdx);
+                    idx = biggerChildIdx;
+                    continue;
+                }
+            } else if (childl < size) { // 只有左子节点
+                if (array[idx] < array[childl]) {
+                    swap(idx, childl);
+                }
+            }
+            return;
+        }
     }
 
     private void swap(int i, int j) {
