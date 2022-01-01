@@ -20,18 +20,10 @@ public class BinaryMaxHeap {
     }
 
     public void offer(int value) {
-        int i = size;
+        // 放到数组最后
         array[size++] = value;
-
-        while (i > 0) {
-            int parentIdx = (i - 1) / 2;
-            if (array[i] > array[parentIdx]) {
-                swap(i, parentIdx);
-                i = parentIdx;
-            } else {
-                break;
-            }
-        }
+        // 然后上浮
+        swim(size - 1);
     }
 
     public int poll() {
@@ -43,32 +35,31 @@ public class BinaryMaxHeap {
         array[0] = array[size - 1];
         size--;
 
-        maxHeapify(0);
+        sink(0);
         return result;
     }
 
-    /**
-     * 最大堆合法化操作。idx位置的节点如果小于子节点，和最大的子节点交换。并循环，直到满足最大堆定义。
-     * @param idx
-     */
-    private void maxHeapify(int idx) {
-        for (; ; ) {
-            int childl = 2 * idx + 1;
-            int childr = 2 * idx + 2;
+    // 上浮
+    private void swim(int idx) {
+        while (idx > 0 && array[idx] > array[(idx - 1) / 2]) {
+            swap(idx, (idx - 1) / 2);
+            idx = (idx - 1) / 2;
+        }
+    }
 
-            if (childr < size) { // 两个子节点
-                int biggerChildIdx = array[childl] > array[childr] ? childl : childr;
-                if (array[idx] < array[biggerChildIdx]) {
-                    swap(idx, biggerChildIdx);
-                    idx = biggerChildIdx;
-                    continue;
-                }
-            } else if (childl < size) { // 只有左子节点
-                if (array[idx] < array[childl]) {
-                    swap(idx, childl);
-                }
+    // 下沉
+    private void sink(int pos) {
+        while (2 * pos + 1 < size) { // 有子节点
+            int i = 2 * pos + 1; // 较大子节点下标
+            // 两个子节点
+            if (i + 1 < size && array[i] < array[i + 1]) {
+                i = i + 1;
             }
-            return;
+            if (array[pos] >= array[i]) {
+                break;
+            }
+            swap(pos, i);
+            pos = i;
         }
     }
 
