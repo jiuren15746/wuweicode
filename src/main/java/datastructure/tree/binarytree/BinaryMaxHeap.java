@@ -14,14 +14,14 @@ public class BinaryMaxHeap implements BinaryHeap {
         this.size = 0;
     }
 
-    @Override
-    public boolean isMapHeap() {
-        return true;
-    }
-
     public BinaryMaxHeap(int[] elements) {
         this.array = elements;
         this.size = elements.length;
+    }
+
+    @Override
+    public boolean isMaxHeap() {
+        return true;
     }
 
     @Override
@@ -41,6 +41,11 @@ public class BinaryMaxHeap implements BinaryHeap {
         array[0] = array[(size--) - 1];
         sink(0);
         return result;
+    }
+
+    @Override
+    public int size() {
+        return size;
     }
 
     // 上浮
