@@ -1,5 +1,8 @@
 package datastructure.tree.binarytree;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 二叉堆（最大堆，父节点比子节点大）。可以用来实现优先级队列。
  * 最大堆定义：1. 是完全二叉树，2. 每个节点>=子节点。
@@ -46,6 +49,21 @@ public class BinaryMaxHeap implements BinaryHeap {
     @Override
     public int size() {
         return size;
+    }
+
+    @Override
+    public List<Integer> toSortedList() {
+        // 先copy出来一个。
+        BinaryMaxHeap copy = new BinaryMaxHeap(0);
+        copy.array = new int[size];
+        copy.size = size;
+        System.arraycopy(array, 0, copy.array, 0, size);
+
+        List<Integer> list = new ArrayList<>();
+        while (copy.size() > 0) {
+            list.add(copy.poll());
+        }
+        return list;
     }
 
     // 上浮

@@ -2,6 +2,9 @@ package datastructure.tree.binarytree;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.testng.collections.Lists;
+
+import java.util.ArrayList;
 
 public class BinaryMaxHeapTest {
 
@@ -33,5 +36,22 @@ public class BinaryMaxHeapTest {
         Assert.assertEquals(heap.getElements(), new int[]{60, 40, 50, 10, 20});
         Assert.assertEquals(heap.poll(), 60);
         Assert.assertEquals(heap.getElements(), new int[]{50, 40, 20, 10});
+    }
+
+    @Test
+    public void toSortedList() {
+        BinaryMaxHeap heap = new BinaryMaxHeap(20);
+        heap.offer(10);
+        heap.offer(50);
+        heap.offer(60);
+        heap.offer(40);
+        heap.offer(20);
+        heap.offer(70);
+        heap.offer(90);
+
+        Assert.assertEquals(heap.toSortedList(),
+                Lists.newArrayList(90, 70, 60, 50, 40, 20, 10));
+
+        Assert.assertEquals(heap.size(), 7);
     }
 }

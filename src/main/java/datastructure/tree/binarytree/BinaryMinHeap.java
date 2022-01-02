@@ -41,6 +41,21 @@ public class BinaryMinHeap implements BinaryHeap {
         return size;
     }
 
+    @Override
+    public List<Integer> toSortedList() {
+        // 先copy出来一个。
+        BinaryMinHeap copy = new BinaryMinHeap(0);
+        copy.array = new int[size];
+        copy.size = size;
+        System.arraycopy(array, 0, copy.array, 0, size);
+
+        List<Integer> list = new ArrayList<>();
+        while (copy.size() > 0) {
+            list.add(copy.poll());
+        }
+        return list;
+    }
+
     // 上浮
     private void swim(int pos) {
         while (pos > 0 && array[pos] < array[(pos - 1) / 2]) {

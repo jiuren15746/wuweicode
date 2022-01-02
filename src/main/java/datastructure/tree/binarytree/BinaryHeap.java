@@ -30,11 +30,5 @@ public interface BinaryHeap {
     /**
      * 返回有序列表。
      */
-    default List<Integer> toSortedList() {
-        List<Integer> list = new ArrayList<>();
-        while (size() > 0) {
-            list.add(poll());
-        }
-        return list;
-    }
+    List<Integer> toSortedList();
 }
