@@ -13,7 +13,7 @@ public class LinkedListJiuren {
     static public LinkedListJiuren createList(int[] array) {
         LinkedListJiuren list = new LinkedListJiuren();
         for (int val : array) {
-            list.push(val);
+            list.append(val);
         }
         return list;
     }
@@ -175,19 +175,26 @@ public class LinkedListJiuren {
             return;
         }
 
+        // 指针i遍历，遇到小于base的值，p前进，然后交换i和p的值
         int base = begin.data;
         ListNode p = begin;
         for (ListNode i = begin; i != end.next; i = i.next) {
             if (i.data < base) {
                 p = p.next;
-                swap(p, i);
+                if (p != i) {
+                    swap(p, i);
+                }
             }
         }
+        // p指针左侧（包含p不包含头），都小于base。然后p和begin互换。
         swap(p, begin);
 
         ListNode pre = getPrevious(begin, p);
         quickSort_swapValue(begin, pre);
-        quickSort_swapValue(p.next, end);
+        // 注意这里踩过一个坑：如果p等于end，p.next会越界
+        if (p != end) {
+            quickSort_swapValue(p.next, end);
+        }
     }
 
     private void swap(ListNode a, ListNode b) {
