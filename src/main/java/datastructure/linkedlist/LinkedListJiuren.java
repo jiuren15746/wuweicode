@@ -29,7 +29,7 @@ public class LinkedListJiuren {
         if (head == null) {
             tail = head = new ListNode(value);
         } else {
-            tail.next = new ListNode(value);
+            tail = tail.next = new ListNode(value);
         }
     }
 

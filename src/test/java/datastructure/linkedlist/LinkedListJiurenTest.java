@@ -17,4 +17,17 @@ public class LinkedListJiurenTest {
         Assert.assertEquals(list.getLength(), 5);
         Assert.assertEquals(list.getLength_recursive(list.head), 5);
     }
+
+    @Test
+    public void test_append() {
+        LinkedListJiuren list = new LinkedListJiuren();
+        list.append(1);
+        list.append(3);
+        list.append(1);
+        list.append(2);
+        list.append(1);
+
+        Assert.assertEquals(list.getLength(), 5);
+        Assert.assertEquals(list.getLength_recursive(list.head), 5);
+    }
 }
