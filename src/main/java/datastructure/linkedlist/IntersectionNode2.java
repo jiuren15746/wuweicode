@@ -1,10 +1,10 @@
-package datastructure.linkedlist.algo;
+package datastructure.linkedlist;
 
-import datastructure.linkedlist.algo.IntersectionNode.ListNode;
+import datastructure.linkedlist.IntersectionNode.ListNode;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import static datastructure.linkedlist.algo.IntersectionNode.createList;
+import static datastructure.linkedlist.IntersectionNode.createList;
 
 /**
  * 该解法脑洞有点大。

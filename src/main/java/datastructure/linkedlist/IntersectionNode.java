@@ -1,4 +1,4 @@
-package datastructure.linkedlist.algo;
+package datastructure.linkedlist;
 
 import lombok.Data;
 import org.testng.Assert;

@@ -1,15 +1,15 @@
-package datastructure.linkedlist.algo;
+package datastructure.linkedlist;
 
 public class ListNode {
-    int val;
+    int data;
     ListNode next;
 
-    ListNode(int val) {
-        this.val = val;
+    ListNode(int data) {
+        this.data = data;
     }
 
-    ListNode(int val, ListNode next) {
-        this.val = val;
+    ListNode(int data, ListNode next) {
+        this.data = data;
         this.next = next;
     }
 
@@ -38,7 +38,7 @@ public class ListNode {
         ListNode temp = head;
         int[] array = new int[length];
         for (int i = 0; i < array.length; ++i) {
-            array[i] = temp.val;
+            array[i] = temp.data;
             temp = temp.next;
         }
         return array;

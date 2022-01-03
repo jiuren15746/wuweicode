@@ -1,4 +1,4 @@
-package datastructure.linkedlist.algo;
+package datastructure.linkedlist;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
