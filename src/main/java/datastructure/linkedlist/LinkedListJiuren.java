@@ -1,8 +1,8 @@
 package datastructure.linkedlist;
 
 public class LinkedListJiuren {
-    // 有一个固定头结点. 便于append
-    ListNode head = new ListNode(-1);
+    ListNode head;
+    ListNode tail;
     // =============
 
     /**
@@ -10,29 +10,32 @@ public class LinkedListJiuren {
      */
     public void push(int value) {
         ListNode node = new ListNode(value);
-        node.next = head.next;
-        head.next = node;
+        node.next = head;
+        head = node;
+        if (tail == null) {
+            tail = head;
+        }
     }
 
-    // 在指定节点后插入
-    public void insertAfter(ListNode node, int value) {
-        ListNode temp = new ListNode(value);
-        temp.next = node.next;
-        node.next = temp;
-    }
+//    // 在指定节点后插入
+//    public void insertAfter(ListNode node, int value) {
+//        ListNode temp = new ListNode(value);
+//        temp.next = node.next;
+//        node.next = temp;
+//    }
 
     // 在尾部插入节点
     public void append(int value) {
-        ListNode tail = head;
-        while (tail.next != null) {
-            tail = tail.next;
+        if (head == null) {
+            tail = head = new ListNode(value);
+        } else {
+            tail.next = new ListNode(value);
         }
-        tail.next = new ListNode(value);
     }
 
     public int getLength() {
         int length = 0;
-        for (ListNode node = head.next; node != null; node = node.next) {
+        for (ListNode node = head; node != null; node = node.next) {
             length++;
         }
         return length;

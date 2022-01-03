@@ -15,6 +15,6 @@ public class LinkedListJiurenTest {
         list.push(1);
 
         Assert.assertEquals(list.getLength(), 5);
-        Assert.assertEquals(list.getLength_recursive(list.head.next), 5);
+        Assert.assertEquals(list.getLength_recursive(list.head), 5);
     }
 }
