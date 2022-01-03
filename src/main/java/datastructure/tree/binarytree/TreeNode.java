@@ -1,8 +1,13 @@
-package datastructure.binarytree;
+package datastructure.tree.binarytree;
 
+/**
+ * 二叉树节点。
+ */
 public class TreeNode {
     final int val;
+    // 左子树
     TreeNode left;
+    // 右子树
     TreeNode right;
 
     TreeNode(int value) {
