@@ -170,6 +170,11 @@ public class LinkedListJiuren {
 //    }
 
 
+    /**
+     * 快速排序。不移动节点，只交换值。
+     * @param begin
+     * @param end
+     */
     public void quickSort_swapValue(ListNode begin, ListNode end) {
         if (begin == null || end == null || begin == end) {
             return;
