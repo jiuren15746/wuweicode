@@ -1,12 +1,8 @@
 package datastructure.array.algo.twopointers;
 
-import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertEquals;
-
 public class QuickSort2 {
 
-    public void quickSort(int[] array, int begin, int end) {
+    public static void quickSort(int[] array, int begin, int end) {
         if (begin >= end) {
             return;
         }
@@ -15,6 +11,7 @@ public class QuickSort2 {
         int j = end;
 
         while (i < j) {
+            // 左侧小于等于，右侧大于
             while (i < j && array[j] > base) j--;
             while (i < j && array[i] <= base) i++;
             if (i < j) {
@@ -23,7 +20,6 @@ public class QuickSort2 {
                 swap(array, i, begin);
             }
         }
-
         quickSort(array, begin, i-1);
         quickSort(array, i+1, end);
     }
@@ -32,36 +28,5 @@ public class QuickSort2 {
         int temp = array[i];
         array[i] = array[j];
         array[j] = temp;
-    }
-
-
-    static public void quickSort3(int[] array, int begin, int end) {
-        if (begin >= end) return;
-
-        int i = begin;
-        int j = end;
-        int base = array[begin];
-
-        while (i < j) {
-            while (i < j && array[j] > base) j--;
-            while (i < j && array[i] <= base) i++;
-            if (i != j) {
-                swap(array, i, j);
-            } else {
-                swap(array, i, begin);
-            }
-        }
-
-        quickSort3(array, begin, i-1);
-        quickSort3(array,i+1, end);
-    }
-
-
-    @Test
-    public void test() {
-        int[] array = {6, 1, 2, 7, 9, 3, 9, 6, 4, 5, 10, 8};
-        quickSort3(array, 0, array.length - 1);
-
-        assertEquals(array, new int[]{1, 2, 3, 4, 5, 6, 6, 7, 8, 9, 9, 10});
     }
 }
