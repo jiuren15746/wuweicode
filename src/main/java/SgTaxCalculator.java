@@ -31,7 +31,6 @@ public class SgTaxCalculator {
         for (Map.Entry<Amount, Double> entry : taxRateMap.entrySet()) {
             long amount = entry.getKey().amount;
             double rate = entry.getValue();
-//            System.out.println(amount + " -> " + rate);
 
             if (income < amount) {
                 totalTax += income * rate;
