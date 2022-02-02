@@ -3,6 +3,7 @@ import java.util.Map;
 
 public class SgTaxCalculator {
 
+    // 为了避免相同金额插入map中，被认为是同一个key
     static class Amount {
         long amount;
         public Amount(long amount) {
