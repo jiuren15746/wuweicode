@@ -1,9 +1,10 @@
 package datastructure.skiplist.v2;
 
+import datastructure.skiplist.v2.SkipList2.DataNode;
+import datastructure.skiplist.v2.SkipList2.HeadNode;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
-import datastructure.skiplist.v2.SkipList2.*;
 
 
 public class SkipListAlgo {
@@ -13,7 +14,7 @@ public class SkipListAlgo {
      * @return 新的topHead
      */
     static public HeadNode addLevel(SkipList2 skiplist) {
-        HeadNode newHead = new HeadNode(skiplist.getLevel() + 1, null);
+        HeadNode newHead = new HeadNode(skiplist.getLevel() + 1, null, null);
         newHead.setDown(skiplist.getTopHead());
         skiplist.setTopHead(newHead);
         System.out.println("add level, " + newHead);
@@ -58,7 +59,7 @@ public class SkipListAlgo {
     static public void insert(SkipList2 skiplist, int target) {
         // 查找插入的路径
         List<DataNode> path = find(skiplist, target);
-        DataNode previous = null;
+        DataNode previous;
         DataNode newNode = null;
 
         // 从底层向上层，在每一层插入节点
@@ -69,8 +70,10 @@ public class SkipListAlgo {
                 previous = addLevel(skiplist);
             }
             // 插入新节点
-            newNode = new DataNode(previous.getLevel(), target, previous.getNext(), newNode);
-            previous.setNext(newNode);
+            DataNode temp = new DataNode(previous.getLevel(), target, previous.getNext(), previous);
+            previous.setNext(temp);
+            temp.setDown(newNode);
+            newNode = temp;
         }
     }
 

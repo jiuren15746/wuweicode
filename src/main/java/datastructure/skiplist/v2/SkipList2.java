@@ -8,7 +8,7 @@ public class SkipList2 {
     private HeadNode topHead;
 
     public SkipList2() {
-        topHead = new HeadNode(0, null);
+        topHead = new HeadNode(0, null, null);
     }
 
     /**
@@ -51,32 +51,34 @@ public class SkipList2 {
         return head;
     }
 
-    // 数据节点和索引节点共用
+    // 数据/索引节点，双向。
     @Data
     static public class DataNode {
-        protected Integer value = null;
-        protected DataNode next = null;
-        protected DataNode down = null;
-
         // 最底层level为零
         protected int level = 0;
+        protected Integer value = null;
+
+        protected DataNode pre = null;
+        protected DataNode next = null;
+        protected DataNode down = null;
 
         protected DataNode() {}
 
         public DataNode(int level) {
             this.level = level;
         }
-        public DataNode(int level, Integer value, DataNode next) {
+        public DataNode(int level, Integer value, DataNode next, DataNode pre) {
             this.level = level;
             this.value = value;
             this.next = next;
+            this.pre = pre;
         }
-        public DataNode(int level, Integer value, DataNode next, DataNode down) {
-            this.level = level;
-            this.value = value;
-            this.next = next;
-            this.down = down;
-        }
+//        public DataNode(int level, Integer value, DataNode next, DataNode down) {
+//            this.level = level;
+//            this.value = value;
+//            this.next = next;
+//            this.down = down;
+//        }
         @Override
         public String toString() {
             return "DataNode(L" + level + ", value=" + value + ")";
@@ -87,12 +89,13 @@ public class SkipList2 {
     @Data
     static public class HeadNode extends DataNode {
         private HeadNode() {}
-        public HeadNode(int level, DataNode next) {
-            super(level, null, next);
+
+        public HeadNode(int level, DataNode next, DataNode pre) {
+            super(level, null, next, pre);
         }
-        public HeadNode(int level, DataNode next, HeadNode down) {
-            super(level, null, next, down);
-        }
+//        public HeadNode(int level, DataNode next, HeadNode down) {
+//            super(level, null, next, down);
+//        }
         public void setValue() {
             throw new UnsupportedOperationException("Can't set value to head node.");
         }
