@@ -50,7 +50,6 @@ public class SkipListAlgo {
         return path;
     }
 
-
     /**
      * 向跳表中插入元素。
      * @param skiplist
@@ -80,5 +79,30 @@ public class SkipListAlgo {
     static private boolean isCreateIndex() {
         long time = System.nanoTime();
         return time % 2 == 1;
+    }
+
+    /**
+     * 删除一个数值。
+     *
+     * @return 如果数值不在跳表中，返回false。否则删除后，返回true。
+     */
+    static public boolean delete(SkipList2 skiplist, int target) {
+        // 查找路径
+        List<DataNode> path = find(skiplist, target);
+        // 没找到
+        if (path.get(path.size() - 1).getValue().intValue() != target) {
+            return false;
+        }
+
+        for (int level = 0; level <= skiplist.getLevel(); ++level) {
+            DataNode deleteNode = path.get(skiplist.getLevel() - level);
+            if (deleteNode.getValue() != null && deleteNode.getValue().intValue() == target) {
+                deleteNode.getPre().setNext(deleteNode.getNext());
+                if (deleteNode.getNext() != null) {
+                    deleteNode.getNext().setPre(deleteNode.getPre());
+                }
+            }
+        }
+        return true;
     }
 }

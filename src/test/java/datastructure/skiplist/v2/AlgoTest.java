@@ -6,7 +6,7 @@ import java.util.List;
 import datastructure.skiplist.v2.SkipList2.*;
 import static datastructure.skiplist.v2.SkipListAlgo.*;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 
 public class AlgoTest {
@@ -21,7 +21,7 @@ public class AlgoTest {
     }
 
     @Test
-    public void testInsert_空跳表() {
+    public void testInsert() {
         SkipList2 skiplist = new SkipList2();
         insert(skiplist, 1);
         insert(skiplist, 2);
@@ -56,4 +56,42 @@ public class AlgoTest {
         }
     }
 
+    @Test
+    public void testDelete() {
+        SkipList2 skiplist = new SkipList2();
+        insert(skiplist, 1);
+        insert(skiplist, 2);
+        insert(skiplist, 3);
+        insert(skiplist, 4);
+        insert(skiplist, 5);
+        insert(skiplist, 8);
+        insert(skiplist, 9);
+        insert(skiplist, 10);
+
+        assertEquals(skiplist.getSize(), 8);
+
+        assertFalse(delete(skiplist, 6));
+
+        // 删除8，然后再查找
+        assertTrue(delete(skiplist, 8));
+        List<DataNode> path = find(skiplist, 8);
+        assertEquals(path.get(path.size() - 1).getValue().intValue(), 5);
+    }
+
+    @Test
+    public void test插入然后清空() {
+        SkipList2 skiplist = new SkipList2();
+
+        for (int i = 1; i <= 100; ++i) {
+            insert(skiplist, i);
+        }
+        int level = skiplist.getLevel();
+
+        for (int i = 1; i <= 100; ++i) {
+            delete(skiplist, i);
+        }
+        assertEquals(skiplist.getSize(), 0);
+        // 删除所有节点后，level不变
+        assertEquals(skiplist.getLevel(), level);
+    }
 }
