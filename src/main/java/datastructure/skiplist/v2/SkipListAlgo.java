@@ -1,7 +1,7 @@
 package datastructure.skiplist.v2;
 
-import datastructure.skiplist.v2.SkipList2.DataNode;
-import datastructure.skiplist.v2.SkipList2.HeadNode;
+import datastructure.skiplist.v2.Nodes.DataNode;
+import datastructure.skiplist.v2.Nodes.HeadNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public class SkipListAlgo {
      * @return 新的topHead
      */
     static public HeadNode addLevel(SkipList2 skiplist) {
-        HeadNode newHead = new HeadNode(skiplist.getLevel() + 1, null, null);
+        HeadNode newHead = new HeadNode(skiplist.getLevel() + 1);
         newHead.setDown(skiplist.getTopHead());
         skiplist.setTopHead(newHead);
         System.out.println("add level, " + newHead);

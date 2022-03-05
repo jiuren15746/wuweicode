@@ -1,11 +1,12 @@
 package datastructure.skiplist.v2;
 
+import datastructure.skiplist.v2.Nodes.DataNode;
+import datastructure.skiplist.v2.Nodes.HeadNode;
 import org.testng.annotations.Test;
 
 import java.util.List;
-import datastructure.skiplist.v2.SkipList2.*;
+
 import static datastructure.skiplist.v2.SkipListAlgo.*;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.*;
 
 
