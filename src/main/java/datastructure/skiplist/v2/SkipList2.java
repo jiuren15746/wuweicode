@@ -81,11 +81,12 @@ public class SkipList2 implements SkipListInterface {
 
         // 从底层向上层，在每一层插入节点
         for (int level = 0; level == 0 || isCreateIndex(); ++level) {
-            if (getTopLevel() >= level) {
-                previous = path.get(getTopLevel() - level);
-            } else {
+            if (level > getTopLevel()) {
                 previous = addLevel();
+            } else {
+                previous = path.get(getTopLevel() - level);
             }
+
             // 插入新节点
             DataNode temp = new DataNode(previous.getLevel(), value, previous.getNext(), previous);
             previous.setNext(temp);
