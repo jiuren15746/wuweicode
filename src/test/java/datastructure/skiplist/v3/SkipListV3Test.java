@@ -49,4 +49,15 @@ public class SkipListV3Test {
         assertEquals(path.get(1).value, Integer.MIN_VALUE);
         assertEquals(path.get(2).value, Integer.MIN_VALUE);
     }
+
+    @Test
+    public void testFind_empty() {
+        SkipListV3 skipList = new SkipListV3();
+
+        // find
+        int target = 7;
+        List<SkipNode> path = skipList.find(target);
+        assertEquals(path.size(), 1);
+        assertEquals(path.get(0).value, Integer.MIN_VALUE);
+    }
 }

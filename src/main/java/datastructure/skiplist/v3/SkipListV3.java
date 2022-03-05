@@ -39,12 +39,10 @@ public class SkipListV3 implements SkipListInterface3 {
 
     @Override
     public List<SkipNode> find(int target) {
-
         SkipNode node = head;
-        int level = topLevel;
         List<SkipNode> path = Lists.newArrayList();
 
-        while (level >= 0) {
+        for (int level = topLevel; level >= 0;) {
             // 向右走
             if (node.value < target
                     && node.getNext(level) != null
@@ -57,7 +55,6 @@ public class SkipListV3 implements SkipListInterface3 {
                 level--;
             }
         }
-
         return path;
     }
 
