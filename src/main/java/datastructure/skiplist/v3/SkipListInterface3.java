@@ -54,6 +54,11 @@ public interface SkipListInterface3 {
         public SkipNode(int value) {
             this.value = value;
         }
+        public SkipNode(int value, int topLevel) {
+            this.value = value;
+            this.next = new SkipNode[topLevel + 1];
+            this.pre = new SkipNode[topLevel + 1];
+        }
 
         public SkipNode getNext(int level) {
             if (next != null && next.length -1 >= level) {
@@ -63,9 +68,32 @@ public interface SkipListInterface3 {
             }
         }
 
+        public void setNext(int level, SkipNode nextNode) {
+            next[level] = nextNode;
+            if (null != nextNode) {
+                nextNode.pre[level] = this;
+            }
+        }
+
         @Override
         public String toString() {
-            return "DataNode(" + value + ")";
+            StringBuilder sb = new StringBuilder();
+            sb.append("SkipNode(");
+            sb.append(value).append(", next=[");
+
+            for (int level = 0; level < next.length; ++level) {
+                SkipNode next = getNext(level);
+                if (null != next) {
+                    sb.append(next.value);
+                } else {
+                    sb.append("null");
+                }
+                sb.append(",");
+            }
+            sb.deleteCharAt(sb.length() - 1);
+            sb.append("])");
+
+            return sb.toString();
         }
     }
 

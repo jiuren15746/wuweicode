@@ -3,17 +3,18 @@ package datastructure.skiplist.v3;
 import org.testng.collections.Lists;
 
 import java.util.List;
+import java.util.Random;
 
 public class SkipListV3 implements SkipListInterface3 {
-
+    static public final int MAX_LEVEL = 5;
     private int topLevel;
-    private SkipNode head;
+    protected SkipNode head;
 
 
     public SkipListV3() {
         topLevel = 0;
         // 头节点的值最小
-        head = new SkipNode(Integer.MIN_VALUE);
+        head = new SkipNode(Integer.MIN_VALUE, MAX_LEVEL);
     }
 
     public SkipListV3(SkipNode head) {
@@ -59,7 +60,32 @@ public class SkipListV3 implements SkipListInterface3 {
     }
 
     @Override
-    public void insert(int value) {
+    public void insert(int target) {
+        List<SkipNode> path = find(target);
+        int randomLevel = getRandomLevel();
+        SkipNode newNode = new SkipNode(target, randomLevel);
 
+        for (int level = 0; level <= randomLevel; ++level) {
+            if (level <= topLevel) {
+                SkipNode pre = path.get(path.size() - 1 - level);
+                SkipNode next = pre.getNext(level);
+                newNode.setNext(level, next);
+                pre.setNext(level, newNode);
+            } else {
+                head.setNext(level, newNode);
+                topLevel++;
+            }
+        }
+    }
+
+
+    private int getRandomLevel() {
+        Random random = new Random();
+        int level = 0;
+        while (random.nextInt() % 2 == 0
+                && level < MAX_LEVEL && level < topLevel + 1) {
+            level++;
+        }
+        return level;
     }
 }

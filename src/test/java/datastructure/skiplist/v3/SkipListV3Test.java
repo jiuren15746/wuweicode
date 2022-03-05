@@ -4,6 +4,7 @@ import datastructure.skiplist.v3.SkipListInterface3.SkipNode;
 import org.testng.annotations.Test;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.testng.Assert.assertEquals;
 
@@ -59,5 +60,34 @@ public class SkipListV3Test {
         List<SkipNode> path = skipList.find(target);
         assertEquals(path.size(), 1);
         assertEquals(path.get(0).value, Integer.MIN_VALUE);
+    }
+
+    @Test
+    public void testInsert() {
+        SkipListV3 skipList = new SkipListV3();
+        for (int i = 0; i <= 10; ++i) {
+            skipList.insert(i);
+        }
+
+        assertEquals(skipList.getSize(), 11);
+
+        for (SkipNode node = skipList.head; node != null; node = node.getNext(0)) {
+            System.out.println(node);
+        }
+    }
+
+
+    @Test
+    public void testInsertAndFind() {
+        SkipListV3 skipList = new SkipListV3();
+        for (int i = 0; i <= 10000; ++i) {
+            skipList.insert(i);
+        }
+
+        List<SkipNode> path = skipList.find(7777);
+        System.out.println(
+                path.stream()
+                        .map(x -> x.value)
+                        .collect(Collectors.toList()));
     }
 }
