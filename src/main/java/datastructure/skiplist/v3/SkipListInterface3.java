@@ -33,12 +33,12 @@ public interface SkipListInterface3 {
      * 插入一个数值。
      */
     void insert(int value);
-//
-//    /**
-//     * 删除一个数值。
-//     * @return 是否删除成功，没找到认为删除失败，返回false
-//     */
-//    boolean delete(int value);
+
+    /**
+     * 删除一个数值。
+     * @return 是否删除成功，没找到认为删除失败，返回false
+     */
+    boolean delete(int value);
 
 
     /**
@@ -61,11 +61,8 @@ public interface SkipListInterface3 {
         }
 
         public SkipNode getNext(int level) {
-            if (next != null && next.length -1 >= level) {
-                return next[level];
-            } else {
-                return null;
-            }
+            return (null != next && next.length - 1 >= level)
+                    ? next[level] : null;
         }
 
         public void setNext(int level, SkipNode nextNode) {
@@ -73,6 +70,15 @@ public interface SkipListInterface3 {
             if (null != nextNode) {
                 nextNode.pre[level] = this;
             }
+        }
+
+        public SkipNode getPre(int level) {
+            return (null != pre && pre.length - 1 >= level)
+                    ? pre[level] : null;
+        }
+
+        public int getTopLevel() {
+            return next.length - 1;
         }
 
         @Override

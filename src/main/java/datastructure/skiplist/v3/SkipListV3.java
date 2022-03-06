@@ -78,6 +78,24 @@ public class SkipListV3 implements SkipListInterface3 {
         }
     }
 
+    @Override
+    public boolean delete(int target) {
+        List<SkipNode> path = find(target);
+        SkipNode node = path.get(path.size() - 1);
+        if (node.value != target) {
+            return false;
+        }
+
+        for (int level = 0; level <= node.getTopLevel(); ++level) {
+            SkipNode pre = node.getPre(level);
+            SkipNode next = node.getNext(level);
+            if (null != pre) {
+                pre.setNext(level, next);
+            }
+        }
+        return true;
+    }
+
 
     private int getRandomLevel() {
         Random random = new Random();

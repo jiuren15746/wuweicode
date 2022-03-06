@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 public class SkipListV3Test {
 
@@ -89,5 +89,22 @@ public class SkipListV3Test {
                 path.stream()
                         .map(x -> x.value)
                         .collect(Collectors.toList()));
+    }
+
+    @Test
+    public void testDelete() {
+        SkipListV3 skipList = new SkipListV3();
+        for (int i = 0; i <= 10000; ++i) {
+            skipList.insert(i);
+        }
+
+        int size = skipList.getSize();
+        List<SkipNode> path = skipList.find(7777);
+        assertEquals(path.get(path.size() - 1).value, 7777);
+
+        skipList.delete(7777);
+        assertEquals(skipList.getSize(), size - 1);
+        path = skipList.find(7777);
+        assertNotEquals(path.get(path.size() - 1).value, 7777);
     }
 }
