@@ -5,6 +5,9 @@ import org.testng.collections.Lists;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * http://legendtkl.com/2016/06/05/skiplist/
+ */
 public class SkipListV3 implements SkipListInterface3 {
     static public final int MAX_LEVEL = 5;
     private int topLevel;
