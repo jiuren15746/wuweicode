@@ -1,9 +1,6 @@
 package datastructure.skiplist.v3;
 
-import lombok.Data;
-
 import java.util.List;
-import java.util.Map;
 
 /**
  * 跳表接口。
