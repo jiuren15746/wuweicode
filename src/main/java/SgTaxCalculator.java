@@ -46,19 +46,22 @@ public class SgTaxCalculator {
 
     static public void main(String[] args) {
 
-        long income = 195000;
-        long tax = calculateTax(income);
-        System.out.println("==========");
-        System.out.println(income + " -> " + tax + " -> " + (income - tax));
+        long[] incomeList = new long[]{352000, 363000, 330000, 380000};
 
-        income = 255000;
-        tax = calculateTax(income);
-        System.out.println("==========");
-        System.out.println(income + " -> " + tax + " -> " + (income - tax));
+        for (long income : incomeList) {
+            long tax = calculateTax(income);
+            System.out.println("==========");
+            System.out.println(income + " -> " + tax + " -> " + (income - tax));
+        }
 
-        income = 330000;
-        tax = calculateTax(income);
-        System.out.println("==========");
-        System.out.println(income + " -> " + tax + " -> " + (income - tax));
+//        income = 255000;
+//        tax = calculateTax(income);
+//        System.out.println("==========");
+//        System.out.println(income + " -> " + tax + " -> " + (income - tax));
+//
+//        income = 330000;
+//        tax = calculateTax(income);
+//        System.out.println("==========");
+//        System.out.println(income + " -> " + tax + " -> " + (income - tax));
     }
 }
