@@ -76,8 +76,7 @@ public class LevelOrderTraverse {
 
     /**
      * 2022.3.13练习。 改为返回简单的List。
-     * @param root
-     * @return
+     * 只使用一层循环即可。
      */
     static public List<Integer> levelOrderTraverse3(TreeNode<Integer> root) {
         List<Integer> result = new ArrayList<>();

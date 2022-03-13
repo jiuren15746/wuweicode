@@ -1,8 +1,5 @@
 package datastructure.tree.binarytree;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 二叉堆（最大堆，父节点比子节点大）。可以用来实现优先级队列。
  * 最大堆定义：1. 是完全二叉树，2. 每个节点>=子节点。
@@ -27,6 +24,9 @@ public class BinaryMaxHeap implements BinaryHeap {
         return true;
     }
 
+    /**
+     * 在最后插入新节点，然后上浮。上浮是为了满足最大堆定义。
+     */
     @Override
     public void offer(int value) {
         // 放到数组最后。然后上浮。
@@ -34,6 +34,11 @@ public class BinaryMaxHeap implements BinaryHeap {
         swim(size - 1);
     }
 
+    /**
+     * 取最大堆的根节点，即最大的节点。
+     * 然后把最后一个节点move到根节点，然后下沉。下沉也是为了满足最大堆定义。
+     * @return
+     */
     @Override
     public int poll() {
         if (size <= 0) {
@@ -51,21 +56,6 @@ public class BinaryMaxHeap implements BinaryHeap {
         return size;
     }
 
-    @Override
-    public List<Integer> toSortedList() {
-        // 先copy出来一个。
-        BinaryMaxHeap copy = new BinaryMaxHeap(0);
-        copy.array = new int[size];
-        copy.size = size;
-        System.arraycopy(array, 0, copy.array, 0, size);
-
-        List<Integer> list = new ArrayList<>();
-        while (copy.size() > 0) {
-            list.add(copy.poll());
-        }
-        return list;
-    }
-
     // 上浮
     private void swim(int idx) {
         while (idx > 0 && array[idx] > array[(idx - 1) / 2]) {
@@ -76,17 +66,15 @@ public class BinaryMaxHeap implements BinaryHeap {
 
     // 下沉
     private void sink(int pos) {
-        while (2 * pos + 1 < size) { // 有子节点
-            int i = 2 * pos + 1; // 较大子节点下标
+        // pos节点比子节点小
+        while (!isSatisfy(pos)) {
+            int biggerChild = 2 * pos + 1;
             // 两个子节点
-            if (i + 1 < size && array[i] < array[i + 1]) {
-                i = i + 1;
+            if (biggerChild + 1 < size && array[biggerChild + 1] > array[biggerChild]) {
+                biggerChild += 1;
             }
-            if (array[pos] >= array[i]) {
-                break;
-            }
-            swap(pos, i);
-            pos = i;
+            swap(pos, biggerChild);
+            pos = biggerChild;
         }
     }
 
@@ -96,27 +84,33 @@ public class BinaryMaxHeap implements BinaryHeap {
         array[j] = temp;
     }
 
-    public int[] getElements() {
-        int[] copy = new int[size];
-        System.arraycopy(array, 0, copy, 0, size);
-        return copy;
-    }
-
     /**
      * 检查是否满足最大堆定义。
      * @return
      */
     public boolean check() {
-        for (int i = 0; i < size; ++i) {
-            int childl = 2*i + 1;
-            int childr = 2*i + 2;
-            if (childl < size && array[i] < array[childl]) {
-                return false;
-            }
-            if (childr < size && array[i] < array[childr]) {
+        for (int idx = 0; idx < size; ++idx) {
+            if (!isSatisfy(idx)) {
                 return false;
             }
         }
         return true;
+    }
+
+    public boolean isSatisfy(int parentIdx) {
+        int leftChild = 2 * parentIdx + 1;
+        // 没有子节点
+        if (leftChild >= size) {
+            return true;
+        }
+        // 只有左子节点
+        else if (leftChild + 1 >= size) {
+            return array[parentIdx] >= array[leftChild];
+        }
+        // 有两个子节点
+        else {
+            return array[parentIdx] >= array[leftChild]
+                    && array[parentIdx] >= array[leftChild + 1];
+        }
     }
 }
