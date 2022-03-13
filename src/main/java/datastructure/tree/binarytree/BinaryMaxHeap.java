@@ -3,6 +3,8 @@ package datastructure.tree.binarytree;
 /**
  * 二叉堆（最大堆，父节点比子节点大）。可以用来实现优先级队列。
  * 最大堆定义：1. 是完全二叉树，2. 每个节点>=子节点。
+ *
+ * 使用场景：只需要找到最大值，但是不需要全部排序。
  */
 public class BinaryMaxHeap implements BinaryHeap {
 
@@ -66,15 +68,19 @@ public class BinaryMaxHeap implements BinaryHeap {
 
     // 下沉
     private void sink(int pos) {
-        // pos节点比子节点小
-        while (!isSatisfy(pos)) {
+        // 有子节点
+        while (2 * pos + 1 < size) {
             int biggerChild = 2 * pos + 1;
-            // 两个子节点
+            // 两个子节点，比较
             if (biggerChild + 1 < size && array[biggerChild + 1] > array[biggerChild]) {
                 biggerChild += 1;
             }
-            swap(pos, biggerChild);
-            pos = biggerChild;
+            if (array[pos] >= array[biggerChild]) {
+                break;
+            } else {
+                swap(pos, biggerChild);
+                pos = biggerChild;
+            }
         }
     }
 

@@ -1,8 +1,5 @@
 package datastructure.tree.binarytree;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 最小堆实现。定义：1. 完全二叉树，2.父节点<=子节点。
  */
@@ -39,21 +36,6 @@ public class BinaryMinHeap implements BinaryHeap {
     @Override
     public int size() {
         return size;
-    }
-
-    @Override
-    public List<Integer> toSortedList() {
-        // 先copy出来一个。
-        BinaryMinHeap copy = new BinaryMinHeap(0);
-        copy.array = new int[size];
-        copy.size = size;
-        System.arraycopy(array, 0, copy.array, 0, size);
-
-        List<Integer> list = new ArrayList<>();
-        while (copy.size() > 0) {
-            list.add(copy.poll());
-        }
-        return list;
     }
 
     // 上浮
