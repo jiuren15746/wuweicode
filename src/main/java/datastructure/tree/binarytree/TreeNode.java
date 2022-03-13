@@ -1,20 +1,23 @@
 package datastructure.tree.binarytree;
 
+import lombok.Data;
+
 /**
  * 二叉树节点。
  */
-public class TreeNode {
-    final int val;
+@Data
+public class TreeNode<T> {
+    final T value;
     // 左子树
-    TreeNode left;
+    TreeNode<T> left;
     // 右子树
-    TreeNode right;
+    TreeNode<T> right;
 
-    TreeNode(int value) {
-        this.val = value;
+    TreeNode(T value) {
+        this.value = value;
     }
-    TreeNode(int value, TreeNode left, TreeNode right) {
-        this.val = value;
+    TreeNode(T value, TreeNode left, TreeNode right) {
+        this.value = value;
         this.left = left;
         this.right = right;
     }
