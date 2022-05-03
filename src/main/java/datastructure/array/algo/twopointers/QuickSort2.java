@@ -17,32 +17,11 @@ public class QuickSort2 {
             if (i != j) { // 2022.2.22调整
                 swap(array, i, j);
             } else { // i和j相遇
-                swap(array, i, begin);
+                swap(array, begin, i); // 2022.5.3 把quickSort递归调用放在这里，更清晰
+                quickSort(array, begin, i-1);
+                quickSort(array, i+1, end);
             }
         }
-        quickSort(array, begin, i-1);
-        quickSort(array, i+1, end);
-    }
-
-
-    static void quickSort3(int[] array, int start, int end) {
-        if (start < 0 || start >= end) return;
-
-        int base = array[start];
-        int i = start;
-        int j = end;
-        while (i < j) {
-            while (i < j && array[j] > base) --j;
-            while (i < j && array[i] <= base) ++i;
-            if (i != j) {
-                swap(array, i, j);
-            } else {
-                // i和j相遇
-                swap(array, i, start);
-            }
-        }
-        quickSort3(array, start, i - 1);
-        quickSort3(array, i + 1, end);
     }
 
     static private void swap(int[] array, int i, int j) {
