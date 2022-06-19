@@ -3,7 +3,7 @@ package datastructure.array.algo.twopointers;
 import org.testng.annotations.Test;
 
 import static datastructure.array.algo.twopointers.FindMidPosValue.findTargetPosValue;
-import static datastructure.array.algo.twopointers.QuickSort3.quickSort;
+import static datastructure.array.algo.twopointers.QuickSort2.quickSort;
 import static org.testng.Assert.assertEquals;
 
 public class QuickSortTest {

@@ -5,6 +5,7 @@ package datastructure.tree.binarytree;
  * 最大堆定义：1. 是完全二叉树，2. 每个节点>=子节点。
  *
  * 使用场景：只需要找到最大值，但是不需要全部排序。
+ * 使用场景：交易所的撮合引擎。
  */
 public class BinaryMaxHeap implements BinaryHeap {
 
@@ -31,9 +32,16 @@ public class BinaryMaxHeap implements BinaryHeap {
      */
     @Override
     public void offer(int value) {
-        // 放到数组最后。然后上浮。
-        array[size++] = value;
+        // 放到数组最后
+        int pos = size++;
+        int parentPos = (pos - 1) / 2;
+        array[pos] = value;
         swim(size - 1);
+        // 然后上浮
+        while (pos > 0 && value > array[parentPos]) {
+            swap(pos, parentPos);
+            pos = parentPos;
+        }
     }
 
     /**
