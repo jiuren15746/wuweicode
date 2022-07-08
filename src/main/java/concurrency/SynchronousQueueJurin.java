@@ -1,6 +1,8 @@
 package concurrency;
 
 
+import concurrency.lock.ReentrantLockJiuren;
+import concurrency.lock.impl.ReentrantLock2;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,14 +14,15 @@ import static concurrency.PrintLog.printLog;
 /**
  * 难点：
  *  <li>队列不用来保存数据，而是用来对线程排队。
- *  <li>有两种锁：一种是节点锁，用来同步生产者、消费者线程。另一种是队列锁，用来保证对队列的串行访问。
+ *  <li>使用到两种锁：一种是节点锁，用来同步生产者、消费者线程。另一种是队列锁，用来保证对队列的串行访问。
  *      但是当线程在队列节点上wait前，需要释放队列锁。
+ *
+ * 该数据结构更像是一种同步器。把它想象成成双成对的匹配器，但是它不考虑双方是否情愿，是要是异性，都可以匹配成功。
  */
 public class SynchronousQueueJurin<E> {
 
     private final List<Node> queue = new LinkedList<>();
-    //    private final IntReentranceLock queueLock = new IntReentranceLock();
-    private final ReentrantLock queueLock = new ReentrantLock();
+    private final ReentrantLockJiuren queueLock = new ReentrantLock2();
 
     private class Node {
         private final boolean isPublisher;
