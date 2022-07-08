@@ -1,12 +1,10 @@
 package concurrency.lock;
 
-import concurrency.lock.impl.IntReentranceLock;
 import concurrency.lock.impl.ReentrantLock2;
+import java.util.List;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
-
-import java.util.List;
 
 public class ReentranceLockTest {
 
@@ -45,6 +43,7 @@ public class ReentranceLockTest {
 //        final IntReentranceLock lock = new IntReentranceLock();
         ReentrantLockJiuren lock = new ReentrantLock2();
 
+        // 每个线程加锁后解锁
         Runnable task = new Runnable() {
             @Override
             public void run() {
@@ -63,7 +62,7 @@ public class ReentranceLockTest {
             }
         };
 
-        int threadCount = 10;
+        int threadCount = 50;
         List<Thread> threads = Lists.newArrayList();
         for (int i = 0; i < threadCount; ++i) {
             Thread t = new Thread(task);

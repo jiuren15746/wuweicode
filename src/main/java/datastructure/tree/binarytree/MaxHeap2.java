@@ -18,9 +18,9 @@ public class MaxHeap2 implements BinaryHeap {
         expandIfNecessary();
         // 先放在最后
         int pos = size++;
-        int parentPos = (pos - 1) / 2;
         array[pos] = value;
         // 上浮
+        int parentPos = (pos - 1) / 2;
         while (pos > 0 && value > array[parentPos]) {
             swap(pos, parentPos);
             pos = parentPos;
@@ -30,6 +30,17 @@ public class MaxHeap2 implements BinaryHeap {
 
     @Override
     public int poll() {
+        final int result = array[0];
+        // 把尾巴节点放到头节点
+        array[0] = array[size - 1];
+        size--;
+        // 下沉
+        int pos = 0;
+        // 有两个子节点
+        if (2 * pos + 2 < size) {
+
+        }
+
         return 0;
     }
 
@@ -45,10 +56,10 @@ public class MaxHeap2 implements BinaryHeap {
     }
 
     private void expandIfNecessary() {
-        if (size == array.length) {
-            int[] tmp = new int[size * 2];
-            System.arraycopy(array, 0, tmp, 0, size);
-            array = tmp;
+        if (array.length == size) {
+            int[] copy = new int[size * 2];
+            System.arraycopy(array, 0, copy, 0, size);
+            array = copy;
             System.out.println("array expand.");
         }
     }
