@@ -1,12 +1,13 @@
 package concurrency.lock.impl;
 
+import concurrency.lock.ReentrantLockJiuren;
 import java.util.concurrent.atomic.AtomicInteger;
 import static concurrency.PrintLog.printLog;
 
 /**
  * 可重入锁。仅使用CAS实现。第一次实现，比较冗长。
  */
-public class IntReentranceLock {
+public class IntReentranceLock implements ReentrantLockJiuren {
 
     // 0表示锁空闲。大于零表示加锁次数。
     private AtomicInteger lockCount = new AtomicInteger(0);
@@ -21,6 +22,7 @@ public class IntReentranceLock {
      *
      * @throws InterruptedException
      */
+    @Override
     public void lock() throws InterruptedException {
         for (int tryCount = 0;; tryCount++) {
             // 尝试10次，休息一会
@@ -52,6 +54,7 @@ public class IntReentranceLock {
         }
     }
 
+    @Override
     public void unlock() {
         if (!isHeldByCurrentThread()) {
             throw new IllegalMonitorStateException();
@@ -65,6 +68,7 @@ public class IntReentranceLock {
         printLog("unlock success, lockCount=" + newCount);
     }
 
+    @Override
     public boolean isHeldByCurrentThread() {
         return Thread.currentThread() == holdingThread;
     }
