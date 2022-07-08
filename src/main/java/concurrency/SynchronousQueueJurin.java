@@ -1,15 +1,14 @@
 package concurrency;
 
 
+import static concurrency.PrintLog.printLog;
+
 import concurrency.lock.ReentrantLockJiuren;
 import concurrency.lock.impl.ReentrantLock2;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.locks.ReentrantLock;
-
-import static concurrency.PrintLog.printLog;
 
 /**
  * 难点：
@@ -25,10 +24,11 @@ public class SynchronousQueueJurin<E> {
     private final ReentrantLockJiuren queueLock = new ReentrantLock2();
 
     private class Node {
+        // 当前阻塞线程是生产者还是消费者
         private final boolean isPublisher;
         // indicate whether exchange has happened
         private volatile boolean exchangeFlag = false;
-        // used for data exchange between publisher and consumer
+        // 交换的数据
         private volatile E data;
         private Thread waitingThread;
 
@@ -38,14 +38,18 @@ public class SynchronousQueueJurin<E> {
             this.waitingThread = Thread.currentThread();
         }
 
-        void exchangeForConsumerNode(E data) {
+        // 生产者调用此方法，与阻塞的消费者交换数据，并唤醒消费者线程
+        synchronized void exchangeForConsumerNode(E data) {
             this.data = data;
             this.exchangeFlag = true;
+            notify();
         }
 
-        E exchangeForProducerNode() {
+        // 消费者调用此方法，与阻塞的生产者交换数据，并唤醒生产者
+        synchronized E exchangeForProducerNode() {
             E data = this.data;
             this.exchangeFlag = true;
+            notify();
             return data;
         }
     }
@@ -59,25 +63,20 @@ public class SynchronousQueueJurin<E> {
     public void offer(E element) throws InterruptedException {
         queueLock.lock();
         try {
-            // find consumer node
+            // 1. 如果存在消费者节点，交换数据，唤醒消费者，最后返回
             Node consumerNode = findUnExchangedNode(false);
-
-            // if consumer node exists, exchange data, then wake it up
             if (null != consumerNode) {
-                synchronized (consumerNode) {
-                    printLog("find consumer node, wake it up."+ consumerNode.waitingThread.getName() );
-                    consumerNode.exchangeForConsumerNode(element);
-                    consumerNode.notify();
-                    return;
-                }
+                printLog("find consumer node, wake it up." + consumerNode.waitingThread.getName());
+                consumerNode.exchangeForConsumerNode(element);
+                return;
             }
 
-            // Else, insert producer node and wait
+            // 2.1 插入生产者节点
             Node producerNode = new Node(true, element);
             queue.add(producerNode);
             printLog("insert producer node and wait.");
 
-            // check exchangeFlag after wake up, then remove node
+            // 2.2 在节点上等待消费者
             synchronized (producerNode) {
                 while (producerNode.exchangeFlag == false) {
                     queueLock.unlock();
@@ -86,9 +85,7 @@ public class SynchronousQueueJurin<E> {
                 }
                 queue.remove(producerNode);
             }
-
             printLog("after wake up, just return.");
-            return;
         }
         finally {
             if (queueLock.isHeldByCurrentThread()) {
@@ -101,25 +98,19 @@ public class SynchronousQueueJurin<E> {
     public E take() throws InterruptedException {
         queueLock.lock();
         try {
-            // find producer node
+            // 1. 如果存在生产者节点，交换数据后将其唤醒，最后返回数据
             Node producerNode = findUnExchangedNode(true);
-
-            // if producer node exists, exchange data, then wake it up
             if (null != producerNode) {
-                synchronized (producerNode) {
-                    printLog("find producer node, wake it up." + producerNode.waitingThread.getName());
-                    E data = producerNode.exchangeForProducerNode();
-                    producerNode.notify();
-                    return data;
-                }
+                printLog("find producer node, wake it up." + producerNode.waitingThread.getName());
+                return producerNode.exchangeForProducerNode();
             }
 
-            // Else, insert consumer node and wait
+            // 2.1 插入消费者节点
             Node consumerNode = new Node(false, null);
             queue.add(consumerNode);
             printLog("insert consumer node and wait.");
 
-            // check exchangeFlag after wake up, then remove node
+            // 2.2 在节点上等待生产者。知道被交换后，删除节点，返回数据。
             synchronized (consumerNode) {
                 while (consumerNode.exchangeFlag == false) {
                     queueLock.unlock();
@@ -128,7 +119,6 @@ public class SynchronousQueueJurin<E> {
                 }
                 queue.remove(consumerNode);
             }
-
             printLog("after wake up, return data=" + consumerNode.data);
             return consumerNode.data;
         }
