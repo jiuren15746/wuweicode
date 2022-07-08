@@ -139,6 +139,7 @@ public class SynchronousQueueJurin<E> {
                 .orElse(null);
     }
 
+    // todo 添加测试用例
     static public void main(String[] args) throws Exception {
 
         final SynchronousQueueJurin<String> queue = new SynchronousQueueJurin<>();
@@ -166,11 +167,11 @@ public class SynchronousQueueJurin<E> {
             }
         };
 
-        int consumerCount = 5;
+        int count = 10;
         List<Thread> threadList = new ArrayList<>();
 
         // start producer
-        for (int i = 0; i < consumerCount; ++i) {
+        for (int i = 0; i < count; ++i) {
             Thread producer = new Thread(producerTask);
             producer.setName("producer" + i);
             producer.start();
@@ -180,11 +181,10 @@ public class SynchronousQueueJurin<E> {
         Thread.sleep(1000);
 
         // start consumer
-        for (int i = 0; i < consumerCount; ++i) {
+        for (int i = 0; i < count; ++i) {
             Thread consumer = new Thread(consumerTask);
             consumer.setName("consumer" + i);
             consumer.start();
-
             threadList.add(consumer);
         }
 
