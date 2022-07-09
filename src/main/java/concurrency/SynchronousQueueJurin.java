@@ -5,10 +5,8 @@ import static concurrency.PrintLog.printLog;
 
 import concurrency.lock.ReentrantLockJiuren;
 import concurrency.lock.impl.ReentrantLock2;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * 难点：
