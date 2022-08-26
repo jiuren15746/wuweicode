@@ -10,9 +10,17 @@ import java.util.Random;
  */
 public class SkipListV3 implements SkipListInterface3 {
     static public final int MAX_LEVEL = 5;
-    private int topLevel;
-    protected SkipNode head;
 
+    /**
+     * 跳表的高度。起始高度为0.
+     */
+    private int topLevel = 0;
+
+    /**
+     * 头结点不存放具体的数据。高度等于调表最大高度。
+     */
+    protected SkipNode head;
+    //========
 
     public SkipListV3() {
         topLevel = 0;
@@ -43,19 +51,21 @@ public class SkipListV3 implements SkipListInterface3 {
 
     @Override
     public List<SkipNode> find(int target) {
-        SkipNode node = head;
         List<SkipNode> path = Lists.newArrayList();
+        SkipNode curNode = head;
 
+        // 这里从逻辑上应该有两层循环：外层从高level向低level循环。内层循环在一个level内向右循环。
+        // 只是代码上做了一点优化，只用了一层循环来实现。
         for (int level = topLevel; level >= 0;) {
-            // 向右走
-            if (node.value < target
-                    && node.getNextAtLevel(level) != null
-                    && node.getNextAtLevel(level).value <= target) {
-                node = node.getNextAtLevel(level);
+            // 向右走. 条件：curNode<target && nextNode<=target
+            if (curNode.value < target
+                    && curNode.getNextAtLevel(level) != null
+                    && curNode.getNextAtLevel(level).value <= target) {
+                curNode = curNode.getNextAtLevel(level);
             }
             // 向右走不动了，转下一层
             else {
-                path.add(node);
+                path.add(curNode);
                 level--;
             }
         }
