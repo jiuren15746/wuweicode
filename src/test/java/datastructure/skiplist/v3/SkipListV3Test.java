@@ -71,7 +71,7 @@ public class SkipListV3Test {
 
         assertEquals(skipList.getSize(), 11);
 
-        for (SkipNode node = skipList.head; node != null; node = node.getNext(0)) {
+        for (SkipNode node = skipList.head; node != null; node = node.getNextAtLevel(0)) {
             System.out.println(node);
         }
     }

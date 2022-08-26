@@ -34,8 +34,8 @@ public class SkipListV3 implements SkipListInterface3 {
     public int getSize() {
         int size = 0;
         SkipNode node = head;
-        while (node != null && node.getNext(0) != null) {
-            node = node.getNext(0);
+        while (node != null && node.getNextAtLevel(0) != null) {
+            node = node.getNextAtLevel(0);
             size++;
         }
         return size;
@@ -49,9 +49,9 @@ public class SkipListV3 implements SkipListInterface3 {
         for (int level = topLevel; level >= 0;) {
             // 向右走
             if (node.value < target
-                    && node.getNext(level) != null
-                    && node.getNext(level).value <= target) {
-                node = node.getNext(level);
+                    && node.getNextAtLevel(level) != null
+                    && node.getNextAtLevel(level).value <= target) {
+                node = node.getNextAtLevel(level);
             }
             // 向右走不动了，转下一层
             else {
@@ -71,11 +71,11 @@ public class SkipListV3 implements SkipListInterface3 {
         for (int level = 0; level <= randomLevel; ++level) {
             if (level <= topLevel) {
                 SkipNode pre = path.get(path.size() - 1 - level);
-                SkipNode next = pre.getNext(level);
-                newNode.setNext(level, next);
-                pre.setNext(level, newNode);
+                SkipNode next = pre.getNextAtLevel(level);
+                newNode.setNextAtLevel(level, next);
+                pre.setNextAtLevel(level, newNode);
             } else {
-                head.setNext(level, newNode);
+                head.setNextAtLevel(level, newNode);
                 topLevel++;
             }
         }
@@ -90,10 +90,10 @@ public class SkipListV3 implements SkipListInterface3 {
         }
 
         for (int level = 0; level <= node.getTopLevel(); ++level) {
-            SkipNode pre = node.getPre(level);
-            SkipNode next = node.getNext(level);
+            SkipNode pre = node.getPreAtLevel(level);
+            SkipNode next = node.getNextAtLevel(level);
             if (null != pre) {
-                pre.setNext(level, next);
+                pre.setNextAtLevel(level, next);
             }
         }
         return true;

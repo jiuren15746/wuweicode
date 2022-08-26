@@ -63,23 +63,25 @@ public interface SkipListInterface3 {
             this.pre = new SkipNode[topLevel + 1];
         }
 
-        public SkipNode getNext(int level) {
-            return (null != next && next.length - 1 >= level)
-                    ? next[level] : null;
+        public SkipNode getNextAtLevel(int level) {
+            return (null != next && next.length - 1 >= level) ? next[level] : null;
         }
 
-        public void setNext(int level, SkipNode nextNode) {
+        public void setNextAtLevel(int level, SkipNode nextNode) {
             next[level] = nextNode;
             if (null != nextNode) {
                 nextNode.pre[level] = this;
             }
         }
 
-        public SkipNode getPre(int level) {
-            return (null != pre && pre.length - 1 >= level)
-                    ? pre[level] : null;
+        public SkipNode getPreAtLevel(int level) {
+            return (null != pre && pre.length - 1 >= level) ? pre[level] : null;
         }
 
+        /**
+         * 返回该节点的高度. 最底层高度为0.
+         * @return
+         */
         public int getTopLevel() {
             return next.length - 1;
         }
@@ -91,7 +93,7 @@ public interface SkipListInterface3 {
             sb.append(value).append(", next=[");
 
             for (int level = 0; level < next.length; ++level) {
-                SkipNode next = getNext(level);
+                SkipNode next = getNextAtLevel(level);
                 if (null != next) {
                     sb.append(next.value);
                 } else {
