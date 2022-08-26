@@ -40,12 +40,18 @@ public interface SkipListInterface3 {
 
     /**
      * 跳表节点。包含数据，以及多层索引指针。
+     * 在调表的每一层，都是双向链表.
      */
     class SkipNode {
 
         protected final int value;
-
+        /**
+         * 多层next指针
+         */
         protected SkipNode[] next;
+        /**
+         * 多层pre指针
+         */
         protected SkipNode[] pre;
 
         public SkipNode(int value) {
