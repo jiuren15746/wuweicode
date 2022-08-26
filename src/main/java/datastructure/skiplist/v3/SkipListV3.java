@@ -49,25 +49,31 @@ public class SkipListV3 implements SkipListInterface3 {
         return size;
     }
 
+    /**
+     * 查找指定
+     * @param target
+     * @return
+     */
     @Override
     public List<SkipNode> find(int target) {
         List<SkipNode> path = Lists.newArrayList();
-        SkipNode curNode = head;
 
         // 这里从逻辑上应该有两层循环：外层从高level向低level循环。内层循环在一个level内向右循环。
         // 只是代码上做了一点优化，只用了一层循环来实现。
-        for (int level = topLevel; level >= 0;) {
-            // 向右走. 条件：curNode<target && nextNode<=target
-            if (curNode.value < target
-                    && curNode.getNextAtLevel(level) != null
-                    && curNode.getNextAtLevel(level).value <= target) {
-                curNode = curNode.getNextAtLevel(level);
+        SkipNode curNode = head;
+
+        for (int lv = topLevel; lv >= 0;) {
+            // 向右走. 条件：curNode<target && nextNode非空 && nextNode<=target
+            if (curNode.value < target) {
+                SkipNode nextNode = curNode.getNextAtLevel(lv);
+                if (null != nextNode && nextNode.value <= target) {
+                    curNode = nextNode;
+                    continue;
+                }
             }
             // 向右走不动了，转下一层
-            else {
-                path.add(curNode);
-                level--;
-            }
+            path.add(curNode);
+            lv--;
         }
         return path;
     }
