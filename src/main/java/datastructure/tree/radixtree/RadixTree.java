@@ -46,7 +46,7 @@ public class RadixTree<V> {
      * 从上到下逐个节点匹配。内部使用递归。
      */
     private void search(TreeNode node, String str, SearchResult result) {
-        final int matchCount = node.matchString(str);
+        final int matchCount = node.matchKey(str);
         result.path.add(node);
         result.matchCount = matchCount;
         result.totalMatchCount += matchCount;

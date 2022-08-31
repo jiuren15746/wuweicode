@@ -55,9 +55,11 @@ public class TreeNode<V> {
      * @param str
      * @return
      */
-    public int matchString(String str) {
+    public int matchKey(String str) {
         int matchCount = 0;
-        for (int i = 0; i < key.length() && i < str.length(); ++i) {
+        int minLength = key.length() < str.length() ? key.length() : str.length();
+
+        for (int i = 0; i < minLength; ++i) {
             if (key.charAt(i) == str.charAt(i)) {
                 matchCount++;
             }
