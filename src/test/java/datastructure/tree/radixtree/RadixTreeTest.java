@@ -31,7 +31,7 @@ public class RadixTreeTest {
         assertEquals(result.result, SR_MATCH);
         assertEquals(result.path.size(), 4);
         TreeNode lastNode = result.path.get(result.path.size() - 1);
-        assertEquals(lastNode.getContent(), "e");
+        assertEquals(lastNode.getKey(), "e");
         assertTrue(lastNode.isWord());
         assertEquals(lastNode.getChildren().size(), 2);
 
@@ -40,7 +40,7 @@ public class RadixTreeTest {
         assertEquals(result.result, SR_MATCH);
         assertEquals(result.path.size(), 5);
         lastNode = result.path.get(result.path.size() - 1);
-        assertEquals(lastNode.getContent(), "re");
+        assertEquals(lastNode.getKey(), "re");
         assertTrue(lastNode.isWord());
         assertEquals(lastNode.getChildren().size(), 0);
 
@@ -49,7 +49,7 @@ public class RadixTreeTest {
         assertEquals(result.result, SR_PREFFIX);
         assertEquals(result.path.size(), 4);
         lastNode = result.path.get(result.path.size() - 1);
-        assertEquals(lastNode.getContent(), "is");
+        assertEquals(lastNode.getKey(), "is");
         assertTrue(lastNode.isWord());
         assertEquals(lastNode.getChildren().size(), 0);
 
@@ -58,7 +58,7 @@ public class RadixTreeTest {
         assertEquals(result.result, SR_SUPER);
         assertEquals(result.path.size(), 3);
         lastNode = result.path.get(result.path.size() - 1);
-        assertEquals(lastNode.getContent(), "o");
+        assertEquals(lastNode.getKey(), "o");
         assertTrue(lastNode.isWord());
         assertEquals(lastNode.getChildren().size(), 0);
 
@@ -67,7 +67,7 @@ public class RadixTreeTest {
         assertEquals(result.result, SR_SUBSTR);
         assertEquals(result.path.size(), 5);
         lastNode = result.path.get(result.path.size() - 1);
-        assertEquals(lastNode.getContent(), "re");
+        assertEquals(lastNode.getKey(), "re");
         assertTrue(lastNode.isWord());
         assertEquals(lastNode.getChildren().size(), 0);
     }

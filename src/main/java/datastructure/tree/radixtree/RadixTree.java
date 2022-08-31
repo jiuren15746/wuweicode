@@ -52,11 +52,11 @@ public class RadixTree {
         result.totalMatchCount += matchCount;
 
         // 完全相等，结束
-        if (matchCount == node.getContent().length() && matchCount == str.length()) {
+        if (matchCount == node.getKey().length() && matchCount == str.length()) {
             result.result = SR_MATCH;
         }
         // 节点内容是str的子串，向下走
-        else if (matchCount == node.getContent().length()) {
+        else if (matchCount == node.getKey().length()) {
             // str被吃掉一部分
             String newStr = str.substring(matchCount);
             // Routing
