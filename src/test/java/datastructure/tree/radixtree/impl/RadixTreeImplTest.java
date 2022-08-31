@@ -1,12 +1,11 @@
-package datastructure.tree.radixtree;
+package datastructure.tree.radixtree.impl;
 
-import static datastructure.tree.radixtree.RadixTree.SR_MATCH;
-import static datastructure.tree.radixtree.RadixTree.SR_PREFFIX;
-import static datastructure.tree.radixtree.RadixTree.SR_SUBSTR;
-import static datastructure.tree.radixtree.RadixTree.SR_SUPER;
+import static datastructure.tree.radixtree.impl.RadixTreeImpl.*;
+
 import static org.testng.Assert.assertEquals;
 
-import datastructure.tree.radixtree.RadixTree.SearchResult;
+import datastructure.tree.radixtree.RadixTree;
+import datastructure.tree.radixtree.TreeNode;
 import java.io.InputStreamReader;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
@@ -14,13 +13,13 @@ import org.testng.annotations.Test;
 
 
 
-public class RadixTreeTest {
+public class RadixTreeImplTest {
 
     @Test
     public void testInsertAndSearch() throws Exception {
-        List<String> lines = IOUtils.readLines(new InputStreamReader(RadixTreeTest.class.getResourceAsStream("/words.txt")));
+        List<String> lines = IOUtils.readLines(new InputStreamReader(RadixTreeImplTest.class.getResourceAsStream("/words.txt")));
 
-        RadixTree<String> tree = new RadixTree<>();
+        RadixTreeImpl<String> tree = new RadixTreeImpl<>();
         for (String line : lines) {
             line = line.trim();
             if (line.length() > 0) {
