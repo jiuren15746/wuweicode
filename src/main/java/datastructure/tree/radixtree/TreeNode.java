@@ -1,6 +1,5 @@
 package datastructure.tree.radixtree;
 
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -13,31 +12,23 @@ import org.testng.collections.Maps;
  * https://android.googlesource.com/platform/external/smali/+/android-5.1.1_r8/util/src/main/java/ds/tree/RadixTreeNode.java
  */
 @Data
-public class TreeNode {
+public class TreeNode<V> {
     private String key;
-    private Map<Character, TreeNode> children;
-    /**
-     * 从root走到该节点，是否组成一个单词. 如果为true，可以认为在children[0]处增加一个空的子节点
-     */
-    private boolean isWord = false;
+    private V value;
+    private Map<Character, TreeNode<V>> children;
 
     public TreeNode() {
         this.key = "";
         this.children = new HashMap<>();
     }
 
-    public TreeNode(String value) {
-        this.key = value;
+    public TreeNode(String key, V value) {
+        this.key = key;
+        this.value = value;
         this.children = new HashMap<>();
     }
 
-    public TreeNode(String value, Map<Character, TreeNode> children, boolean isWord) {
-        this.key = value;
-        this.children = children;
-        this.isWord = isWord;
-    }
-
-    public void addChild(TreeNode child) {
+    public void addChild(TreeNode<V> child) {
         char routingChar = child.key.charAt(0);
         assertFalse(children.containsKey(routingChar));
         children.put(routingChar, child);
@@ -49,11 +40,12 @@ public class TreeNode {
      */
     public void split(int count) {
         assertTrue(count > 0 && count < key.length());
-        String keep = key.substring(0, count);
-        String left = key.substring(count);
-        TreeNode newNode = new TreeNode(left, this.children, this.isWord);
-        this.key = keep;
-        this.isWord = false;
+        // 拆分出的新节点继承了原节点的value和children
+        TreeNode<V> newNode = new TreeNode(key.substring(count), this.value);
+        newNode.children = this.children;
+
+        this.key = key.substring(0, count);
+        this.value = null;
         this.children = Maps.newHashMap();
         this.children.put(newNode.key.charAt(0), newNode);
     }
@@ -72,17 +64,5 @@ public class TreeNode {
         }
         return matchCount;
     }
-
-
-    public static void main(String[] args) {
-        TreeNode node = new TreeNode("hello");
-
-        String str = "alibaba";
-        assertEquals(0, node.matchString(str));
-
-        str = "haha";
-        assertEquals(1, node.matchString(str));
-    }
-
 
 }

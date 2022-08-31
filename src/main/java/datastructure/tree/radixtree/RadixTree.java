@@ -3,7 +3,7 @@ package datastructure.tree.radixtree;
 import java.util.List;
 import org.testng.collections.Lists;
 
-public class RadixTree {
+public class RadixTree<V> {
 
     /**
      * 在最后一个节点，str和节点内容完全相同.
@@ -23,11 +23,11 @@ public class RadixTree {
     protected static final int SR_SUPER = 3;
 
 
-    private TreeNode root = new TreeNode();
+    private TreeNode<V> root = new TreeNode();
     //========
 
-    public static class SearchResult {
-        List<TreeNode> path = Lists.newArrayList();
+    public static class SearchResult<V> {
+        List<TreeNode<V>> path = Lists.newArrayList();
         // 最后一个节点的匹配结果，参考上面常量
         int result;
         // 最后一个节点匹配字符数
@@ -36,8 +36,8 @@ public class RadixTree {
         int totalMatchCount;
     }
 
-    public SearchResult search(String word) {
-        SearchResult result = new SearchResult();
+    public SearchResult<V> search(String word) {
+        SearchResult<V> result = new SearchResult();
         search(root, word, result);
         return result;
     }
@@ -60,7 +60,7 @@ public class RadixTree {
             // str被吃掉一部分
             String newStr = str.substring(matchCount);
             // Routing
-            TreeNode subNode = node.getChildren().get(newStr.charAt(0));
+            TreeNode subNode = (TreeNode) node.getChildren().get(newStr.charAt(0));
             if (null == subNode) {
                 // 路由不到子节点
                 result.result = SR_SUPER;
@@ -79,35 +79,31 @@ public class RadixTree {
         }
     }
 
-    public void insert(String word) {
+    public void insert(String word, V value) {
         // search
-        SearchResult result = search(word);
+        SearchResult<V> result = search(word);
 
-        TreeNode lastNode = result.path.get(result.path.size() - 1);
+        TreeNode<V> lastNode = result.path.get(result.path.size() - 1);
         int resultCase = result.result;
         int matchCount = result.matchCount;
         int totalMatchCount = result.totalMatchCount;
 
         if (SR_MATCH == resultCase) {
-            lastNode.setWord(true);
+            lastNode.setValue(value);
         }
-        // word是最后节点内容的子串. 节点拆分. 剩余部分作为子节点，节点children下移作为新建子节点的children
+        // word是最后节点内容的子串. 节点拆分.
         else if (SR_SUBSTR == resultCase) {
             lastNode.split(matchCount);
-            lastNode.setWord(true);
+            lastNode.setValue(value);
         }
         // word和最后节点内容有公共前缀. 节点拆分，并增加一个新的子节点。
         else if (SR_PREFFIX == resultCase) {
             lastNode.split(matchCount);
-            TreeNode wordNode = new TreeNode(word.substring(totalMatchCount));
-            wordNode.setWord(true);
-            lastNode.addChild(wordNode);
+            lastNode.addChild(new TreeNode(word.substring(totalMatchCount), value));
         }
         // word是节点内容的超串，但是被吃掉剩余的部分没有路由. word截断剩余部分作为子节点。
         else if (SR_SUPER == resultCase) {
-            TreeNode wordNode = new TreeNode(word.substring(totalMatchCount));
-            wordNode.setWord(true);
-            lastNode.addChild(wordNode);
+            lastNode.addChild(new TreeNode(word.substring(totalMatchCount), value));
         }
     }
 
