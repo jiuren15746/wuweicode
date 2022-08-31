@@ -1,10 +1,6 @@
 package datastructure.tree.radixtree;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
-import org.apache.commons.io.IOUtils;
 import org.testng.collections.Lists;
 
 public class RadixTree {
@@ -12,25 +8,25 @@ public class RadixTree {
     /**
      * 在最后一个节点，str和节点内容完全相同.
      */
-    private static final int SR_MATCH = 0;
+    protected static final int SR_MATCH = 0;
     /**
      * 在最后一个节点，str是节点内容的子串
      */
-    private static final int SR_SUBSTR = 1;
+    protected static final int SR_SUBSTR = 1;
     /**
      * 在最后一个节点，str和节点内容有公共前缀
      */
-    private static final int SR_PREFFIX = 2;
+    protected static final int SR_PREFFIX = 2;
     /**
      * 在最后一个节点，str是节点内容的超串，但是被吃掉剩余的部分没有路由
      */
-    private static final int SR_SUPER = 3;
+    protected static final int SR_SUPER = 3;
 
 
     private TreeNode root = new TreeNode();
     //========
 
-    private static class SearchResult {
+    public static class SearchResult {
         List<TreeNode> path = Lists.newArrayList();
         // 最后一个节点的匹配结果，参考上面常量
         int result;
@@ -40,10 +36,16 @@ public class RadixTree {
         int totalMatchCount;
     }
 
+    public SearchResult search(String word) {
+        SearchResult result = new SearchResult();
+        search(root, word, result);
+        return result;
+    }
+
     /**
      * 从上到下逐个节点匹配。内部使用递归。
      */
-    public void search(TreeNode node, String str, SearchResult result) {
+    private void search(TreeNode node, String str, SearchResult result) {
         final int matchCount = node.matchString(str);
         result.path.add(node);
         result.matchCount = matchCount;
@@ -77,25 +79,9 @@ public class RadixTree {
         }
     }
 
-
-//    private static final int SR_MATCH = 0;
-//    /**
-//     * 在最后一个节点，str是节点内容的子串
-//     */
-//    private static final int SR_SUBSTR = 1;
-//    /**
-//     * 在最后一个节点，str和节点内容有公共前缀
-//     */
-//    private static final int SR_PREFFIX = 2;
-//    /**
-//     * 在最后一个节点，str是节点内容的超串，但是被吃掉剩余的部分没有路由
-//     */
-//    private static final int SR_SUPER = 3;
-
     public void insert(String word) {
         // search
-        SearchResult result = new SearchResult();
-        search(root, word, result);
+        SearchResult result = search(word);
 
         TreeNode lastNode = result.path.get(result.path.size() - 1);
         int resultCase = result.result;
@@ -125,17 +111,4 @@ public class RadixTree {
         }
     }
 
-
-    public static void main(String[] args) throws IOException {
-
-        List<String> lines = IOUtils.readLines(new InputStreamReader(RadixTree.class.getResourceAsStream("/words.txt")));
-
-        RadixTree tree = new RadixTree();
-        for (String line : lines) {
-            line = line.trim();
-            tree.insert(line);
-        }
-
-        System.out.println(tree);
-    }
 }
