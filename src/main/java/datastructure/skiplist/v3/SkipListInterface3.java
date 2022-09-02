@@ -43,7 +43,7 @@ public interface SkipListInterface3 {
      * 在跳表的每一层，都是双向链表.
      */
     class SkipNode {
-
+        // 头结点的value没有意义
         protected final int value;
         /**
          * 多层next指针

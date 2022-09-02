@@ -7,6 +7,7 @@ import java.util.Random;
 
 /**
  * http://legendtkl.com/2016/06/05/skiplist/
+ * 头结点一定要有最高的高度，第一个数据节点则不一定。！！！
  */
 public class SkipListV3 implements SkipListInterface3 {
     static public final int MAX_LEVEL = 5;
@@ -56,7 +57,9 @@ public class SkipListV3 implements SkipListInterface3 {
         SkipNode nextNode = null;
         for (int lv = topLevel; lv >= 0; ) {
             // 向右走. 条件：curNode<target && nextNode非空 && nextNode<=target
-            if (curNode.value < target && (nextNode = curNode.getNextAtLevel(lv)) != null && nextNode.value <= target) {
+            if ((curNode == head || curNode.value < target)
+                    && (nextNode = curNode.getNextAtLevel(lv)) != null
+                    && nextNode.value <= target) {
                 curNode = nextNode;
             } else { // 向右走不动了，转下一层
                 path.add(curNode);
