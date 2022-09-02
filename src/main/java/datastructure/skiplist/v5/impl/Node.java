@@ -1,4 +1,4 @@
-package datastructure.skiplist.v5;
+package datastructure.skiplist.v5.impl;
 
 /**
  * 跳表节点。包含数据，以及多层索引指针。
@@ -13,28 +13,34 @@ class Node<V> {
      * 多层next指针
      */
     protected Node<V>[] next;
+//    protected Node<V>[] pre;
     //========
 
-    public Node(long key, V value, int topLevel) {
+    public Node(long key, V value, int level) {
         this.key = key;
         this.value = value;
-        this.next = new Node[topLevel + 1];
+        this.next = new Node[level + 1];
+//        this.pre = new Node[topLevel + 1];
     }
 
-    public Node<V> getNextAtLevel(int level) {
+    public Node<V> getNext(int level) {
         return level < next.length ? next[level] : null;
     }
-
-    public void setNextAtLevel(int level, Node<V> nextNode) {
+    public void setNext(int level, Node<V> nextNode) {
         next[level] = nextNode;
     }
 
+//    public Node<V> getPre(int level) {
+//        return level < next.length ? pre[level] : null;
+//    }
+//    public void setPre(int level, Node<V> preNode) {
+//        pre[level] = preNode;
+//    }
+
     /**
-     * 返回该节点的高度. 最底层高度为0.
-     *
-     * @return
+     * 返回该节点Level. 最底层level为0.
      */
-    public int getTopLevel() {
+    public int getLevel() {
         return next.length - 1;
     }
 
@@ -45,7 +51,7 @@ class Node<V> {
         sb.append(value).append(", next=[");
 
         for (int level = 0; level < next.length; ++level) {
-            Node<V> next = getNextAtLevel(level);
+            Node<V> next = getNext(level);
             if (null != next) {
                 sb.append(next.value);
             } else {
