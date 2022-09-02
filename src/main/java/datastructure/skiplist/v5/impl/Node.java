@@ -13,14 +13,12 @@ class Node<V> {
      * 多层next指针
      */
     protected Node<V>[] next;
-//    protected Node<V>[] pre;
     //========
 
     public Node(long key, V value, int level) {
         this.key = key;
         this.value = value;
         this.next = new Node[level + 1];
-//        this.pre = new Node[topLevel + 1];
     }
 
     public Node<V> getNext(int level) {
@@ -30,12 +28,6 @@ class Node<V> {
         next[level] = nextNode;
     }
 
-//    public Node<V> getPre(int level) {
-//        return level < next.length ? pre[level] : null;
-//    }
-//    public void setPre(int level, Node<V> preNode) {
-//        pre[level] = preNode;
-//    }
 
     /**
      * 返回该节点Level. 最底层level为0.
