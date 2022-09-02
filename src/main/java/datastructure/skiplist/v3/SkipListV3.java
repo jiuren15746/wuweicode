@@ -10,10 +10,13 @@ import java.util.Random;
  * 头结点一定要有最高的高度，第一个数据节点则不一定。！！！
  */
 public class SkipListV3 implements SkipListInterface3 {
+    /**
+     * 最高层的level=5. 一共有6层.
+     */
     static public final int MAX_LEVEL = 5;
 
     /**
-     * 跳表的高度。起始高度为0.
+     * 跳表的高度。范围[0, MAX_LEVEL]  todo 好像没啥用
      */
     private int topLevel = 0;
 
@@ -49,6 +52,11 @@ public class SkipListV3 implements SkipListInterface3 {
         return size;
     }
 
+    /**
+     * 每层返回一个节点。共topLevel + 1个。
+     * @param target
+     * @return
+     */
     @Override
     public List<SkipNode> find(int target) {
         List<SkipNode> path = Lists.newArrayList();
@@ -74,7 +82,7 @@ public class SkipListV3 implements SkipListInterface3 {
         List<SkipNode> path = find(target);
         int randomLevel = getRandomLevel();
         SkipNode newNode = new SkipNode(target, randomLevel);
-
+        // 维护每一层的链表
         for (int level = 0; level <= randomLevel; ++level) {
             if (level <= topLevel) {
                 SkipNode pre = path.get(path.size() - 1 - level);
@@ -108,10 +116,8 @@ public class SkipListV3 implements SkipListInterface3 {
 
 
     private int getRandomLevel() {
-        Random random = new Random();
         int level = 0;
-        while (random.nextInt() % 2 == 0
-                && level < MAX_LEVEL && level < topLevel + 1) {
+        while ((System.nanoTime() & 0xFF) % 2 == 0 && level < MAX_LEVEL) {
             level++;
         }
         return level;

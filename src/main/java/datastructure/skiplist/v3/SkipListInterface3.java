@@ -54,9 +54,11 @@ public interface SkipListInterface3 {
          */
         protected SkipNode[] pre;
 
+        // for test
         public SkipNode(int value) {
             this.value = value;
         }
+
         public SkipNode(int value, int topLevel) {
             this.value = value;
             this.next = new SkipNode[topLevel + 1];
