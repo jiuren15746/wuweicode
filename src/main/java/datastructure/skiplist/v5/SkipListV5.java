@@ -19,9 +19,10 @@ public interface SkipListV5<V> {
     void removeFirst();
 
     /**
-     * 插入一个数值。如果有相同的key，返回false。
+     * 插入一个数值。
      * @param key 排序使用的key
      * @param value key关联的值
+     * @return 插入是否成功。如果有相同的key，返回false。
      */
     boolean insert(long key, V value);
 
