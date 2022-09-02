@@ -20,4 +20,25 @@ public class RadixLongKeyTreeImplTest {
         tree.put(key, "" + key);
         assertEquals(tree.find(key), "-2");
     }
+
+    @Test
+    public void testPutAndFind_zero() {
+        long key = 0;
+        tree.put(key, "" + key);
+        assertEquals(tree.find(key), "0");
+    }
+
+    @Test
+    public void testPutAndFind_min() {
+        long key = Long.MIN_VALUE;
+        tree.put(key, "" + key);
+        assertEquals(tree.find(key), "" + Long.MIN_VALUE);
+    }
+
+    @Test
+    public void testPutAndFind_max() {
+        long key = Long.MAX_VALUE;
+        tree.put(key, "" + key);
+        assertEquals(tree.find(key), "" + Long.MAX_VALUE);
+    }
 }
