@@ -74,6 +74,8 @@ public class SkipListV5ImplTest {
         for (long key = 1; key <= 100; ++key) {
             assertEquals(skipList.find(key), "" + key);
         }
+
+        assertEquals(skipList.find(101), null);
     }
 
     @Test
@@ -85,8 +87,23 @@ public class SkipListV5ImplTest {
         }
         assertEquals(skipList.size(), 1000000);
 
-        assertEquals(skipList.getKeysCount(0), 1000000);
         skipList.print();
+    }
+
+    @Test
+    public void asc_find_1_to_100w() {
+        SkipListV5<Object> skipList = createSkipList(true);
+
+        for (long key = 1; key <= 1000000L; ++key) {
+            skipList.insert(key, "" + key);
+        }
+
+        long start = System.currentTimeMillis();
+        for (long key = 1; key <= 1000000L; ++key) {
+            assertEquals(skipList.find(key), "" + key);
+        }
+        long duration = System.currentTimeMillis() - start;
+        System.out.println(duration);
     }
 
     private SkipListV5<Object> createSkipList(boolean asc) {

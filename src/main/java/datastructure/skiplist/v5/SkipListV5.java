@@ -37,12 +37,5 @@ public interface SkipListV5<V> {
      */
     long size();
 
-    /**
-     * 返回指定level的key个数。
-     * @param level
-     * @return
-     */
-    long getKeysCount(int level);
-
     void print();
 }

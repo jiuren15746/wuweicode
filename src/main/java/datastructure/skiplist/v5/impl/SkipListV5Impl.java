@@ -90,18 +90,13 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
     }
 
     @Override
-    public long getKeysCount(int level) {
-        long count = 0;
-        for (Node<V> current = head.getNext(level); current != null; current = current.getNext(level)) {
-            count++;
-        }
-        return count;
-    }
-
-    @Override
     public void print() {
         for (int lv = 0; lv <= maxLevel; ++lv) {
-            System.out.println("At level=" + lv + ", list size = " + getKeysCount(lv));
+            long count = 0;
+            for (Node<V> current = head.getNext(lv); current != null; current = current.getNext(lv)) {
+                count++;
+            }
+            System.out.println("At level=" + lv + ", list size = " + count);
         }
     }
 
