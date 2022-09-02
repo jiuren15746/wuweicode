@@ -10,13 +10,16 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
     /**
      * 最高层的level=9. 一共有10层.
      */
-    static public final int MAX_LEVEL = 9;
+    public final int maxLevel;
 
     /**
      * 头结点不存放具体的数据。高度等于跳表最大高度。这个非常重要！！！
      */
     private final Node<V> head;
 
+    /**
+     * 用于实现升序或降序
+     */
     private final Comparator<Long> comparator;
 
     private long size;
@@ -24,8 +27,15 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
     //========
 
     public SkipListV5Impl(Comparator<Long> comparator) {
+        this.maxLevel = 9;
         this.comparator = comparator;
-        this.head = new Node<>(-1, null, MAX_LEVEL);
+        this.head = new Node<>(-1, null, this.maxLevel);
+    }
+
+    public SkipListV5Impl(int maxLevel, Comparator<Long> comparator) {
+        this.maxLevel = maxLevel;
+        this.comparator = comparator;
+        this.head = new Node<>(-1, null, this.maxLevel);
     }
 
     @Override
@@ -47,9 +57,12 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
     }
 
     @Override
-    public void insert(long key, V value) {
+    public boolean insert(long key, V value) {
         // 查找插入位置
         List<Node<V>> path = find(key);
+        if (path.get(path.size() - 1).key == key) {
+            return false;
+        }
         // 创建节点并插入
         int level = getRandomLevel();
         Node<V> newNode = new Node<>(key, value, level);
@@ -57,10 +70,11 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
         for (int i = 0; i <= level; ++i) {
             Node<V> pre = path.get(path.size() - 1 - i);
             Node<V> next = pre.getNext(i);
-            pre.setNext(level, newNode);
-            newNode.setNext(level, next);
+            pre.setNext(i, newNode);
+            newNode.setNext(i, next);
         }
         size++;
+        return true;
     }
 
     @Override
@@ -79,7 +93,7 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
         // 这里从逻辑上应该有两层循环：外层从高level向低level循环。内层循环在一个level内向右循环。只是代码上做了一点优化，只用了一层循环来实现。
         Node<V> curNode = head;
         Node<V> nextNode = null;
-        for (int lv = MAX_LEVEL; lv >= 0; ) {
+        for (int lv = maxLevel; lv >= 0; ) {
             // 向右走. 条件：curNode<target && nextNode非空 && nextNode<=target
             boolean forward = (curNode == head || comparator.compare(curNode.key, target) < 0)
                     && (nextNode = curNode.getNext(lv)) != null
@@ -99,7 +113,7 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
      */
     private int getRandomLevel() {
         int level = 0;
-        while ((System.nanoTime() & 0xFF) % 5 == 0 && level < MAX_LEVEL) {
+        while ((System.nanoTime() & 0xFF) % 5 == 0 && level < maxLevel) {
             level++;
         }
         return level;
