@@ -78,7 +78,7 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
     }
 
     @Override
-    public long getSize() {
+    public long size() {
         return size;
     }
 

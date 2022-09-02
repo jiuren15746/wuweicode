@@ -29,5 +29,5 @@ public interface SkipListV5<V> {
      * 返回元素个数
      * @return
      */
-    long getSize();
+    long size();
 }
