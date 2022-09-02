@@ -40,7 +40,7 @@ public interface SkipListInterface3 {
 
     /**
      * 跳表节点。包含数据，以及多层索引指针。
-     * 在调表的每一层，都是双向链表.
+     * 在跳表的每一层，都是双向链表.
      */
     class SkipNode {
 
