@@ -17,9 +17,9 @@ public class SkipListV3 implements SkipListInterface3 {
     private int topLevel = 0;
 
     /**
-     * 头结点不存放具体的数据。高度等于跳表最大高度。
+     * 头结点不存放具体的数据。高度等于跳表最大高度。这个非常重要！！！
      */
-    protected SkipNode head;
+    protected final SkipNode head;
     //========
 
     public SkipListV3() {
@@ -51,8 +51,7 @@ public class SkipListV3 implements SkipListInterface3 {
     @Override
     public List<SkipNode> find(int target) {
         List<SkipNode> path = Lists.newArrayList();
-        // 这里从逻辑上应该有两层循环：外层从高level向低level循环。内层循环在一个level内向右循环。
-        // 只是代码上做了一点优化，只用了一层循环来实现。
+        // 这里从逻辑上应该有两层循环：外层从高level向低level循环。内层循环在一个level内向右循环。只是代码上做了一点优化，只用了一层循环来实现。
         SkipNode curNode = head;
         SkipNode nextNode = null;
         for (int lv = topLevel; lv >= 0; ) {
