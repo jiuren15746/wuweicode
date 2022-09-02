@@ -1,6 +1,8 @@
 package datastructure.skiplist.v5;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+
 import datastructure.skiplist.v5.impl.SkipListV5Impl;
 import java.util.Comparator;
 import org.testng.annotations.Test;
