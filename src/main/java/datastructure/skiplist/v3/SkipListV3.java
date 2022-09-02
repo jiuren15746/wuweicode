@@ -58,9 +58,7 @@ public class SkipListV3 implements SkipListInterface3 {
             // 向右走. 条件：curNode<target && nextNode非空 && nextNode<=target
             if (curNode.value < target && (nextNode = curNode.getNextAtLevel(lv)) != null && nextNode.value <= target) {
                 curNode = nextNode;
-            }
-            // 向右走不动了，转下一层
-            else {
+            } else { // 向右走不动了，转下一层
                 path.add(curNode);
                 lv--;
             }
