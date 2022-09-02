@@ -27,8 +27,22 @@ public interface SkipListV5<V> {
     boolean insert(long key, V value);
 
     /**
+     * 查找key对应的节点的value. 查不到返回null.
+     */
+    V find(long key);
+
+    /**
      * 返回元素个数
      * @return
      */
     long size();
+
+    /**
+     * 返回指定level的key个数。
+     * @param level
+     * @return
+     */
+    long getKeysCount(int level);
+
+    void print();
 }

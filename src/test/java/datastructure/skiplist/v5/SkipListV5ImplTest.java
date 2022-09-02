@@ -64,6 +64,31 @@ public class SkipListV5ImplTest {
         assertEquals(skipList.size(), 0);
     }
 
+    @Test
+    public void asc_find() {
+        SkipListV5<Object> skipList = createSkipList(true);
+
+        for (long key = 1; key <= 100; ++key) {
+            skipList.insert(key, "" + key);
+        }
+        for (long key = 1; key <= 100; ++key) {
+            assertEquals(skipList.find(key), "" + key);
+        }
+    }
+
+    @Test
+    public void asc_insert_1_to_100w() {
+        SkipListV5<Object> skipList = createSkipList(true);
+
+        for (long key = 1; key <= 1000000L; ++key) {
+            skipList.insert(key, "" + key);
+        }
+        assertEquals(skipList.size(), 1000000);
+
+        assertEquals(skipList.getKeysCount(0), 1000000);
+        skipList.print();
+    }
+
     private SkipListV5<Object> createSkipList(boolean asc) {
         Comparator<Long> comparator = new Comparator<Long>() {
             @Override

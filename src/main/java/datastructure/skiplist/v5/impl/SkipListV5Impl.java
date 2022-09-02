@@ -57,9 +57,16 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
     }
 
     @Override
+    public V find(long key) {
+        List<Node<V>> path = find0(key);
+        Node<V> node = path.get(path.size() - 1);
+        return node.key == key ? node.value : null;
+    }
+
+    @Override
     public boolean insert(long key, V value) {
         // 查找插入位置
-        List<Node<V>> path = find(key);
+        List<Node<V>> path = find0(key);
         if (path.get(path.size() - 1).key == key) {
             return false;
         }
@@ -82,13 +89,29 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
         return size;
     }
 
+    @Override
+    public long getKeysCount(int level) {
+        long count = 0;
+        for (Node<V> current = head.getNext(level); current != null; current = current.getNext(level)) {
+            count++;
+        }
+        return count;
+    }
+
+    @Override
+    public void print() {
+        for (int lv = 0; lv <= maxLevel; ++lv) {
+            System.out.println("At level=" + lv + ", list size = " + getKeysCount(lv));
+        }
+    }
+
     /**
      * 在跳表中查找元素。返回查找路径。
      * 如果跳表中有该节点，返回该节点的查找路径。
      * 如果跳表中没有该节点，返回目标位置的前一个节点的查找路径。
      * @return 每层返回一个节点。共 MAX_LEVEL + 1个。
      */
-    private List<Node<V>> find(long target) {
+    private List<Node<V>> find0(long target) {
         List<Node<V>> path = Lists.newArrayList();
         // 这里从逻辑上应该有两层循环：外层从高level向低level循环。内层循环在一个level内向右循环。只是代码上做了一点优化，只用了一层循环来实现。
         Node<V> curNode = head;
