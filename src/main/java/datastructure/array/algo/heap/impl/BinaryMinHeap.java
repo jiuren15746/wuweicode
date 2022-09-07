@@ -1,4 +1,6 @@
-package datastructure.tree.binarytree;
+package datastructure.array.algo.heap.impl;
+
+import datastructure.array.algo.heap.BinaryHeap;
 
 /**
  * 最小堆实现。定义：1. 完全二叉树，2.父节点<=子节点。

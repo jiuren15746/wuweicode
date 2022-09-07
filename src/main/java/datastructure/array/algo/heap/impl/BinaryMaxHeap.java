@@ -1,4 +1,6 @@
-package datastructure.tree.binarytree;
+package datastructure.array.algo.heap.impl;
+
+import datastructure.array.algo.heap.BinaryHeap;
 
 /**
  * 二叉堆（最大堆，父节点比子节点大）。可以用来实现优先级队列。

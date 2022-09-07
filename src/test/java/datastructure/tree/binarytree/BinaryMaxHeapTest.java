@@ -1,5 +1,6 @@
 package datastructure.tree.binarytree;
 
+import datastructure.array.algo.heap.impl.BinaryMaxHeap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

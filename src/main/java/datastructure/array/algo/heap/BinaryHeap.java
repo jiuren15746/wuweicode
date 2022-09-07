@@ -1,4 +1,4 @@
-package datastructure.tree.binarytree;
+package datastructure.array.algo.heap;
 
 /**
  * 二叉堆的接口。

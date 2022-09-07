@@ -1,5 +1,6 @@
 package datastructure.tree.binarytree;
 
+import datastructure.array.algo.heap.BinaryHeap;
 import java.util.Arrays;
 import java.util.Random;
 
