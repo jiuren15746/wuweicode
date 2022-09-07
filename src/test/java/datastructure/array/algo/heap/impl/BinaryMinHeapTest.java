@@ -20,10 +20,21 @@ public class BinaryMinHeapTest {
     }
 
     @Test
-    public void size_not_empty() {
+    public void offer() {
         for (int i = 0; i < 100; ++i) {
             minHeap.offer(System.nanoTime());
         }
         assertEquals(minHeap.size(), 100);
+    }
+
+    @Test
+    public void poll() {
+        for (int i = 0; i < 10000; ++i) {
+            minHeap.offer(new Long(i));
+        }
+
+        for (int i = 0; i < 10000; ++i) {
+            assertEquals(minHeap.poll(), new Long(i));
+        }
     }
 }
