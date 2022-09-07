@@ -74,6 +74,7 @@ public class BinaryMinHeap<V extends Comparable> {
             Object[] newArray = new Object[array.length << 1];
             System.arraycopy(array, 0, newArray, 0, size);
             array = newArray;
+            System.out.println("min heap expand, capacity=" + array.length);
         }
     }
 }
