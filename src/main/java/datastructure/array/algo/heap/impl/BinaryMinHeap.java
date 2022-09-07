@@ -1,70 +1,75 @@
 package datastructure.array.algo.heap.impl;
 
-import datastructure.array.algo.heap.BinaryHeap;
-
 /**
  * 最小堆实现。定义：1. 完全二叉树，2.父节点<=子节点。
  */
-public class BinaryMinHeap implements BinaryHeap {
+public class BinaryMinHeap<V extends Comparable> {
 
-    private int[] array;
+    private Object[] array;
     private int size;
+    //========
 
     public BinaryMinHeap(int capacity) {
-        array = new int[capacity];
+        array = new Object[capacity];
         size = 0;
     }
 
-    @Override
     public boolean isMaxHeap() {
         return false;
     }
 
-    @Override
-    public void offer(int value) {
+    /**
+     * 插入元素。
+     * @param value
+     */
+    public void offer(V value) {
+        expandIfNecessary();
+        // 先放到最后一个位置
         array[size++] = value;
-        swim(size-1);
+        // 如果比parent小，则上浮
+        int pos = size - 1;
+        int parentPos = (pos - 1) / 2;
+        while (pos > 0 && ((V) array[pos]).compareTo(array[parentPos]) < 0) {
+            swap(pos, parentPos);
+            pos = parentPos;
+        }
     }
 
-    @Override
-    public int poll() {
-        int result = array[0];
-        // 取最后一个元素填充根节点位置。然后下沉。
+    /**
+     * 取出最小元素，即零号元素。
+     * @return
+     */
+    public V poll() {
+        V result = (V) array[0];
+        // 取最后一个元素填充根节点位置
         array[0] = array[(size--) - 1];
-        sink(0);
+        // 根节点下沉
+        int pos = 0;
+        for (int leftChild, minChild; (leftChild = 2 * pos + 1) < size; pos = minChild) {
+            minChild = (leftChild + 1 < size && ((V) array[leftChild + 1]).compareTo(array[leftChild]) < 0) ? leftChild + 1 : leftChild;
+            if (((V) array[pos]).compareTo(array[minChild]) <= 0) {
+                break;
+            }
+            swap(pos, minChild);
+        }
         return result;
     }
 
-    @Override
     public int size() {
         return size;
     }
 
-    // 上浮
-    private void swim(int pos) {
-        while (pos > 0 && array[pos] < array[(pos - 1) / 2]) {
-            swap(pos, (pos - 1) / 2);
-            pos = (pos - 1) / 2;
-        }
-    }
-    // 下沉
-    private void sink(int pos) {
-        while (2 * pos + 1 < size) {
-            int i = 2 * pos + 1;
-            if (i + 1 < size && array[i + 1] < array[i]) {
-                i = i + 1;
-            }
-            if (array[pos] <= array[i]) {
-                break;
-            }
-            swap(pos, i);
-            pos = i;
-        }
-    }
-
     private void swap(int i, int j) {
-        int temp = array[i];
+        Object temp = array[i];
         array[i] = array[j];
         array[j] = temp;
+    }
+
+    private void expandIfNecessary() {
+        if (size >= array.length) {
+            Object[] newArray = new Object[array.length << 1];
+            System.arraycopy(array, 0, newArray, 0, size);
+            array = newArray;
+        }
     }
 }
