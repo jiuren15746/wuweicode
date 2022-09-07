@@ -9,6 +9,10 @@ public class BinaryMinHeap<V extends Comparable> {
     private int size;
     //========
 
+    public BinaryMinHeap() {
+        this(8);
+    }
+
     public BinaryMinHeap(int capacity) {
         array = new Object[capacity];
         size = 0;
