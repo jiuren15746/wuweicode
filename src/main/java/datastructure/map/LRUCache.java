@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class LRUCache {
-
     private static class LRUNode {
         private final int key;
         private Object value;
@@ -15,6 +14,10 @@ public class LRUCache {
         LRUNode(int key, Object value) {
             this.key = key;
             this.value = value;
+        }
+        @Override
+        public String toString() {
+            return "(" + key + "," + value + ")";
         }
     }
 
@@ -38,7 +41,7 @@ public class LRUCache {
             removeNode(existNode);
         }
         // 再evict
-        if (map.size() + 1 > capacity) {
+        if (map.size() > capacity) {
             LRUNode tobeDeleted = lruHead.next;
             removeNode(tobeDeleted);
             map.remove(tobeDeleted.key);
@@ -73,6 +76,7 @@ public class LRUCache {
     private void appendNode(LRUNode node) {
         lruTail.next = node;
         node.pre = lruTail;
+        node.next = null;
         lruTail = node;
     }
 
