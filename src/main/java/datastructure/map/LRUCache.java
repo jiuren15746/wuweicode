@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class LRUCache {
+    /**
+     * !!! LRUNode作为map的value。同时又通过pre和next维护双向链表。
+     * 有些实现采用独立的hashmap和LinkedList。因为LinkedList.remove()的时间复杂度为O(n)。会导致整体复杂度上升为O(n).
+     */
     private static class LRUNode {
         private final int key;
         private Object value;
@@ -22,6 +26,7 @@ public class LRUCache {
     }
 
     private HashMap<Integer, LRUNode> map;
+    // head指向最近最少访问的节点. tail指向最近刚刚访问的节点
     private LRUNode lruHead;
     private LRUNode lruTail;
     private int capacity;
@@ -29,14 +34,15 @@ public class LRUCache {
     public LRUCache(int capacity) {
         this.capacity = capacity;
         this.map = new HashMap<>(capacity);
+        // 双向链表有一个dummy节点，不用修改head指针，编码简单很多
         this.lruHead = this.lruTail = new LRUNode(-1, null);
     }
 
     public void put(int key, Object value) {
         // 先插入
         LRUNode node = new LRUNode(key, value);
-        appendNode(node);
         LRUNode existNode = map.put(key, node);
+        appendNode(node);
         if (existNode != null) {
             removeNode(existNode);
         }
@@ -49,6 +55,9 @@ public class LRUCache {
         }
     }
 
+    /**
+     * get的时间复杂度为O(1).
+     */
     public Object get(int key) {
         LRUNode node = map.get(key);
         if (node != null) {
@@ -71,12 +80,18 @@ public class LRUCache {
         if (node.next != null) {
             node.next.pre = node.pre;
         }
+        // tail指针调整
+        if (node == lruTail) {
+            lruTail = node.pre;
+        }
     }
 
     private void appendNode(LRUNode node) {
         lruTail.next = node;
-        node.pre = lruTail;
+        // 这一步很关键，漏掉会导致bug
         node.next = null;
+        node.pre = lruTail;
+        // tail指针调整
         lruTail = node;
     }
 

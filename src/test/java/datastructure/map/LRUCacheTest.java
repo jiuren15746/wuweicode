@@ -17,6 +17,17 @@ public class LRUCacheTest {
     }
 
     @Test
+    public void put_key重复() {
+        LRUCache cache = new LRUCache(32);
+        for (int key = 0; key < 8; ++key) {
+            cache.put(key, "" + key);
+        }
+        cache.put(6, "6_1");
+        assertEquals(cache.get(6), "6_1");
+        assertEquals(cache.getLruOrderedKeys(), Lists.newArrayList(0,1,2,3,4,5,7,6));
+    }
+
+    @Test
     public void get() {
         LRUCache cache = new LRUCache(32);
         for (int key = 0; key < 8; ++key) {
