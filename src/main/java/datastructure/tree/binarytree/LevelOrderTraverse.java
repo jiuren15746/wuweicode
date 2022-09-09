@@ -95,4 +95,25 @@ public class LevelOrderTraverse {
         }
         return result;
     }
+
+
+    public static List<List<Integer>> levelOrderTraverse5(TreeNode<Integer> root) {
+        List<List<Integer>> result = new ArrayList<>();
+        Queue<TreeNode<Integer>> traverse = new LinkedList<>(Arrays.asList(root));
+        while (!traverse.isEmpty()) { // 层间循环
+            List<Integer> levelElements = new ArrayList<>();
+            result.add(levelElements);
+            for (int k = traverse.size(); k > 0; --k) { // 层内循环
+                TreeNode<Integer> node = traverse.poll();
+                levelElements.add(node.getValue());
+                if (node.getLeft() != null) {
+                    traverse.add(node.getLeft());
+                }
+                if (node.getRight() != null) {
+                    traverse.add(node.getRight());
+                }
+            }
+        }
+        return result;
+    }
 }

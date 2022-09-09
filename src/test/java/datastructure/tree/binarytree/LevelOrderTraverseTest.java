@@ -22,7 +22,7 @@ public class LevelOrderTraverseTest {
         node20.left = node15;
         node20.right = node7;
 
-        List<List<Integer>> result = levelOrder(root);
+        List<List<Integer>> result = levelOrderTraverse5(root);
         System.out.println(result);
         List<List<Integer>> result2 = levelOrderTraverse(root);
         System.out.println(result2);
