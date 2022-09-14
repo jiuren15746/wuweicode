@@ -7,7 +7,6 @@ import lombok.Data;
 
 import java.util.Comparator;
 
-@Data
 public class OrderBook {
 
     private static Comparator<Long> ASCEND = new Comparator<Long>() {
@@ -27,10 +26,19 @@ public class OrderBook {
     private final String symbol;
     private final DirectionEnum direction;
     private final SkipListV5<OrderQueue> orders;
+    //========
 
     public OrderBook(String symbol, DirectionEnum direction) {
         this.symbol = symbol;
         this.direction = direction;
         this.orders = new SkipListV5Impl(direction == DirectionEnum.BUY ? DESCEND : ASCEND);
+    }
+
+    public OrderQueue getFirst() {
+        return orders.getFirst();
+    }
+
+    public void removeFirst() {
+        orders.removeFirst();
     }
 }

@@ -16,7 +16,7 @@ public class GtcStrategy implements ExecStrategy {
         long takerAmountEv = order.getAmountEv();
 
         for (;;) {
-            OrderQueue orderQueue = makerOrderBook.getOrders().getFirst();
+            OrderQueue orderQueue = makerOrderBook.getFirst();
             if (null == orderQueue) {
                 // 没有流动性 todo
                 return new MatchResult();
@@ -39,7 +39,7 @@ public class GtcStrategy implements ExecStrategy {
                     takerAmountEv -= makerOrder.getAmountEv();
                 }
             }
-            makerOrderBook.getOrders().removeFirst();
+            makerOrderBook.removeFirst();
         }
     }
 
