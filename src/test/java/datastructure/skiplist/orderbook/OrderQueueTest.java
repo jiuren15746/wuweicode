@@ -36,13 +36,14 @@ public class OrderQueueTest {
         OrderQueue queue = new OrderQueue();
         queue.enqueue(order);
 
+        // peek
         Order peekOrder = queue.peek();
         assertTrue(peekOrder == order);
         assertEquals(queue.size(), 1);
         assertEquals(queue.getHead(), 0);
         assertEquals(queue.getTail(), 0);
 
-
+        // dequeue
         Order dequeueOrder = queue.dequeue();
         assertTrue(dequeueOrder == order);
         assertEquals(queue.size(), 0);
