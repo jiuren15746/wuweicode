@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
-
+    private long uid;
     private String orderId;
     private String symbol;
     /**
