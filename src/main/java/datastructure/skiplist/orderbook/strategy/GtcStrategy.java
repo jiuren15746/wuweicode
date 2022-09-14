@@ -10,18 +10,18 @@ public class GtcStrategy implements ExecStrategy {
     @Override
     public MatchResult execOrder(MatchEngine engine, Order order) {
         MatchResult result = new MatchResult();
-        OrderBook makerOrderBook = order.isBuy() ? engine.getSellOrders() : engine.getBuyOrders();
+        OrderBook makerOrderBook = order.isBuy() ? engine.getSellOrderBook() : engine.getBuyOrderBook();
         long takerAmountEv = order.getAmountEv();
 
-        for (;;) {
-            OrderQueue orderQueue = makerOrderBook.getFirst();
+        while (takerAmountEv > 0) {
+            OrderQueue makerOrderQueue = makerOrderBook.getFirst();
 
             // 没有流动性, 或价格不匹配
-            if (null == orderQueue || !isPriceMatch(order, orderQueue)) {
+            if (null == makerOrderQueue || !isPriceMatch(order, makerOrderQueue)) {
                 break;
             }
 
-            for (Order makerOrder; takerAmountEv > 0 && (makerOrder = orderQueue.peek()) != null; ) {
+            for (Order makerOrder; takerAmountEv > 0 && (makerOrder = makerOrderQueue.peek()) != null; ) {
                 if (takerAmountEv < makerOrder.getAmountEv()) {
                     // taker is over
                     result.addTrade(order, makerOrder, takerAmountEv);
@@ -31,13 +31,11 @@ public class GtcStrategy implements ExecStrategy {
                     // maker is over
                     result.addTrade(order, makerOrder, makerOrder.getAmountEv());
                     takerAmountEv -= makerOrder.getAmountEv();
-                    orderQueue.dequeue();
+                    makerOrderQueue.dequeue();
                 }
             }
 
-            if (takerAmountEv == 0) {
-                break;
-            } else {
+            if (makerOrderQueue.size() == 0) {
                 makerOrderBook.removeFirst();
             }
         }
@@ -49,7 +47,7 @@ public class GtcStrategy implements ExecStrategy {
             result.setResult(order.getAmountEv() == takerAmountEv ? RESULT_NOT_FILLED : RESULT_PARTIAL_FILLED);
             // 剩余order加入taker订单簿
             order.setAmountEv(takerAmountEv);
-            OrderBook takerOrderBook = order.isBuy() ? engine.getBuyOrders() : engine.getSellOrders();
+            OrderBook takerOrderBook = order.isBuy() ? engine.getBuyOrderBook() : engine.getSellOrderBook();
             takerOrderBook.addOrder(order);
         }
         return result;

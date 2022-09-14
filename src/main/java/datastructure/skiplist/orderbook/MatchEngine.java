@@ -10,14 +10,14 @@ public class MatchEngine {
     private static final ExecStrategy gtcStrategy = new GtcStrategy();
 
     private final String symbol;
-    private final OrderBook buyOrders;
-    private final OrderBook sellOrders;
+    private final OrderBook buyOrderBook;
+    private final OrderBook sellOrderBook;
     //========
 
     public MatchEngine(String symbol) {
         this.symbol = symbol;
-        this.buyOrders = new OrderBook(symbol, DirectionEnum.BUY);
-        this.sellOrders = new OrderBook(symbol, DirectionEnum.SELL);
+        this.buyOrderBook = new OrderBook(symbol, DirectionEnum.BUY);
+        this.sellOrderBook = new OrderBook(symbol, DirectionEnum.SELL);
     }
 
     public MatchResult match(Order order) {
