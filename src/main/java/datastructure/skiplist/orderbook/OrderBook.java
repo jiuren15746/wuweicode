@@ -1,11 +1,13 @@
 package datastructure.skiplist.orderbook;
 
-
+import datastructure.skiplist.orderbook.enums.DirectionEnum;
 import datastructure.skiplist.v5.SkipListV5;
 import datastructure.skiplist.v5.impl.SkipListV5Impl;
+import lombok.Data;
 
 import java.util.Comparator;
 
+@Data
 public class OrderBook {
 
     private static Comparator<Long> ASCEND = new Comparator<Long>() {
@@ -22,13 +24,13 @@ public class OrderBook {
         }
     };
 
-    private String symbol;
-    private SkipListV5 buyOrders;
-    private SkipListV5 sellOrders;
+    private final String symbol;
+    private final DirectionEnum direction;
+    private final SkipListV5<OrderQueue> orders;
 
-    public OrderBook(String symbol) {
+    public OrderBook(String symbol, DirectionEnum direction) {
         this.symbol = symbol;
-        this.buyOrders = new SkipListV5Impl(DESCEND);
-        this.sellOrders = new SkipListV5Impl(ASCEND);
+        this.direction = direction;
+        this.orders = new SkipListV5Impl(direction == DirectionEnum.BUY ? DESCEND : ASCEND);
     }
 }

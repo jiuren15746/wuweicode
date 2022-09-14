@@ -11,4 +11,8 @@ public enum OrderType {
     OrderType(int code) {
         this.code = code;
     }
+
+    public int getCode() {
+        return code;
+    }
 }

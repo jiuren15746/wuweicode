@@ -1,5 +1,6 @@
 package datastructure.skiplist.orderbook;
 
+import datastructure.skiplist.orderbook.enums.DirectionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,5 +34,14 @@ public class Order {
      * see ExecStrategy
      */
     private int execStrategy;
+    //========
+
+    public boolean isBuy() {
+        return direction == DirectionEnum.BUY.getCode();
+    }
+
+    public void decreaseAmount(long delta) {
+        this.amountEv -= delta;
+    }
 
 }
