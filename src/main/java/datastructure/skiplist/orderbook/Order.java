@@ -1,11 +1,17 @@
 package datastructure.skiplist.orderbook;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 进入撮合引擎的订单。
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Order {
 
     private String orderId;
