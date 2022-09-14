@@ -1,7 +1,10 @@
-package datastructure.skiplist.v5.impl;
+package datastructure.skiplist.orderbook;
 
 import lombok.Data;
 
+/**
+ * 进入撮合引擎的订单。
+ */
 @Data
 public class Order {
 
@@ -15,7 +18,14 @@ public class Order {
     private long priceEv;
     private long amountEv;
 
+    /**
+     * see OrderType.
+     */
     private int orderType;
+
+    /**
+     * see ExecStrategy
+     */
     private int execStrategy;
 
 }

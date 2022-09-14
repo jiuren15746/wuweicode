@@ -1,4 +1,4 @@
-package datastructure.skiplist.v5.enums;
+package datastructure.skiplist.orderbook.enums;
 
 public enum OrderType {
 
