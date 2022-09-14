@@ -23,7 +23,6 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
     private final Comparator<Long> comparator;
 
     private long size;
-
     //========
 
     public SkipListV5Impl(Comparator<Long> comparator) {
@@ -59,29 +58,36 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
     @Override
     public V find(long key) {
         List<Node<V>> path = find0(key);
-        Node<V> node = path.get(path.size() - 1);
-        return node.key == key ? node.value : null;
+        Node<V> lastNode = path.get(path.size() - 1);
+        return lastNode.key == key ? lastNode.value : null;
     }
 
     @Override
     public boolean insert(long key, V value) {
         // 查找插入位置
         List<Node<V>> path = find0(key);
-        if (path.get(path.size() - 1).key == key) {
+        Node<V> lastNode = path.get(path.size() - 1);
+
+        if (lastNode.key == key) {
             return false;
+        } else {
+            insert0(key, value, path);
+            return true;
         }
-        // 创建节点并插入
-        int level = getRandomLevel();
-        Node<V> newNode = new Node<>(key, value, level);
-        // 维护每一层的链表
-        for (int i = 0; i <= level; ++i) {
-            Node<V> pre = path.get(path.size() - 1 - i);
-            Node<V> next = pre.getNext(i);
-            pre.setNext(i, newNode);
-            newNode.setNext(i, next);
+    }
+
+
+    public V findOrInsert(long key, V value) {
+        // 查找插入位置
+        List<Node<V>> path = find0(key);
+        Node<V> lastNode = path.get(path.size() - 1);
+
+        if (lastNode.key == key) {
+            return lastNode.value;
+        } else {
+            insert0(key, value, path);
+            return value;
         }
-        size++;
-        return true;
     }
 
     @Override
@@ -124,6 +130,20 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
             }
         }
         return path;
+    }
+
+    private void insert0(long key, V value, List<Node<V>> path) {
+        // 创建节点并插入
+        int level = getRandomLevel();
+        Node<V> newNode = new Node<>(key, value, level);
+        // 维护每一层的链表
+        for (int i = 0; i <= level; ++i) {
+            Node<V> pre = path.get(path.size() - 1 - i);
+            Node<V> next = pre.getNext(i);
+            pre.setNext(i, newNode);
+            newNode.setNext(i, next);
+        }
+        size++;
     }
 
     /**

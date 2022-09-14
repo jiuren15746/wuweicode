@@ -32,6 +32,15 @@ public interface SkipListV5<V> {
     V find(long key);
 
     /**
+     * 查找或插入。
+     * 如果能查到key，则返回已有节点的值；否则插入新节点。
+     * @param key
+     * @param value
+     * @return 返回值一定不为null
+     */
+    V findOrInsert(long key, V value);
+
+    /**
      * 返回元素个数
      * @return
      */

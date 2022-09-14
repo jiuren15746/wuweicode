@@ -1,7 +1,6 @@
 package datastructure.skiplist.orderbook.strategy;
 
 import datastructure.skiplist.orderbook.*;
-import datastructure.skiplist.orderbook.enums.DirectionEnum;
 import datastructure.skiplist.orderbook.enums.OrderType;
 
 
@@ -9,23 +8,16 @@ public class GtcStrategy implements ExecStrategy {
 
     @Override
     public MatchResult execOrder(MatchEngine engine, Order order) {
-        OrderBook makerOrderBook =
-                order.getDirection() == DirectionEnum.BUY.getCode()
-                        ? engine.getSellOrders() : engine.getBuyOrders();
-
+        MatchResult result = new MatchResult();
+        OrderBook makerOrderBook = order.isBuy() ? engine.getSellOrders() : engine.getBuyOrders();
         long takerAmountEv = order.getAmountEv();
 
         for (;;) {
             OrderQueue orderQueue = makerOrderBook.getFirst();
-            if (null == orderQueue) {
-                // 没有流动性 todo
-                return new MatchResult();
-            }
 
-            // 价格不匹配
-            if (!isPriceMatch(order, orderQueue)) {
-                // todo
-                return new MatchResult();
+            // 没有流动性, 或价格不匹配
+            if (null == orderQueue || !isPriceMatch(order, orderQueue)) {
+                break;
             }
 
             for (Order makerOrder; (makerOrder = orderQueue.peek()) != null; ) {
@@ -41,6 +33,13 @@ public class GtcStrategy implements ExecStrategy {
             }
             makerOrderBook.removeFirst();
         }
+
+        // 剩余order加入taker订单簿
+        order.setAmountEv(takerAmountEv);
+
+        OrderBook takerOrderBook = order.isBuy() ? engine.getBuyOrders() : engine.getSellOrders();
+        takerOrderBook.addOrder(order);
+        return result;
     }
 
 

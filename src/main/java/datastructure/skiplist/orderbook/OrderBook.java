@@ -41,4 +41,15 @@ public class OrderBook {
     public void removeFirst() {
         orders.removeFirst();
     }
+
+    public void addOrder(Order order) {
+        if (order.getDirection() == this.direction.getCode()) {
+            OrderQueue newOrderQueue = new OrderQueue();
+            newOrderQueue.enqueue(order);
+            OrderQueue retOrderQueue = orders.findOrInsert(order.getPriceEv(), newOrderQueue);
+            if (retOrderQueue != newOrderQueue) {
+                retOrderQueue.enqueue(order);
+            }
+        }
+    }
 }
