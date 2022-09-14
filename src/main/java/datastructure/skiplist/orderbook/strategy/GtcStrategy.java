@@ -1,7 +1,7 @@
 package datastructure.skiplist.orderbook.strategy;
 
 import datastructure.skiplist.orderbook.*;
-import datastructure.skiplist.orderbook.enums.OrderType;
+import datastructure.skiplist.orderbook.enums.OrderTypeEnum;
 
 
 public class GtcStrategy implements ExecStrategy {
@@ -44,7 +44,7 @@ public class GtcStrategy implements ExecStrategy {
 
 
     private boolean isPriceMatch(Order order, OrderQueue orderQueue) {
-        if (order.getOrderType() == OrderType.MARKET.getCode()) {
+        if (order.getOrderType() == OrderTypeEnum.MARKET.getCode()) {
             return true;
         }
         if (order.isBuy()) {

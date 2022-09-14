@@ -31,7 +31,7 @@ public class Order {
     private int orderType;
 
     /**
-     * see ExecStrategy
+     * see ExecStrategyEnum
      */
     private int execStrategy;
     //========

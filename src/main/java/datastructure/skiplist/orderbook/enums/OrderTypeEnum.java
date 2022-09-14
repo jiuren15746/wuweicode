@@ -1,6 +1,6 @@
 package datastructure.skiplist.orderbook.enums;
 
-public enum OrderType {
+public enum OrderTypeEnum {
 
     LIMIT(0),
     MARKET(1),
@@ -8,7 +8,7 @@ public enum OrderType {
 
     private int code;
 
-    OrderType(int code) {
+    OrderTypeEnum(int code) {
         this.code = code;
     }
 
