@@ -55,13 +55,11 @@ public class GtcStrategyTest {
         assertEquals(trade.getPriceEv(), buyOrder.getPriceEv());
         assertEquals(trade.getAmountEv(), amountEv);
 
-        // check buy order book
-        OrderQueue buyOrderQueue = engine.getBuyOrderBook().getFirst();
-        assertNull(buyOrderQueue);
-
-        // check sell order book
-        OrderQueue sellOrderQueue = engine.getSellOrderBook().getFirst();
-        assertNull(sellOrderQueue);
+        // check order book
+        assertEquals(engine.getBuyOrderBook().size(), 0);
+        assertNull(engine.getBuyOrderBook().getFirst());
+        assertEquals(engine.getSellOrderBook().size(), 0);
+        assertNull(engine.getSellOrderBook().getFirst());
     }
 
     @Test
@@ -86,13 +84,11 @@ public class GtcStrategyTest {
         assertEquals(trade.getPriceEv(), sellOrder.getPriceEv());
         assertEquals(trade.getAmountEv(), amountEv);
 
-        // check buy order book
-        OrderQueue buyOrderQueue = engine.getBuyOrderBook().getFirst();
-        assertNull(buyOrderQueue);
-
-        // check sell order book
-        OrderQueue sellOrderQueue = engine.getSellOrderBook().getFirst();
-        assertNull(sellOrderQueue);
+        // check order book
+        assertEquals(engine.getBuyOrderBook().size(), 0);
+        assertNull(engine.getBuyOrderBook().getFirst());
+        assertEquals(engine.getSellOrderBook().size(), 0);
+        assertNull(engine.getSellOrderBook().getFirst());
     }
 
     @Test
@@ -111,12 +107,46 @@ public class GtcStrategyTest {
         assertEquals(matchResult.getTradeList().size(), 0);
 
         // check buy order book
+        assertEquals(engine.getBuyOrderBook().size(), 1);
+        assertEquals(engine.getSellOrderBook().size(), 1);
         OrderQueue buyOrderQueue = engine.getBuyOrderBook().getFirst();
-        assertEquals(buyOrderQueue.size(), 1);
-
-        // check sell order book
         OrderQueue sellOrderQueue = engine.getSellOrderBook().getFirst();
+        assertEquals(buyOrderQueue.size(), 1);
         assertEquals(sellOrderQueue.size(), 1);
+    }
+
+    @Test
+    public void buyThenSell_priceMatch_partialFill() {
+        MatchEngine engine = new MatchEngine(symbol);
+
+        final long buyAmtEv = 100;
+        final long sellAmtEv = 150;
+        Order buyOrder = createBuyOrder("buyOrder", 1000, buyAmtEv);
+        Order sellOrder = createSellOrder("sellOrder", 999, sellAmtEv);
+
+        strategy.execOrder(engine, buyOrder);
+        MatchResult matchResult = strategy.execOrder(engine, sellOrder);
+
+        // 校验result
+        assertEquals(matchResult.getResult(), MatchResult.RESULT_PARTIAL_FILLED);
+        assertEquals(matchResult.getTradeList().size(), 1);
+
+        // check trade
+        Trade trade = matchResult.getTradeList().get(0);
+        assertEquals(trade.getTakerOrderId(), sellOrder.getOrderId());
+        assertEquals(trade.getMakerOrderId(), buyOrder.getOrderId());
+        assertEquals(trade.getPriceEv(), 1000);
+        assertEquals(trade.getAmountEv(), 100);
+
+        // check order book
+        assertEquals(engine.getBuyOrderBook().size(), 0);
+        assertEquals(engine.getSellOrderBook().size(), 1);
+        OrderQueue buyOrderQueue = engine.getBuyOrderBook().getFirst();
+        OrderQueue sellOrderQueue = engine.getSellOrderBook().getFirst();
+        assertNull(buyOrderQueue);
+        assertEquals(sellOrderQueue.size(), 1);
+        // check order
+        assertEquals(sellOrderQueue.peek().getAmountEv(), 50);
     }
 
     private Order createBuyOrder(String orderId, long priceEv, long amountEv) {
