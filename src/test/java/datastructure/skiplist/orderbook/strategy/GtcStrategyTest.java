@@ -149,6 +149,40 @@ public class GtcStrategyTest {
         assertEquals(sellOrderQueue.peek().getAmountEv(), 50);
     }
 
+    @Test
+    public void buyThenSell_priceMatch_fullFill() {
+        MatchEngine engine = new MatchEngine(symbol);
+
+        final long buyAmtEv = 150;
+        final long sellAmtEv = 100;
+        Order buyOrder = createBuyOrder("buyOrder", 1000, buyAmtEv);
+        Order sellOrder = createSellOrder("sellOrder", 999, sellAmtEv);
+
+        strategy.execOrder(engine, buyOrder);
+        MatchResult matchResult = strategy.execOrder(engine, sellOrder);
+
+        // 校验result
+        assertEquals(matchResult.getResult(), MatchResult.RESULT_FULL_FILLED);
+        assertEquals(matchResult.getTradeList().size(), 1);
+
+        // check trade
+        Trade trade = matchResult.getTradeList().get(0);
+        assertEquals(trade.getTakerOrderId(), sellOrder.getOrderId());
+        assertEquals(trade.getMakerOrderId(), buyOrder.getOrderId());
+        assertEquals(trade.getPriceEv(), 1000);
+        assertEquals(trade.getAmountEv(), 100);
+
+        // check order book
+        assertEquals(engine.getBuyOrderBook().size(), 1);
+        assertEquals(engine.getSellOrderBook().size(), 0);
+        OrderQueue buyOrderQueue = engine.getBuyOrderBook().getFirst();
+        OrderQueue sellOrderQueue = engine.getSellOrderBook().getFirst();
+        assertEquals(buyOrderQueue.size(), 1);
+        assertNull(sellOrderQueue);
+        // check order
+        assertEquals(buyOrderQueue.peek().getAmountEv(), 50);
+    }
+
     private Order createBuyOrder(String orderId, long priceEv, long amountEv) {
         return createOrder(orderId, DirectionEnum.BUY, priceEv, amountEv);
     }
