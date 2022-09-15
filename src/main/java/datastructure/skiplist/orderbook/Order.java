@@ -34,6 +34,9 @@ public class Order {
      * see ExecStrategyEnum
      */
     private int execStrategy;
+
+    // todo  timeInForce
+
     //========
 
     public boolean isBuy() {
