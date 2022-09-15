@@ -64,6 +64,37 @@ public class GtcStrategyTest {
         assertNull(sellOrderQueue);
     }
 
+    @Test
+    public void sellThenBuy_equalAmount_both_over() {
+        MatchEngine engine = new MatchEngine(symbol);
+
+        final long amountEv = 50;
+        Order buyOrder = createBuyOrder("buyOrder", 1000, amountEv);
+        Order sellOrder = createSellOrder("sellOrder", 999, amountEv);
+
+        strategy.execOrder(engine, sellOrder);
+        MatchResult matchResult = strategy.execOrder(engine, buyOrder);
+
+        // 校验result
+        assertEquals(matchResult.getResult(), MatchResult.RESULT_FULL_FILLED);
+        assertEquals(matchResult.getTradeList().size(), 1);
+
+        // check trade
+        Trade trade = matchResult.getTradeList().get(0);
+        assertEquals(trade.getTakerOrderId(), buyOrder.getOrderId());
+        assertEquals(trade.getMakerOrderId(), sellOrder.getOrderId());
+        assertEquals(trade.getPriceEv(), sellOrder.getPriceEv());
+        assertEquals(trade.getAmountEv(), amountEv);
+
+        // check buy order book
+        OrderQueue buyOrderQueue = engine.getBuyOrderBook().getFirst();
+        assertNull(buyOrderQueue);
+
+        // check sell order book
+        OrderQueue sellOrderQueue = engine.getSellOrderBook().getFirst();
+        assertNull(sellOrderQueue);
+    }
+
     private Order createBuyOrder(String orderId, long priceEv, long amountEv) {
         return createOrder(orderId, DirectionEnum.BUY, priceEv, amountEv);
     }
