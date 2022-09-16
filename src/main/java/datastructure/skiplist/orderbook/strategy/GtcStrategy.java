@@ -7,6 +7,9 @@ import static datastructure.skiplist.orderbook.MatchResult.*;
 
 public class GtcStrategy implements ExecStrategy {
 
+    protected boolean isAddLeftToOrderBook = true;
+    //========
+
     @Override
     public MatchResult execOrder(MatchEngine engine, Order order) {
         MatchResult result = new MatchResult();
@@ -45,14 +48,15 @@ public class GtcStrategy implements ExecStrategy {
             result.setResult(RESULT_FULL_FILLED);
         } else {
             result.setResult(order.getAmountEv() == takerAmountEv ? RESULT_NOT_FILLED : RESULT_PARTIAL_FILLED);
-            // 剩余order加入taker订单簿
-            order.setAmountEv(takerAmountEv);
-            OrderBook takerOrderBook = order.isBuy() ? engine.getBuyOrderBook() : engine.getSellOrderBook();
-            takerOrderBook.addOrder(order);
+            if (isAddLeftToOrderBook) {
+                // 剩余order加入taker订单簿
+                order.setAmountEv(takerAmountEv);
+                OrderBook takerOrderBook = order.isBuy() ? engine.getBuyOrderBook() : engine.getSellOrderBook();
+                takerOrderBook.addOrder(order);
+            }
         }
         return result;
     }
-
 
     private boolean isPriceMatch(Order order, OrderQueue orderQueue) {
         if (order.getOrderType() == OrderTypeEnum.MARKET.getCode()) {
