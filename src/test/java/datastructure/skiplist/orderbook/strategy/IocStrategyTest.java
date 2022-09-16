@@ -8,15 +8,13 @@ import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
 import static org.testng.Assert.assertEquals;
+import static datastructure.skiplist.orderbook.strategy.GtcStrategyTest.*;
 
 public class IocStrategyTest {
-
-    private String symbol = "BTCUSD";
-    private GtcStrategy strategy = new IocStrategy();
+    private MatchEngine engine = new MatchEngine("BTCUSD");
 
     @Test
     public void first_buy_order() {
-        MatchEngine engine = new MatchEngine(symbol);
 
         String orderId = "firstBuyOrder";
         long priceEv = 1000;
@@ -24,7 +22,7 @@ public class IocStrategyTest {
         Order iocBuyOrder = createIocBuyOrder(orderId, priceEv, amountEv);
 
         // IOC订单，撮合不成功，不加入订单簿
-        MatchResult matchResult = strategy.execOrder(engine, iocBuyOrder);
+        MatchResult matchResult = engine.execute(iocBuyOrder);
 
         // 校验result
         assertEquals(matchResult.getResult(), MatchResult.RESULT_NOT_FILLED);
@@ -35,34 +33,33 @@ public class IocStrategyTest {
         assertEquals(engine.getSellOrderBook().size(), 0);
     }
 
-//    @Test
-//    public void buyThenSell_equalAmount_both_over() {
-//        MatchEngine engine = new MatchEngine(symbol);
-//
-//        final long amountEv = 50;
-//        Order buyOrder = createBuyOrder("buyOrder", 1000, amountEv);
-//        Order sellOrder = createSellOrder("sellOrder", 999, amountEv);
-//
-//        strategy.execOrder(engine, buyOrder);
-//        MatchResult matchResult = strategy.execOrder(engine, sellOrder);
-//
-//        // 校验result
-//        assertEquals(matchResult.getResult(), MatchResult.RESULT_FULL_FILLED);
-//        assertEquals(matchResult.getTradeList().size(), 1);
-//
-//        // check trade
-//        Trade trade = matchResult.getTradeList().get(0);
-//        assertEquals(trade.getTakerOrderId(), sellOrder.getOrderId());
-//        assertEquals(trade.getMakerOrderId(), buyOrder.getOrderId());
-//        assertEquals(trade.getPriceEv(), buyOrder.getPriceEv());
-//        assertEquals(trade.getAmountEv(), amountEv);
-//
-//        // check order book
-//        assertEquals(engine.getBuyOrderBook().size(), 0);
-//        assertNull(engine.getBuyOrderBook().getFirst());
-//        assertEquals(engine.getSellOrderBook().size(), 0);
-//        assertNull(engine.getSellOrderBook().getFirst());
-//    }
+    // 买单为GTC，卖单为IOC。价格匹配，数量相等。两个订单完全撮合，没有剩余。
+    @Test
+    public void buyThenSell_equalAmount_both_over() {
+        final long amountEv = 50;
+        Order gtcBuyOrder = createGtcBuyOrder("buyOrder", 1000L, amountEv);
+        Order iocSellOrder = createIocSellOrder("sellOrder", 999L, amountEv);
+
+        engine.execute(gtcBuyOrder);
+        MatchResult matchResult = engine.execute(iocSellOrder);
+
+        // 校验result
+        assertEquals(matchResult.getResult(), MatchResult.RESULT_FULL_FILLED);
+        assertEquals(matchResult.getTradeList().size(), 1);
+
+        // check trade
+        Trade trade = matchResult.getTradeList().get(0);
+        assertEquals(trade.getTakerOrderId(), iocSellOrder.getOrderId());
+        assertEquals(trade.getMakerOrderId(), gtcBuyOrder.getOrderId());
+        assertEquals(trade.getPriceEv(), gtcBuyOrder.getPriceEv());
+        assertEquals(trade.getAmountEv(), amountEv);
+
+        // check order book
+        assertEquals(engine.getBuyOrderBook().size(), 0);
+        assertEquals(engine.getSellOrderBook().size(), 0);
+        assertNull(engine.getBuyOrderBook().getFirst());
+        assertNull(engine.getSellOrderBook().getFirst());
+    }
 //
 //    @Test
 //    public void sellThenBuy_equalAmount_both_over() {
@@ -185,11 +182,11 @@ public class IocStrategyTest {
 //        assertEquals(buyOrderQueue.peek().getAmountEv(), 50);
 //    }
 
-    private Order createIocBuyOrder(String orderId, Long priceEv, long amountEv) {
+    private static Order createIocBuyOrder(String orderId, Long priceEv, long amountEv) {
         return createIocOrder(orderId, DirectionEnum.BUY, priceEv, amountEv);
     }
 
-    private Order createIocSellOrder(String orderId, Long priceEv, long amountEv) {
+    private static Order createIocSellOrder(String orderId, Long priceEv, long amountEv) {
         return createIocOrder(orderId, DirectionEnum.SELL, priceEv, amountEv);
     }
 

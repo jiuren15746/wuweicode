@@ -20,7 +20,7 @@ public class GtcStrategyTest {
         String orderId = "firstBuyOrder";
         long priceEv = 1000;
         long amountEv = 50;
-        Order buyOrder = createLimitBuyOrder(orderId, priceEv, amountEv);
+        Order buyOrder = createGtcBuyOrder(orderId, priceEv, amountEv);
 
         MatchResult matchResult = strategy.execOrder(engine, buyOrder);
 
@@ -38,8 +38,8 @@ public class GtcStrategyTest {
         MatchEngine engine = new MatchEngine(symbol);
 
         final long amountEv = 50;
-        Order buyOrder = createLimitBuyOrder("buyOrder", 1000, amountEv);
-        Order sellOrder = createLimitSellOrder("sellOrder", 999, amountEv);
+        Order buyOrder = createGtcBuyOrder("buyOrder", 1000, amountEv);
+        Order sellOrder = createGtcSellOrder("sellOrder", 999, amountEv);
 
         strategy.execOrder(engine, buyOrder);
         MatchResult matchResult = strategy.execOrder(engine, sellOrder);
@@ -67,8 +67,8 @@ public class GtcStrategyTest {
         MatchEngine engine = new MatchEngine(symbol);
 
         final long amountEv = 50;
-        Order buyOrder = createLimitBuyOrder("buyOrder", 1000, amountEv);
-        Order sellOrder = createLimitSellOrder("sellOrder", 999, amountEv);
+        Order buyOrder = createGtcBuyOrder("buyOrder", 1000, amountEv);
+        Order sellOrder = createGtcSellOrder("sellOrder", 999, amountEv);
 
         strategy.execOrder(engine, sellOrder);
         MatchResult matchResult = strategy.execOrder(engine, buyOrder);
@@ -96,8 +96,8 @@ public class GtcStrategyTest {
         MatchEngine engine = new MatchEngine(symbol);
 
         final long amountEv = 50;
-        Order buyOrder = createLimitBuyOrder("buyOrder", 999, amountEv);
-        Order sellOrder = createLimitSellOrder("sellOrder", 1000, amountEv);
+        Order buyOrder = createGtcBuyOrder("buyOrder", 999, amountEv);
+        Order sellOrder = createGtcSellOrder("sellOrder", 1000, amountEv);
 
         strategy.execOrder(engine, buyOrder);
         MatchResult matchResult = strategy.execOrder(engine, sellOrder);
@@ -121,8 +121,8 @@ public class GtcStrategyTest {
 
         final long buyAmtEv = 100;
         final long sellAmtEv = 150;
-        Order buyOrder = createLimitBuyOrder("buyOrder", 1000, buyAmtEv);
-        Order sellOrder = createLimitSellOrder("sellOrder", 999, sellAmtEv);
+        Order buyOrder = createGtcBuyOrder("buyOrder", 1000, buyAmtEv);
+        Order sellOrder = createGtcSellOrder("sellOrder", 999, sellAmtEv);
 
         strategy.execOrder(engine, buyOrder);
         MatchResult matchResult = strategy.execOrder(engine, sellOrder);
@@ -155,8 +155,8 @@ public class GtcStrategyTest {
 
         final long buyAmtEv = 150;
         final long sellAmtEv = 100;
-        Order buyOrder = createLimitBuyOrder("buyOrder", 1000, buyAmtEv);
-        Order sellOrder = createLimitSellOrder("sellOrder", 999, sellAmtEv);
+        Order buyOrder = createGtcBuyOrder("buyOrder", 1000, buyAmtEv);
+        Order sellOrder = createGtcSellOrder("sellOrder", 999, sellAmtEv);
 
         strategy.execOrder(engine, buyOrder);
         MatchResult matchResult = strategy.execOrder(engine, sellOrder);
@@ -183,21 +183,22 @@ public class GtcStrategyTest {
         assertEquals(buyOrderQueue.peek().getAmountEv(), 50);
     }
 
-    protected static Order createLimitBuyOrder(String orderId, long priceEv, long amountEv) {
-        return createLimitOrder(orderId, DirectionEnum.BUY, priceEv, amountEv);
+    protected static Order createGtcBuyOrder(String orderId, long priceEv, long amountEv) {
+        return createGtcOrder(orderId, DirectionEnum.BUY, priceEv, amountEv);
     }
 
-    protected static Order createLimitSellOrder(String orderId, long priceEv, long amountEv) {
-        return createLimitOrder(orderId, DirectionEnum.SELL, priceEv, amountEv);
+    protected static Order createGtcSellOrder(String orderId, long priceEv, long amountEv) {
+        return createGtcOrder(orderId, DirectionEnum.SELL, priceEv, amountEv);
     }
 
-    protected static Order createLimitOrder(String orderId, DirectionEnum direction, long priceEv, long amountEv) {
+    // priceEv传值表示现价单，空表示市价单
+    protected static Order createGtcOrder(String orderId, DirectionEnum direction, Long priceEv, long amountEv) {
         return Order.builder()
                 .orderId(orderId)
                 .direction(direction.getCode())
                 .priceEv(priceEv)
                 .amountEv(amountEv)
-                .orderType(OrderTypeEnum.LIMIT.getCode())
+                .orderType(null != priceEv ? OrderTypeEnum.LIMIT.getCode() : OrderTypeEnum.MARKET.getCode())
                 .execStrategy(ExecStrategyEnum.GTC.getCode())
                 .build();
     }

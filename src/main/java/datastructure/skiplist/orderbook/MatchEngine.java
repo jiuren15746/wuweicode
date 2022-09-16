@@ -22,7 +22,7 @@ public class MatchEngine {
         this.sellOrderBook = new OrderBook(symbol, DirectionEnum.SELL);
     }
 
-    public MatchResult match(Order order) {
+    public MatchResult execute(Order order) {
         switch (ExecStrategyEnum.getByCode(order.getExecStrategy())) {
             case GTC:
                 return gtcStrategy.execOrder(this, order);
