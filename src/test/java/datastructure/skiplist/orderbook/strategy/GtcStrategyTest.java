@@ -38,8 +38,8 @@ public class GtcStrategyTest {
         MatchEngine engine = new MatchEngine(symbol);
 
         final long amountEv = 50;
-        Order buyOrder = createGtcBuyOrder("buyOrder", 1000, amountEv);
-        Order sellOrder = createGtcSellOrder("sellOrder", 999, amountEv);
+        Order buyOrder = createGtcBuyOrder("buyOrder", 1000L, amountEv);
+        Order sellOrder = createGtcSellOrder("sellOrder", 999L, amountEv);
 
         strategy.execOrder(engine, buyOrder);
         MatchResult matchResult = strategy.execOrder(engine, sellOrder);
@@ -67,8 +67,8 @@ public class GtcStrategyTest {
         MatchEngine engine = new MatchEngine(symbol);
 
         final long amountEv = 50;
-        Order buyOrder = createGtcBuyOrder("buyOrder", 1000, amountEv);
-        Order sellOrder = createGtcSellOrder("sellOrder", 999, amountEv);
+        Order buyOrder = createGtcBuyOrder("buyOrder", 1000L, amountEv);
+        Order sellOrder = createGtcSellOrder("sellOrder", 999L, amountEv);
 
         strategy.execOrder(engine, sellOrder);
         MatchResult matchResult = strategy.execOrder(engine, buyOrder);
@@ -96,8 +96,8 @@ public class GtcStrategyTest {
         MatchEngine engine = new MatchEngine(symbol);
 
         final long amountEv = 50;
-        Order buyOrder = createGtcBuyOrder("buyOrder", 999, amountEv);
-        Order sellOrder = createGtcSellOrder("sellOrder", 1000, amountEv);
+        Order buyOrder = createGtcBuyOrder("buyOrder", 999L, amountEv);
+        Order sellOrder = createGtcSellOrder("sellOrder", 1000L, amountEv);
 
         strategy.execOrder(engine, buyOrder);
         MatchResult matchResult = strategy.execOrder(engine, sellOrder);
@@ -121,8 +121,8 @@ public class GtcStrategyTest {
 
         final long buyAmtEv = 100;
         final long sellAmtEv = 150;
-        Order buyOrder = createGtcBuyOrder("buyOrder", 1000, buyAmtEv);
-        Order sellOrder = createGtcSellOrder("sellOrder", 999, sellAmtEv);
+        Order buyOrder = createGtcBuyOrder("buyOrder", 1000L, buyAmtEv);
+        Order sellOrder = createGtcSellOrder("sellOrder", 999L, sellAmtEv);
 
         strategy.execOrder(engine, buyOrder);
         MatchResult matchResult = strategy.execOrder(engine, sellOrder);
@@ -155,8 +155,8 @@ public class GtcStrategyTest {
 
         final long buyAmtEv = 150;
         final long sellAmtEv = 100;
-        Order buyOrder = createGtcBuyOrder("buyOrder", 1000, buyAmtEv);
-        Order sellOrder = createGtcSellOrder("sellOrder", 999, sellAmtEv);
+        Order buyOrder = createGtcBuyOrder("buyOrder", 1000L, buyAmtEv);
+        Order sellOrder = createGtcSellOrder("sellOrder", 999L, sellAmtEv);
 
         strategy.execOrder(engine, buyOrder);
         MatchResult matchResult = strategy.execOrder(engine, sellOrder);
@@ -183,11 +183,11 @@ public class GtcStrategyTest {
         assertEquals(buyOrderQueue.peek().getAmountEv(), 50);
     }
 
-    protected static Order createGtcBuyOrder(String orderId, long priceEv, long amountEv) {
+    protected static Order createGtcBuyOrder(String orderId, Long priceEv, long amountEv) {
         return createGtcOrder(orderId, DirectionEnum.BUY, priceEv, amountEv);
     }
 
-    protected static Order createGtcSellOrder(String orderId, long priceEv, long amountEv) {
+    protected static Order createGtcSellOrder(String orderId, Long priceEv, long amountEv) {
         return createGtcOrder(orderId, DirectionEnum.SELL, priceEv, amountEv);
     }
 

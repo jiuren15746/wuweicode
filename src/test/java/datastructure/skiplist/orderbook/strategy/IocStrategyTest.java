@@ -60,35 +60,34 @@ public class IocStrategyTest {
         assertNull(engine.getBuyOrderBook().getFirst());
         assertNull(engine.getSellOrderBook().getFirst());
     }
-//
-//    @Test
-//    public void sellThenBuy_equalAmount_both_over() {
-//        MatchEngine engine = new MatchEngine(symbol);
-//
-//        final long amountEv = 50;
-//        Order buyOrder = createBuyOrder("buyOrder", 1000, amountEv);
-//        Order sellOrder = createSellOrder("sellOrder", 999, amountEv);
-//
-//        strategy.execOrder(engine, sellOrder);
-//        MatchResult matchResult = strategy.execOrder(engine, buyOrder);
-//
-//        // 校验result
-//        assertEquals(matchResult.getResult(), MatchResult.RESULT_FULL_FILLED);
-//        assertEquals(matchResult.getTradeList().size(), 1);
-//
-//        // check trade
-//        Trade trade = matchResult.getTradeList().get(0);
-//        assertEquals(trade.getTakerOrderId(), buyOrder.getOrderId());
-//        assertEquals(trade.getMakerOrderId(), sellOrder.getOrderId());
-//        assertEquals(trade.getPriceEv(), sellOrder.getPriceEv());
-//        assertEquals(trade.getAmountEv(), amountEv);
-//
-//        // check order book
-//        assertEquals(engine.getBuyOrderBook().size(), 0);
-//        assertNull(engine.getBuyOrderBook().getFirst());
-//        assertEquals(engine.getSellOrderBook().size(), 0);
-//        assertNull(engine.getSellOrderBook().getFirst());
-//    }
+
+    // 卖单为GTC，买单为IOC。价格匹配，数量相等。两个订单完全撮合，没有剩余。
+    @Test
+    public void sellThenBuy_equalAmount_both_over() {
+        final long amountEv = 50;
+        Order sellOrder = createGtcSellOrder("sellOrder", 999L, amountEv);
+        Order buyOrder = createIocBuyOrder("buyOrder", 1000L, amountEv);
+
+        engine.execute(sellOrder);
+        MatchResult matchResult = engine.execute(buyOrder);
+
+        // 校验result
+        assertEquals(matchResult.getResult(), MatchResult.RESULT_FULL_FILLED);
+        assertEquals(matchResult.getTradeList().size(), 1);
+
+        // check trade
+        Trade trade = matchResult.getTradeList().get(0);
+        assertEquals(trade.getTakerOrderId(), buyOrder.getOrderId());
+        assertEquals(trade.getMakerOrderId(), sellOrder.getOrderId());
+        assertEquals(trade.getPriceEv(), sellOrder.getPriceEv());
+        assertEquals(trade.getAmountEv(), amountEv);
+
+        // check order book
+        assertEquals(engine.getBuyOrderBook().size(), 0);
+        assertEquals(engine.getSellOrderBook().size(), 0);
+        assertNull(engine.getBuyOrderBook().getFirst());
+        assertNull(engine.getSellOrderBook().getFirst());
+    }
 //
 //    @Test
 //    public void buyThenSell_priceNotMatch() {
