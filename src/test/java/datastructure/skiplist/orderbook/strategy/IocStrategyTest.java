@@ -88,30 +88,29 @@ public class IocStrategyTest {
         assertNull(engine.getBuyOrderBook().getFirst());
         assertNull(engine.getSellOrderBook().getFirst());
     }
-//
-//    @Test
-//    public void buyThenSell_priceNotMatch() {
-//        MatchEngine engine = new MatchEngine(symbol);
-//
-//        final long amountEv = 50;
-//        Order buyOrder = createBuyOrder("buyOrder", 999, amountEv);
-//        Order sellOrder = createSellOrder("sellOrder", 1000, amountEv);
-//
-//        strategy.execOrder(engine, buyOrder);
-//        MatchResult matchResult = strategy.execOrder(engine, sellOrder);
-//
-//        // 校验result
-//        assertEquals(matchResult.getResult(), MatchResult.RESULT_NOT_FILLED);
-//        assertEquals(matchResult.getTradeList().size(), 0);
-//
-//        // check buy order book
-//        assertEquals(engine.getBuyOrderBook().size(), 1);
-//        assertEquals(engine.getSellOrderBook().size(), 1);
-//        OrderQueue buyOrderQueue = engine.getBuyOrderBook().getFirst();
-//        OrderQueue sellOrderQueue = engine.getSellOrderBook().getFirst();
-//        assertEquals(buyOrderQueue.size(), 1);
-//        assertEquals(sellOrderQueue.size(), 1);
-//    }
+
+    // 先买单后卖单。IOC卖单没有匹配订单，丢弃。
+    @Test
+    public void buyThenSell_priceNotMatch() {
+        final long amountEv = 50;
+        Order gtcBuyOrder = createGtcBuyOrder("buyOrder", 999L, amountEv);
+        Order iocSellOrder = createIocSellOrder("sellOrder", 1000L, amountEv);
+
+        engine.execute(gtcBuyOrder);
+        MatchResult matchResult = engine.execute(iocSellOrder);
+
+        // 校验result
+        assertEquals(matchResult.getResult(), MatchResult.RESULT_NOT_FILLED);
+        assertEquals(matchResult.getTradeList().size(), 0);
+
+        // check buy order book
+        assertEquals(engine.getBuyOrderBook().size(), 1);
+        assertEquals(engine.getSellOrderBook().size(), 0);
+        OrderQueue buyOrderQueue = engine.getBuyOrderBook().getFirst();
+        OrderQueue sellOrderQueue = engine.getSellOrderBook().getFirst();
+        assertEquals(buyOrderQueue.size(), 1);
+        assertEquals(sellOrderQueue, null);
+    }
 //
 //    @Test
 //    public void buyThenSell_priceMatch_partialFill() {
