@@ -10,24 +10,32 @@ class Node<V> {
     protected final long key;
     protected final V value;
     /**
-     * 多层next指针
+     * 多层next指针和pre指针
      */
     protected Node<V>[] next;
+    protected Node<V>[] pre;
     //========
 
     public Node(long key, V value, int level) {
         this.key = key;
         this.value = value;
         this.next = new Node[level + 1];
+        this.pre = new Node[level + 1];
     }
 
     public Node<V> getNext(int level) {
         return level < next.length ? next[level] : null;
     }
+    public Node<V> getPre(int level) {
+        return level < pre.length ? pre[level] : null;
+    }
+
     public void setNext(int level, Node<V> nextNode) {
         next[level] = nextNode;
     }
-
+    public void setPre(int level, Node<V> preNode) {
+        pre[level] = preNode;
+    }
 
     /**
      * 返回该节点Level. 最底层level为0.
