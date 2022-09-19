@@ -1,5 +1,7 @@
 package datastructure.skiplist.v5;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * 跳表接口定义。
  * @param <V>
@@ -28,8 +30,10 @@ public interface SkipListV5<V> {
 
     /**
      * 查找key对应的节点的value. 查不到返回null.
+     * @param key 要查找的key
+     * @param compareCount 比较次数，用于了解查找性能
      */
-    V find(long key);
+    V find(long key, AtomicInteger compareCount);
 
     /**
      * 查找或插入。

@@ -5,6 +5,8 @@ import static org.testng.Assert.assertNull;
 
 import datastructure.skiplist.v5.impl.SkipListV5Impl;
 import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.testng.annotations.Test;
 
 public class SkipListV5ImplTest {
@@ -71,11 +73,17 @@ public class SkipListV5ImplTest {
         for (long key = 1; key <= 100; ++key) {
             skipList.insert(key, "" + key);
         }
+        skipList.print();
+
         for (long key = 1; key <= 100; ++key) {
-            assertEquals(skipList.find(key), "" + key);
+            AtomicInteger count = new AtomicInteger();
+            assertEquals(skipList.find(key, count), "" + key);
+            System.out.println("size=" + skipList.size() + ", findKey=" + key + ", compareCount=" + count.get());
         }
 
-        assertEquals(skipList.find(101), null);
+        AtomicInteger count = new AtomicInteger();
+        assertEquals(skipList.find(101, count), null);
+        System.out.println("size=" + skipList.size() + ", findKey=101, compareCount=" + count.get());
     }
 
     @Test
@@ -99,11 +107,20 @@ public class SkipListV5ImplTest {
         }
 
         long start = System.currentTimeMillis();
+        long totalCompareCount = 0L;
+        int maxCompareCount = 0;
+
         for (long key = 1; key <= 1000000L; ++key) {
-            assertEquals(skipList.find(key), "" + key);
+            AtomicInteger count = new AtomicInteger();
+            assertEquals(skipList.find(key, count), "" + key);
+//            System.out.println("size=" + skipList.size() + ", findKey=" + key + ", compareCount=" + count.get());
+            totalCompareCount += count.get();
+            maxCompareCount = count.get() > maxCompareCount ? count.get() : maxCompareCount;
         }
         long duration = System.currentTimeMillis() - start;
         System.out.println(duration);
+        System.out.println("avg compare count:" + totalCompareCount / 1000000);
+        System.out.println("max compare count:" + maxCompareCount);
     }
 
     private SkipListV5<Object> createSkipList(boolean asc) {
