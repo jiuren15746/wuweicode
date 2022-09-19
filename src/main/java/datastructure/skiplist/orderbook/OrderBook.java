@@ -38,7 +38,7 @@ public class OrderBook {
         if (order.getDirection() == this.direction.getCode()) {
             OrderQueue newOrderQueue = new OrderQueue();
             newOrderQueue.enqueue(order);
-            OrderQueue retOrderQueue = orders.findOrInsert(order.getPriceEv(), newOrderQueue);
+            OrderQueue retOrderQueue = orders.insertIfAbsent(order.getPriceEv(), newOrderQueue);
             if (retOrderQueue != newOrderQueue) {
                 retOrderQueue.enqueue(order);
             }

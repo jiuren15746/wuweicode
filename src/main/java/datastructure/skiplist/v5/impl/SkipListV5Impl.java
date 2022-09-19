@@ -77,7 +77,7 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
     }
 
 
-    public V findOrInsert(long key, V value) {
+    public V insertIfAbsent(long key, V value) {
         // 查找插入位置
         List<Node<V>> path = find0(key);
         Node<V> lastNode = path.get(path.size() - 1);

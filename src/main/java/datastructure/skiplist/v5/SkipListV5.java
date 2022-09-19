@@ -38,7 +38,7 @@ public interface SkipListV5<V> {
      * @param value
      * @return 返回值一定不为null
      */
-    V findOrInsert(long key, V value);
+    V insertIfAbsent(long key, V value);
 
     /**
      * 返回元素个数
