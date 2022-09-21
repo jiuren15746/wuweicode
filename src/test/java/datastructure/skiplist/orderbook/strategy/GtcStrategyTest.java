@@ -5,16 +5,16 @@ import datastructure.skiplist.orderbook.enums.DirectionEnum;
 import datastructure.skiplist.orderbook.enums.ExecStrategyEnum;
 import datastructure.skiplist.orderbook.enums.OrderTypeEnum;
 import org.testng.annotations.Test;
+
 import static org.testng.Assert.*;
 
 
 public class GtcStrategyTest {
 
     private String symbol = "BTCUSD";
-    private GtcStrategy strategy = new GtcStrategy();
 
     @Test
-    public void first_buy_order() {
+    public void first_buy_order() throws Throwable {
         MatchEngine engine = new MatchEngine(symbol);
 
         String orderId = "firstBuyOrder";
@@ -22,7 +22,7 @@ public class GtcStrategyTest {
         long amountEv = 50;
         Order buyOrder = createGtcBuyOrder(orderId, priceEv, amountEv);
 
-        MatchResult matchResult = strategy.execOrder(engine, buyOrder);
+        MatchResult matchResult = engine.submit(buyOrder);
 
         // 校验result
         assertEquals(matchResult.getResult(), MatchResult.RESULT_NOT_FILLED);
@@ -34,15 +34,15 @@ public class GtcStrategyTest {
     }
 
     @Test
-    public void buyThenSell_equalAmount_both_over() {
+    public void buyThenSell_equalAmount_both_over() throws Throwable {
         MatchEngine engine = new MatchEngine(symbol);
 
         final long amountEv = 50;
         Order buyOrder = createGtcBuyOrder("buyOrder", 1000L, amountEv);
         Order sellOrder = createGtcSellOrder("sellOrder", 999L, amountEv);
 
-        strategy.execOrder(engine, buyOrder);
-        MatchResult matchResult = strategy.execOrder(engine, sellOrder);
+        engine.submit(buyOrder);
+        MatchResult matchResult = engine.submit(sellOrder);
 
         // 校验result
         assertEquals(matchResult.getResult(), MatchResult.RESULT_FULL_FILLED);
@@ -63,15 +63,15 @@ public class GtcStrategyTest {
     }
 
     @Test
-    public void sellThenBuy_equalAmount_both_over() {
+    public void sellThenBuy_equalAmount_both_over() throws Throwable {
         MatchEngine engine = new MatchEngine(symbol);
 
         final long amountEv = 50;
         Order buyOrder = createGtcBuyOrder("buyOrder", 1000L, amountEv);
         Order sellOrder = createGtcSellOrder("sellOrder", 999L, amountEv);
 
-        strategy.execOrder(engine, sellOrder);
-        MatchResult matchResult = strategy.execOrder(engine, buyOrder);
+        engine.submit(sellOrder);
+        MatchResult matchResult = engine.submit(buyOrder);
 
         // 校验result
         assertEquals(matchResult.getResult(), MatchResult.RESULT_FULL_FILLED);
@@ -92,15 +92,15 @@ public class GtcStrategyTest {
     }
 
     @Test
-    public void buyThenSell_priceNotMatch() {
+    public void buyThenSell_priceNotMatch() throws Throwable {
         MatchEngine engine = new MatchEngine(symbol);
 
         final long amountEv = 50;
         Order buyOrder = createGtcBuyOrder("buyOrder", 999L, amountEv);
         Order sellOrder = createGtcSellOrder("sellOrder", 1000L, amountEv);
 
-        strategy.execOrder(engine, buyOrder);
-        MatchResult matchResult = strategy.execOrder(engine, sellOrder);
+        engine.submit(buyOrder);
+        MatchResult matchResult = engine.submit(sellOrder);
 
         // 校验result
         assertEquals(matchResult.getResult(), MatchResult.RESULT_NOT_FILLED);
@@ -116,7 +116,7 @@ public class GtcStrategyTest {
     }
 
     @Test
-    public void buyThenSell_priceMatch_partialFill() {
+    public void buyThenSell_priceMatch_partialFill() throws Throwable {
         MatchEngine engine = new MatchEngine(symbol);
 
         final long buyAmtEv = 100;
@@ -124,8 +124,9 @@ public class GtcStrategyTest {
         Order buyOrder = createGtcBuyOrder("buyOrder", 1000L, buyAmtEv);
         Order sellOrder = createGtcSellOrder("sellOrder", 999L, sellAmtEv);
 
-        strategy.execOrder(engine, buyOrder);
-        MatchResult matchResult = strategy.execOrder(engine, sellOrder);
+//        strategy.execOrder(engine, buyOrder);
+        engine.submit(buyOrder);
+        MatchResult matchResult = engine.submit(sellOrder);
 
         // 校验result
         assertEquals(matchResult.getResult(), MatchResult.RESULT_PARTIAL_FILLED);
@@ -150,7 +151,7 @@ public class GtcStrategyTest {
     }
 
     @Test
-    public void buyThenSell_priceMatch_fullFill() {
+    public void buyThenSell_priceMatch_fullFill() throws Throwable {
         MatchEngine engine = new MatchEngine(symbol);
 
         final long buyAmtEv = 150;
@@ -158,8 +159,11 @@ public class GtcStrategyTest {
         Order buyOrder = createGtcBuyOrder("buyOrder", 1000L, buyAmtEv);
         Order sellOrder = createGtcSellOrder("sellOrder", 999L, sellAmtEv);
 
-        strategy.execOrder(engine, buyOrder);
-        MatchResult matchResult = strategy.execOrder(engine, sellOrder);
+//        strategy.execOrder(engine, buyOrder);
+//        MatchResult matchResult = strategy.execOrder(engine, sellOrder);
+
+        engine.submit(buyOrder);
+        MatchResult matchResult = engine.submit(sellOrder);
 
         // 校验result
         assertEquals(matchResult.getResult(), MatchResult.RESULT_FULL_FILLED);
