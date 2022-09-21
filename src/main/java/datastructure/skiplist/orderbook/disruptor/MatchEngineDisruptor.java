@@ -43,4 +43,17 @@ public class MatchEngineDisruptor {
             return t;
         }
     }
+
+
+
+    public static void main(String[] args) {
+        MatchEngine engine = new MatchEngine("BTCUSD");
+        MatchEngineDisruptor matchEngineDisruptor = new MatchEngineDisruptor(engine);
+
+        for (int i = 0; i < 1000; ++i) {
+            matchEngineDisruptor.publishEvent("This is a random request " + i);
+        }
+
+        System.out.println("");
+    }
 }

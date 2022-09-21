@@ -14,6 +14,6 @@ public class MatchEventHandler implements EventHandler<MatchEvent> {
 
     @Override
     public void onEvent(MatchEvent matchEvent, long sequence, boolean endOfBatch) {
-        System.out.println("handled event request: " + matchEvent.getEventRequest());
+        System.out.println(Thread.currentThread().getName() + " -- handled event request: " + matchEvent.getEventRequest());
     }
 }

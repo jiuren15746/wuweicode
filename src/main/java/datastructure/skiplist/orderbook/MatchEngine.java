@@ -32,7 +32,7 @@ public class MatchEngine {
         this.buyOrderBook = new OrderBook(symbol, DirectionEnum.BUY);
         this.sellOrderBook = new OrderBook(symbol, DirectionEnum.SELL);
 
-        matchEngineDisruptor = new MatchEngineDisruptor(this);
+//        matchEngineDisruptor = new MatchEngineDisruptor(this);
     }
 
     public MatchResult execute(Order order) {
