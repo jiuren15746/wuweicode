@@ -6,6 +6,7 @@ import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import datastructure.skiplist.orderbook.MatchEngine;
 
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.ThreadFactory;
 
 public class MatchEngineDisruptor {
@@ -23,14 +24,15 @@ public class MatchEngineDisruptor {
                 ProducerType.SINGLE, new BlockingWaitStrategy());
         ringBuffer = disruptor.getRingBuffer();
 
-        disruptor.handleEventsWith(new MatchEventHandler(matchEngine));
+        disruptor.handleEventsWith((event, sequence, endOfBatch) -> event.getFutureTask().run());
         disruptor.start();
     }
 
-    public void publishEvent(Object eventRequest) {
+    public void publish(FutureTask futureTask) {
         long sequence = ringBuffer.next();
         try {
-            ringBuffer.get(sequence).setEventRequest(eventRequest);
+            MatchEvent event = ringBuffer.get(sequence);
+            event.setFutureTask(futureTask);
         } finally {
             ringBuffer.publish(sequence);
         }

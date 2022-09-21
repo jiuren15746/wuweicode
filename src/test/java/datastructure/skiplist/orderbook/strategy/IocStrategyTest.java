@@ -22,7 +22,7 @@ public class IocStrategyTest {
         Order iocBuyOrder = createIocBuyOrder(orderId, priceEv, amountEv);
 
         // IOC订单，撮合不成功，不加入订单簿
-        MatchResult matchResult = engine.execute(iocBuyOrder);
+        MatchResult matchResult = engine.executeOrder(iocBuyOrder);
 
         // 校验result
         assertEquals(matchResult.getResult(), MatchResult.RESULT_NOT_FILLED);
@@ -40,8 +40,8 @@ public class IocStrategyTest {
         Order gtcBuyOrder = createGtcBuyOrder("buyOrder", 1000L, amountEv);
         Order iocSellOrder = createIocSellOrder("sellOrder", 999L, amountEv);
 
-        engine.execute(gtcBuyOrder);
-        MatchResult matchResult = engine.execute(iocSellOrder);
+        engine.executeOrder(gtcBuyOrder);
+        MatchResult matchResult = engine.executeOrder(iocSellOrder);
 
         // 校验result
         assertEquals(matchResult.getResult(), MatchResult.RESULT_FULL_FILLED);
@@ -68,8 +68,8 @@ public class IocStrategyTest {
         Order sellOrder = createGtcSellOrder("sellOrder", 999L, amountEv);
         Order buyOrder = createIocBuyOrder("buyOrder", 1000L, amountEv);
 
-        engine.execute(sellOrder);
-        MatchResult matchResult = engine.execute(buyOrder);
+        engine.executeOrder(sellOrder);
+        MatchResult matchResult = engine.executeOrder(buyOrder);
 
         // 校验result
         assertEquals(matchResult.getResult(), MatchResult.RESULT_FULL_FILLED);
@@ -96,8 +96,8 @@ public class IocStrategyTest {
         Order gtcBuyOrder = createGtcBuyOrder("buyOrder", 999L, amountEv);
         Order iocSellOrder = createIocSellOrder("sellOrder", 1000L, amountEv);
 
-        engine.execute(gtcBuyOrder);
-        MatchResult matchResult = engine.execute(iocSellOrder);
+        engine.executeOrder(gtcBuyOrder);
+        MatchResult matchResult = engine.executeOrder(iocSellOrder);
 
         // 校验result
         assertEquals(matchResult.getResult(), MatchResult.RESULT_NOT_FILLED);
