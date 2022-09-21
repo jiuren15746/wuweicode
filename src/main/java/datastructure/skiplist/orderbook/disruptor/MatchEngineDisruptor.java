@@ -29,8 +29,11 @@ public class MatchEngineDisruptor {
 
     public void publishEvent(Object eventRequest) {
         long sequence = ringBuffer.next();
-        ringBuffer.get(sequence).setEventRequest(eventRequest);
-        ringBuffer.publish(sequence);
+        try {
+            ringBuffer.get(sequence).setEventRequest(eventRequest);
+        } finally {
+            ringBuffer.publish(sequence);
+        }
     }
 
     class ConsumerThreadFactory implements ThreadFactory {
@@ -44,16 +47,14 @@ public class MatchEngineDisruptor {
         }
     }
 
-
-
-    public static void main(String[] args) {
-        MatchEngine engine = new MatchEngine("BTCUSD");
-        MatchEngineDisruptor matchEngineDisruptor = new MatchEngineDisruptor(engine);
-
-        for (int i = 0; i < 1000; ++i) {
-            matchEngineDisruptor.publishEvent("This is a random request " + i);
-        }
-
-        System.out.println("");
-    }
+//    public static void main(String[] args) {
+//        MatchEngine engine = new MatchEngine("BTCUSD");
+//        MatchEngineDisruptor matchEngineDisruptor = new MatchEngineDisruptor(engine);
+//
+//        for (int i = 0; i < 1000; ++i) {
+//            matchEngineDisruptor.publishEvent("This is a random request " + i);
+//        }
+//
+//        System.out.println("");
+//    }
 }
