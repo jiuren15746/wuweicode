@@ -8,6 +8,10 @@ import datastructure.tree.radixtree.RadixLongKeyTree;
  * Radix tree的高度是固定的。对于一个long型key，每6bit为一组，拆分为N组N=11，树的最大高度就为N（包括N层中间节点，一层叶子节点）。
  * 因为每次路由的决策数字有6bit，所以一个中间节点有2^6即64个子节点。
  * 所有值都挂在叶子节点上。
+ *
+ * todo 中间节点和叶子节点用不同类型
+ * todo 叶子节点以双向链表串联
+ * todo 保存最小和最大叶子节点
  */
 public class RadixLongKeyTreeImpl<V> implements RadixLongKeyTree<V> {
 
@@ -47,6 +51,7 @@ public class RadixLongKeyTreeImpl<V> implements RadixLongKeyTree<V> {
     public V find(long key) {
         Node<V> current = root;
         for (int i = 0; i < MAX_HEIGHT && null != current; ++i) {
+            // 取低六位
             byte routeKey = (byte) (key & 0x3F);
             current = ((Node[]) current.childrenOrValue)[routeKey];
             key = (key >>> 6);
