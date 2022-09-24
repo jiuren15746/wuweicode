@@ -38,50 +38,12 @@ class Node {
     }
 
     /**
-     * 在array指定长度范围内，二分查找value所在的位置。如果value不在数组中，返回应该插入的位置。start和end表示搜索范围，左右都包含。
-     * 返回的位置可能在数组下标范围之外。
-     */
-    public int binarySearch(long target) {
-        int start = 0;
-        int end = degree - 1;
-
-        while (start <= end) {
-            // 每次调整范围后，target与新范围的左右边界值比较，非常重要！！！
-            if (target <= keys[start]) {
-                return start;
-            }
-            if (target > keys[end]) {
-                return end + 1;
-            }
-            int midPos = (start + end) >> 1;
-            long diff = target - keys[midPos];
-            if (diff == 0) {
-                return midPos;
-            } else if (diff > 0) {
-                start = midPos + 1;
-            } else {
-                end = midPos - 1;
-            }
-        }
-        throw new RuntimeException("Impossible");
-    }
-
-    /**
      *
      * @param key
      * @param value
      */
     public void insert(long key, Object value) {
-        if (degree == 0) {
-            keys[0] = key;
-            childrenOrData[0] = value;
-            degree++;
-            return;
-        }
-
-        final int pos = binarySearch(key);
-
-        // 插入到结尾后面
+        final int pos = degree == 0 ? 0 : binarySearch(key);
         if (pos == degree) {
             keys[degree] = key;
             childrenOrData[degree] = value;
@@ -123,6 +85,35 @@ class Node {
             parent.insert(keys[0], this);
         }
         parent.insert(newNode.keys[0], newNode);
+    }
+
+    /**
+     * 在array指定长度范围内，二分查找value所在的位置。如果value不在数组中，返回应该插入的位置。start和end表示搜索范围，左右都包含。
+     * 返回的位置可能在数组下标范围之外。
+     */
+    private int binarySearch(long target) {
+        int start = 0;
+        int end = degree - 1;
+
+        while (start <= end) {
+            // 每次调整范围后，target与新范围的左右边界值比较，非常重要！！！
+            if (target <= keys[start]) {
+                return start;
+            }
+            if (target > keys[end]) {
+                return end + 1;
+            }
+            int midPos = (start + end) >> 1;
+            long diff = target - keys[midPos];
+            if (diff == 0) {
+                return midPos;
+            } else if (diff > 0) {
+                start = midPos + 1;
+            } else {
+                end = midPos - 1;
+            }
+        }
+        throw new RuntimeException("Impossible");
     }
 
 }
