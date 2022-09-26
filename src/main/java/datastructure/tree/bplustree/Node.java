@@ -101,9 +101,10 @@ class Node {
         parent.insert(newNode.keys[0], newNode);
         newNode.parent = parent;
 
-        // 维护pre, next, parent
-        this.next = newNode;
+        // 维护pre, next
         newNode.pre = this;
+        newNode.next = this.next;
+        this.next = newNode;
     }
 
     protected int binarySearch(long target) {
