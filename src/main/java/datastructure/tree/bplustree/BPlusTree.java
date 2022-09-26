@@ -8,6 +8,8 @@ import static org.testng.Assert.assertEquals;
 public class BPlusTree<V> {
     @Getter
     private final int maxDegree;
+    @Getter
+    private final int minDegree;
 
     @Getter
     protected Node root;
@@ -15,6 +17,7 @@ public class BPlusTree<V> {
 
     public BPlusTree(int maxDegree) {
         this.maxDegree = maxDegree;
+        this.minDegree = maxDegree / 2;
         this.root = new Node(this, true);
     }
 

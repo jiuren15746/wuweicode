@@ -65,6 +65,11 @@ class Node {
         splitIfNecessary();
     }
 
+    /**
+     * 因为每个节点的第一个key晋升作为parent的key。所以节点第一个key变更后，要更新父节点的key。
+     * @param oldKey
+     * @param newKey
+     */
     private void onFirstKeyChanged(long oldKey, long newKey) {
         for (Node node = parent; node != null;) {
             int pos = node.binarySearch(oldKey);
