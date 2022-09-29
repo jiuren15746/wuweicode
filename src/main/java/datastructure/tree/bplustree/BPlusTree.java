@@ -1,9 +1,16 @@
 package datastructure.tree.bplustree;
 
 import lombok.Getter;
+import org.testng.collections.Lists;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static org.testng.Assert.assertEquals;
-
+import static org.testng.Assert.assertTrue;
 
 public class BPlusTree<V> {
     @Getter
@@ -28,6 +35,49 @@ public class BPlusTree<V> {
         leaf.insertAt(pos, key, value);
     }
 
+    public void print() {
+        for (List<Node> visitQueue = Lists.newArrayList(root); visitQueue.size() > 0;) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = visitQueue.size(); i > 0; --i) {
+                Node node = visitQueue.remove(0);
+                sb.append(node).append("  ");
+                if (!node.isLeaf()) {
+                    for (int d = 0; d < node.getDegree(); d++) {
+                        visitQueue.add((Node)node.getChildrenOrData()[d]);
+                    }
+                }
+            }
+            System.out.println("=== " + sb.toString());
+        }
+    }
+
+    public void checkParentRelationship() {
+        checkEachNode(BPlusTree::checkChildRelationship);
+    }
+
+    private static void checkChildRelationship(Node node) {
+        if (!node.isLeaf()) {
+            for (int i = 0; i < node.getDegree(); ++i) {
+                Node child = (Node) node.getChildrenOrData()[i];
+                assertTrue(child.getParent() == node);
+            }
+        }
+    }
+
+    private void checkEachNode(Consumer<Node> visitNodeLogic) {
+        for (List<Node> visitQueue = Lists.newArrayList(root); visitQueue.size() > 0;) {
+            for (int i = visitQueue.size(); i > 0; --i) {
+                Node node = visitQueue.remove(0);
+                if (!node.isLeaf()) {
+                    for (int d = 0; d < node.getDegree(); d++) {
+                        visitQueue.add((Node)node.getChildrenOrData()[d]);
+                    }
+                }
+                visitNodeLogic.accept(node);
+            }
+        }
+    }
+
     /**
      * 查找key对应的位置。
      * @param key
@@ -44,21 +94,4 @@ public class BPlusTree<V> {
         return new Object[] {node, pos};
     }
 
-
-
-    public static void main(String[] args) {
-        final int maxDegree = 4;
-        BPlusTree tree = new BPlusTree(maxDegree);
-        assertEquals(tree.getRoot().getDegree(), 0);
-
-        long[] array = {8, 20, 10, 6, 30};
-        for (long key : array) {
-            tree.insert(key, "" + key);
-        }
-
-        assertEquals(tree.getRoot().getDegree(), 2);
-
-        // todo 插入3，查找位置
-        tree.insert(3, "" + 3);
-    }
 }

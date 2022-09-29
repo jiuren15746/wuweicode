@@ -1,9 +1,12 @@
 package datastructure.tree.bplustree;
 
+import datastructure.array.algo.binarysearch.BinarySearch;
 import lombok.Data;
 
 /**
  * 中间节点和叶子节点结构相同。
+ * 要点：
+ * # 父子节点之间有双向引用。
  */
 @Data
 class Node {
@@ -47,6 +50,8 @@ class Node {
      * @param value
      */
     protected void insertAt(int pos, long key, Object value) {
+        System.out.println("insert " + key + " to " + this);
+
         if (pos == degree) {
             keys[degree] = key;
             childrenOrData[degree] = value;
@@ -78,10 +83,15 @@ class Node {
         }
     }
 
+    /**
+     * 如果节点degree>=maxDegree，对节点进行拆分。
+     */
     private void splitIfNecessary() {
         if (degree <= tree.getMaxDegree()) {
             return;
         }
+
+        System.out.print("Before split: " + this);
 
         // split new Node
         int newDegree = degree >> 1;
@@ -91,6 +101,17 @@ class Node {
         System.arraycopy(childrenOrData, newDegree, newNode.childrenOrData, 0, newNodeDegree);
         newNode.degree = newNodeDegree;
         this.degree = newDegree;
+
+        // populate children
+        for (int i = degree; i < keys.length; ++i) {
+            keys[i] = 0;
+            if (!isLeaf) {
+                ((Node) childrenOrData[i]).parent = newNode;
+            }
+            childrenOrData[i] = null;
+        }
+
+        System.out.println(", after split: " + this + ", " + newNode);
 
         // populate parent relationship
         if (null == parent) {
@@ -108,33 +129,19 @@ class Node {
     }
 
     protected int binarySearch(long target) {
-        return binarySearch2(keys, 0, degree - 1, target);
+        return BinarySearch.binarySearch(keys, 0, degree - 1, target);
     }
 
-    /**
-     * 在array指定长度范围内，二分查找target所在位置或应该插入的位置。start和end表示搜索范围，左右都包含。
-     * 返回的位置可能在数组下标范围之外。
-     */
-    protected static int binarySearch2(long[] array, int start, int end, long target) {
-        while (start <= end) {
-            // 每次调整范围后，target与新范围的左右边界值比较，非常重要！！！
-            if (target <= array[start]) {
-                return start;
-            }
-            if (target > array[end]) {
-                return end + 1;
-            }
-            int midPos = (start + end) >> 1;
-            long diff = target - array[midPos];
-            if (diff == 0) {
-                return midPos;
-            } else if (diff > 0) {
-                start = midPos + 1;
-            } else {
-                end = midPos - 1;
-            }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(isLeaf ? "L[" : "[");
+        for (int i = 0; i < degree; ++i) {
+            sb.append(keys[i]).append(",");
         }
-        throw new RuntimeException("Impossible");
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append("]");
+        return sb.toString();
     }
 
 }
