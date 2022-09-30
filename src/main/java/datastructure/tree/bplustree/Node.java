@@ -96,36 +96,36 @@ class Node {
         // split new Node
         int newDegree = degree >> 1;
         int newNodeDegree = degree - newDegree;
-        Node newNode = new Node(tree, isLeaf);
-        System.arraycopy(keys, newDegree, newNode.keys, 0, newNodeDegree);
-        System.arraycopy(childrenOrData, newDegree, newNode.childrenOrData, 0, newNodeDegree);
-        newNode.degree = newNodeDegree;
+        Node siblingNode = new Node(tree, isLeaf);
+        System.arraycopy(keys, newDegree, siblingNode.keys, 0, newNodeDegree);
+        System.arraycopy(childrenOrData, newDegree, siblingNode.childrenOrData, 0, newNodeDegree);
+        siblingNode.degree = newNodeDegree;
         this.degree = newDegree;
 
         // populate children
         for (int i = degree; i < keys.length; ++i) {
             keys[i] = 0;
             if (!isLeaf) {
-                ((Node) childrenOrData[i]).parent = newNode;
+                ((Node) childrenOrData[i]).parent = siblingNode;
             }
             childrenOrData[i] = null;
         }
 
-        System.out.println(", after split: " + this + ", " + newNode);
+        System.out.println(", after split: " + this + ", " + siblingNode);
 
         // populate parent relationship
         if (null == parent) {
-            newNode.parent = parent = new Node(tree, false);
+            siblingNode.parent = parent = new Node(tree, false);
             tree.root = parent;
             parent.insert(keys[0], this);
         }
-        parent.insert(newNode.keys[0], newNode);
-        newNode.parent = parent;
+        parent.insert(siblingNode.keys[0], siblingNode);
+        siblingNode.parent = parent;
 
         // 维护pre, next
-        newNode.pre = this;
-        newNode.next = this.next;
-        this.next = newNode;
+        siblingNode.pre = this;
+        siblingNode.next = this.next;
+        this.next = siblingNode;
     }
 
     protected int binarySearch(long target) {

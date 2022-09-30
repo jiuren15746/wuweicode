@@ -15,7 +15,7 @@ public class BPlusTreeTest {
         for (long key : array) {
             System.out.println("Insert " + key);
             tree.insert(key, "" + key);
-            tree.checkParentRelationship();
+            tree.checkNodeRelationship();
         }
 //        tree.print();
 //
