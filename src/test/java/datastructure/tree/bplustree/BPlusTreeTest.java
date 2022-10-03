@@ -13,11 +13,13 @@ public class BPlusTreeTest {
         BPlusTree tree = new BPlusTree(maxDegree);
 
         for (long key : array) {
-            System.out.println("Insert " + key);
             tree.insert(key, "" + key);
             tree.checkNodeRelationship();
         }
-//        tree.print();
+        tree.print();
+
+        tree.delete(91);
+        tree.print();
 //
 //        tree.insert(40, "40");
 //        tree.insert(41, "41");

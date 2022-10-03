@@ -43,15 +43,21 @@ class Node {
         insertAt(pos, key, value);
     }
 
+    protected Object delete(long key) {
+        int pos = degree == 0 ? 0 : binarySearch(key);
+        return deleteAt(pos);
+    }
+
     /**
      * 在指定位置插入key和value。
      * @param pos 插入位置下标
      * @param key
-     * @param value
+     * @param value 如果是中间节点，value类型为Node；否则value是其他数据类型。
      */
     protected void insertAt(int pos, long key, Object value) {
         System.out.println("insert " + key + " to " + this);
 
+        // insert after tail
         if (pos == degree) {
             keys[degree] = key;
             childrenOrData[degree] = value;
@@ -67,7 +73,38 @@ class Node {
         }
         degree++;
 
+        // populate child relationship
+        if (!isLeaf) {
+            ((Node)value).parent = this;
+        }
+
         splitIfNecessary();
+    }
+
+    /**
+     * 在指定位置删除key。
+     * @param pos 位置下标
+     */
+    protected Object deleteAt(int pos) {
+        long oldKey = keys[pos];
+        Object oldValue = childrenOrData[pos];
+
+        // delete at tail
+        if (pos == degree - 1) {
+            keys[degree - 1] = 0;
+            childrenOrData[degree - 1] = null;
+        } else {
+            System.arraycopy(keys, pos + 1, keys, pos, degree - pos - 1);
+            System.arraycopy(childrenOrData, pos + 1, childrenOrData, pos, degree - pos - 1);
+        }
+        degree--;
+
+        if (pos == 0) {
+            onFirstKeyChanged(oldKey, keys[0]);
+        }
+
+        borrowOrMergeIfNecessary();
+        return oldValue;
     }
 
     /**
@@ -84,7 +121,7 @@ class Node {
     }
 
     /**
-     * 如果节点degree>=maxDegree，对节点进行拆分。
+     * 如果节点degree>maxDegree，对节点进行拆分。
      */
     private void splitIfNecessary() {
         if (degree <= tree.getMaxDegree()) {
@@ -93,7 +130,7 @@ class Node {
 
         System.out.print("Before split: " + this);
 
-        // split new Node
+        // new sibling Node
         int newDegree = degree >> 1;
         int newNodeDegree = degree - newDegree;
         Node siblingNode = new Node(tree, isLeaf);
@@ -101,6 +138,18 @@ class Node {
         System.arraycopy(childrenOrData, newDegree, siblingNode.childrenOrData, 0, newNodeDegree);
         siblingNode.degree = newNodeDegree;
         this.degree = newDegree;
+
+        // populate pre/next
+        siblingNode.pre = this;
+        siblingNode.next = this.next;
+        this.next = siblingNode;
+
+        // populate parent relationship
+        if (null == parent) {
+            tree.root = new Node(tree, false);
+            tree.root.insert(keys[0], this);
+        }
+        parent.insert(siblingNode.keys[0], siblingNode);
 
         // populate children
         for (int i = degree; i < keys.length; ++i) {
@@ -112,20 +161,48 @@ class Node {
         }
 
         System.out.println(", after split: " + this + ", " + siblingNode);
+    }
 
-        // populate parent relationship
-        if (null == parent) {
-            siblingNode.parent = parent = new Node(tree, false);
-            tree.root = parent;
-            parent.insert(keys[0], this);
+    /**
+     * 如果节点degree<minDegree，对节点进行拆分。
+     */
+    private void borrowOrMergeIfNecessary() {
+        if (degree >= tree.getMinDegree()) {
+            return;
         }
-        parent.insert(siblingNode.keys[0], siblingNode);
-        siblingNode.parent = parent;
 
-        // 维护pre, next
-        siblingNode.pre = this;
-        siblingNode.next = this.next;
-        this.next = siblingNode;
+        // try borrow one data from sibling node
+        if (pre != null && pre.parent == parent && pre.degree > tree.getMinDegree()) {
+            // todo borrow
+            insertAt(0, pre.keys[pre.keys.length - 1], pre.childrenOrData[pre.keys.length - 1]);
+            return;
+        }
+        if (next != null && next.parent == parent && next.degree > tree.getMinDegree()) {
+            // todo borrow
+            insertAt(degree, next.keys[0], next.childrenOrData[0]);
+            return;
+        }
+
+        // merge with sibling
+        if (pre != null && pre.parent == parent) {
+            // merge
+            System.arraycopy(keys, 0, pre.keys, pre.degree, degree);
+            System.arraycopy(childrenOrData, 0, pre.childrenOrData, pre.degree, degree);
+            pre.degree += degree;
+
+            // populate pre/next
+            if (pre != null) {
+                pre.next = this.next;
+            }
+            if (next != null) {
+                next.pre = this.pre;
+            }
+            this.pre = this.next = null;
+
+            // delete index from parent
+            parent.delete(keys[0]);
+        }
+
     }
 
     protected int binarySearch(long target) {
@@ -137,9 +214,11 @@ class Node {
         StringBuilder sb = new StringBuilder();
         sb.append(isLeaf ? "L[" : "[");
         for (int i = 0; i < degree; ++i) {
-            sb.append(keys[i]).append(",");
+            sb.append(keys[i]);
+            if (i < degree - 1) {
+                sb.append(",");
+            }
         }
-        sb.deleteCharAt(sb.length() - 1);
         sb.append("]");
         return sb.toString();
     }
