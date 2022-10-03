@@ -17,7 +17,7 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
     /**
      * 头结点不存放具体数据。高度等于跳表最大高度。这个非常重要！！！
      */
-    private final Node<V> head;
+    private final SkipNodeV5<V> head;
 
     /**
      * 用于实现升序或降序
@@ -30,24 +30,24 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
     public SkipListV5Impl(Comparator<Long> comparator) {
         this.maxLevel = 9;
         this.comparator = comparator;
-        this.head = new Node<>(-1, null, maxLevel);
+        this.head = new SkipNodeV5<>(-1, null, maxLevel);
     }
 
     public SkipListV5Impl(int maxLevel, Comparator<Long> comparator) {
         this.maxLevel = maxLevel;
         this.comparator = comparator;
-        this.head = new Node<>(-1, null, maxLevel);
+        this.head = new SkipNodeV5<>(-1, null, maxLevel);
     }
 
     @Override
     public V getFirst() {
-        Node<V> firstNode = head.getNext(0);
+        SkipNodeV5<V> firstNode = head.getNext(0);
         return firstNode != null ? firstNode.value : null;
     }
 
     @Override
     public void removeFirst() {
-        Node<V> firstNode = head.getNext(0);
+        SkipNodeV5<V> firstNode = head.getNext(0);
         if (null == firstNode) {
             return;
         }
@@ -59,16 +59,16 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
 
     @Override
     public V find(long key, AtomicInteger counter) {
-        List<Node<V>> path = find0(key, counter);
-        Node<V> lastNode = path.get(path.size() - 1);
+        List<SkipNodeV5<V>> path = find0(key, counter);
+        SkipNodeV5<V> lastNode = path.get(path.size() - 1);
         return lastNode.key == key ? lastNode.value : null;
     }
 
     @Override
     public boolean insert(long key, V value) {
         // 查找插入位置
-        List<Node<V>> path = find0(key, null);
-        Node<V> lastNode = path.get(path.size() - 1);
+        List<SkipNodeV5<V>> path = find0(key, null);
+        SkipNodeV5<V> lastNode = path.get(path.size() - 1);
 
         if (lastNode.key == key) {
             return false;
@@ -81,8 +81,8 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
     @Override
     public V insertIfAbsent(long key, V value) {
         // 查找插入位置
-        List<Node<V>> path = find0(key, null);
-        Node<V> lastNode = path.get(path.size() - 1);
+        List<SkipNodeV5<V>> path = find0(key, null);
+        SkipNodeV5<V> lastNode = path.get(path.size() - 1);
 
         if (lastNode.key == key) {
             return lastNode.value;
@@ -101,7 +101,7 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
     public void print() {
         for (int lv = maxLevel; lv >= 0; lv--) {
             long count = 0;
-            for (Node<V> current = head.getNext(lv); current != null; current = current.getNext(lv)) {
+            for (SkipNodeV5<V> current = head.getNext(lv); current != null; current = current.getNext(lv)) {
                 count++;
             }
             System.out.println("At level=" + lv + ", list size = " + count);
@@ -114,11 +114,11 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
      * 如果跳表中没有该节点，返回目标位置的前一个节点的查找路径。
      * @return 每层返回一个节点。共 MAX_LEVEL + 1个。
      */
-    private List<Node<V>> find0(long target, AtomicInteger counter) {
-        List<Node<V>> path = Lists.newArrayList();
+    private List<SkipNodeV5<V>> find0(long target, AtomicInteger counter) {
+        List<SkipNodeV5<V>> path = Lists.newArrayList();
         // 这里从逻辑上应该有两层循环：外层从高level向低level循环。内层循环在一个level内向右循环。只是代码上做了一点优化，只用了一层循环来实现。
-        Node<V> curNode = head;
-        Node<V> nextNode;
+        SkipNodeV5<V> curNode = head;
+        SkipNodeV5<V> nextNode;
         for (int lv = maxLevel; lv >= 0; ) {
             // 向右走
             if ((nextNode = curNode.getNext(lv)) != null && compare(nextNode, target, counter) <= 0) {
@@ -135,13 +135,13 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
     /**
      * 创建节点并插入
      */
-    private void insert0(long key, V value, List<Node<V>> path) {
+    private void insert0(long key, V value, List<SkipNodeV5<V>> path) {
         int level = getRandomLevel();
-        Node<V> newNode = new Node<>(key, value, level);
+        SkipNodeV5<V> newNode = new SkipNodeV5<>(key, value, level);
         // 维护每一层的链表
         for (int i = 0; i <= level; ++i) {
-            Node<V> pre = path.get(path.size() - 1 - i);
-            Node<V> next = pre.getNext(i);
+            SkipNodeV5<V> pre = path.get(path.size() - 1 - i);
+            SkipNodeV5<V> next = pre.getNext(i);
             pre.setNext(i, newNode);
             newNode.setNext(i, next);
             newNode.setPre(i, pre);
@@ -163,7 +163,7 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
         return level;
     }
 
-    private int compare(Node<V> node, long target, AtomicInteger counter) {
+    private int compare(SkipNodeV5<V> node, long target, AtomicInteger counter) {
         if (node == this.head) {
             return -1;
         } else {
