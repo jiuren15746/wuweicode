@@ -70,17 +70,7 @@ class SkipNodeV6<V> {
         }
         size++;
 
-        // split if full
-        if (size > skipList.maxDegree) {
-            // 指向分裂的起始位置
-            int pos = size >> 1;
-            SkipNodeV6 newNode = new SkipNodeV6(skipList, skipList.getRandomLevel());
-            System.arraycopy(keys, pos, newNode.keys, 0, size - pos);
-            System.arraycopy(values, pos, newNode.values, 0, size - pos);
-            newNode.size = size - pos;
-            this.size = pos;
-            newNode.maintainPreNext(path);
-        }
+        splitIfNecessary(path);
         return true;
     }
 
@@ -107,6 +97,20 @@ class SkipNodeV6<V> {
                 next.setPre(lv, this);
             }
         }
+    }
+
+    private void splitIfNecessary(List<SkipNodeV6<V>> path) {
+        if (size <= skipList.maxDegree) {
+            return;
+        }
+        // 指向分裂的起始位置
+        int pos = size >> 1;
+        SkipNodeV6 newNode = new SkipNodeV6(skipList, skipList.getRandomLevel());
+        System.arraycopy(keys, pos, newNode.keys, 0, size - pos);
+        System.arraycopy(values, pos, newNode.values, 0, size - pos);
+        newNode.size = size - pos;
+        this.size = pos;
+        newNode.maintainPreNext(path);
     }
 
     public SkipNodeV6<V> getNext(int level) {

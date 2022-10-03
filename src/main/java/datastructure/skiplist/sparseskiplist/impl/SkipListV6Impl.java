@@ -73,6 +73,11 @@ public class SkipListV6Impl<V> implements SkipListV6<V> {
     }
 
     @Override
+    public V delete(long key) {
+        return null;
+    }
+
+    @Override
     public V find(long key) {
         // 查找插入位置
         List<SkipNodeV6<V>> path = find0(key);

@@ -28,12 +28,12 @@ public interface SkipListV6<V> {
      */
     boolean insert(long key, V value);
 
-//    /**
-//     * 删除key.
-//     * @param key
-//     * @return
-//     */
-//    V delete(long key);
+    /**
+     * 删除key.
+     * @param key
+     * @return
+     */
+    V delete(long key);
 
     /**
      * 查找key对应的节点的value. 查不到返回null.
