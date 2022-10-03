@@ -1,12 +1,14 @@
 package datastructure.skiplist.sparseskiplist.impl;
 
 import datastructure.skiplist.sparseskiplist.SkipListV6;
+import datastructure.skiplist.v5.SkipListV5;
+import org.testng.Assert;
 import org.testng.collections.Lists;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.testng.Assert.assertEquals;
 
 public class SkipListV6Impl<V> implements SkipListV6<V> {
 
@@ -44,8 +46,18 @@ public class SkipListV6Impl<V> implements SkipListV6<V> {
     @Override
     public boolean insert(long key, V value) {
         // 查找插入位置
-        List<SkipNodeV6<V>> path = find0(key, null);
-        SkipNodeV6<V> lastNode = path.get(path.size() - 1);
+        List<SkipNodeV6<V>> path = find0(key);
+
+        // 如果插入的key比第一个节点的keys[0]小，path全部都是head节点。如果不做调整，将会在第一个节点前插入一个新节点，新节点只有一个key。
+        // 为了让节点包含尽可能多的key，调整path，使插入到第一个节点。
+        for (int lv = 0; lv <= maxLevel; ++lv) {
+            SkipNodeV6<V> node = path.get(lv);
+            if (node == head && node.getNext(lv) != null) {
+                path.set(lv, node.getNext(lv));
+            }
+        }
+
+        SkipNodeV6<V> lastNode = path.get(0);
 
         if (lastNode == head) {
             SkipNodeV6<V> newNode = new SkipNodeV6<>(this, getRandomLevel());
@@ -59,8 +71,11 @@ public class SkipListV6Impl<V> implements SkipListV6<V> {
     }
 
     @Override
-    public V find(long key, AtomicInteger compareCount) {
-        return null;
+    public V find(long key) {
+        // 查找插入位置
+        List<SkipNodeV6<V>> path = find0(key);
+        SkipNodeV6<V> lastNode = path.get(0);
+        return lastNode.find(key);
     }
 
     @Override
@@ -76,7 +91,13 @@ public class SkipListV6Impl<V> implements SkipListV6<V> {
     @Override
     public void print() {
         for (int lv = maxLevel; lv >= 0; lv--) {
-            System.out.print("===lv" + maxLevel);
+            System.out.print("===lv" + lv);
+            int count = 0;
+            for (SkipNodeV6 node = head; node != null; node = node.getNext(lv)) {
+                count++;
+            }
+            System.out.print(", node_count=" + count);
+
             for (SkipNodeV6 node = head; node != null; node = node.getNext(lv)) {
                 System.out.print(" " + node);
             }
@@ -88,28 +109,19 @@ public class SkipListV6Impl<V> implements SkipListV6<V> {
      * 在跳表中查找元素。返回查找路径。
      * 如果跳表中有该节点，返回该节点的查找路径。
      * 如果跳表中没有该节点，返回目标位置的前一个节点的查找路径。
-     * @return 每层返回一个节点。共 MAX_LEVEL + 1个。
+     * @return 节点数组。共 MAX_LEVEL + 1个。[maxLevel]表示最高层找到的节点。[maxLevel-1]表示最高层下一层找到的节点。[0]表示在最底层找到的节点。
      */
-    private List<SkipNodeV6<V>> find0(long target, AtomicInteger counter) {
-        List<SkipNodeV6<V>> path = Lists.newArrayList();
+    private List<SkipNodeV6<V>> find0(long target) {
+        List<SkipNodeV6<V>> path = Lists.newArrayList(maxLevel+1);
         // 这里从逻辑上应该有两层循环：外层从高level向低level循环。内层循环在一个level内向右循环。只是代码上做了一点优化，只用了一层循环来实现。
         SkipNodeV6<V> curNode = head;
         SkipNodeV6<V> nextNode;
         for (int lv = maxLevel; lv >= 0; ) {
-            int compareResult = compareFirst(curNode, target);
-            // 向右走
-            if (compareResult < 0 && (nextNode = curNode.getNext(lv)) != null) {
+            if ((nextNode = curNode.getNext(lv)) != null && compareFirst(nextNode, target) <= 0) {
+                // 向右走: 有next节点 && nextNode.keys[0] <= target
                 curNode = nextNode;
-            }
-            // 走过了，退回去，然后到下一层级
-            else if (compareResult > 0) {
-                curNode = curNode.getPre(lv);
-                path.add(curNode);
-                lv--;
-            }
-            // 相等或没有nextNode，转下一层
-            else {
-                path.add(curNode);
+            } else {
+                path.add(0, curNode);
                 lv--;
             }
         }
@@ -135,20 +147,37 @@ public class SkipListV6Impl<V> implements SkipListV6<V> {
      */
     protected int getRandomLevel() {
         int level = 0;
-        while ((System.nanoTime() & 0xFF) % 5 == 0 && level < maxLevel) {
-            level++;
+        for (; level < maxLevel && (System.nanoTime() & 0xFF) % 5 == 0; level++) {
         }
         return level;
     }
 
 
     public static void main(String[] args) {
+//        SkipListV6<Object> skipList = createSkipList(true);
+//        for (long i = 0; i < 100; ++i) {
+//            long key = (long) (Math.random() * 10000L);
+//            skipList.insert(key, "" + key);
+//            Assert.assertEquals(skipList.find(key), "" + key);
+//        }
+//        skipList.print();
+
         SkipListV6<Object> skipList = createSkipList(true);
-        for (long i = 0; i < 100; ++i) {
-            long key = (long) (Math.random() * 10000L);
+
+        long start = System.currentTimeMillis();
+        for (long key = 1; key <= 1000000L; ++key) {
             skipList.insert(key, "" + key);
         }
-        skipList.print();
+        System.out.println((System.currentTimeMillis() - start) + " ms");
+        assertEquals(skipList.size(), 1000000);
+
+//        skipList.print();
+
+//        SkipListV6<Object> skipList = createSkipList(true);
+//        skipList.insert(200, "" + 200);
+//        skipList.insert(100, "" + 100);
+//        skipList.print();
+
 //        assertEquals(skipList.size(), 100);
 //
 //        for (long key = 1; key <= 100; ++key) {

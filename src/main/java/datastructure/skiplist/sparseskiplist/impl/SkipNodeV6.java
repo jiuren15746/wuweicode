@@ -84,12 +84,21 @@ class SkipNodeV6<V> {
         return true;
     }
 
+    protected V find(long key) {
+        int pos = BinarySearch.binarySearch(keys, 0, size - 1, key);
+        if (keys[pos] == key) {
+            return (V) values[pos];
+        } else {
+            return null;
+        }
+    }
+
     /**
      * 维护每一层的pre/next
      */
     protected void maintainPreNext(List<SkipNodeV6<V>> path) {
         for (int lv = 0; lv <= getLevel(); ++lv) {
-            SkipNodeV6<V> pre = path.get(path.size() - 1 - lv);
+            SkipNodeV6<V> pre = path.get(lv);
             SkipNodeV6<V> next = pre.getNext(lv);
             this.setPre(lv, pre);
             this.setNext(lv, next);
@@ -99,8 +108,6 @@ class SkipNodeV6<V> {
             }
         }
     }
-
-
 
     public SkipNodeV6<V> getNext(int level) {
         return level < next.length ? next[level] : null;

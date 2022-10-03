@@ -28,12 +28,19 @@ public interface SkipListV6<V> {
      */
     boolean insert(long key, V value);
 
+//    /**
+//     * 删除key.
+//     * @param key
+//     * @return
+//     */
+//    V delete(long key);
+
     /**
      * 查找key对应的节点的value. 查不到返回null.
      * @param key 要查找的key
-     * @param compareCount 比较次数，用于了解查找性能
+//     * @param compareCount 比较次数，用于了解查找性能
      */
-    V find(long key, AtomicInteger compareCount);
+    V find(long key);
 
     /**
      * 查找或插入。

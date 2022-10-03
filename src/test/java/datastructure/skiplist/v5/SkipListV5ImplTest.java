@@ -1,17 +1,13 @@
 package datastructure.skiplist.v5;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-
 import datastructure.skiplist.v5.impl.SkipListV5Impl;
+import org.testng.annotations.Test;
+
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.testng.annotations.Test;
-import java.util.Scanner;
-
-import java.util.ArrayList;
-import java.util.List;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 
 public class SkipListV5ImplTest {
@@ -95,9 +91,12 @@ public class SkipListV5ImplTest {
     public void asc_insert_1_to_100w() {
         SkipListV5<Object> skipList = createSkipList(true);
 
+        long start = System.currentTimeMillis();
         for (long key = 1; key <= 1000000L; ++key) {
             skipList.insert(key, "" + key);
         }
+        System.out.println((System.currentTimeMillis() - start) + " ms");
+
         assertEquals(skipList.size(), 1000000);
 
         skipList.print();
@@ -143,61 +142,5 @@ public class SkipListV5ImplTest {
         };
         return new SkipListV5Impl<>(comparator);
     }
-
-
-        public static void main(String[] args) {
-            // Scanner input=new Scanner(System.in);
-            // String str=input.next();
-            System.out.println("hello world");
-
-            Node node15 = new Node(15, null, null);
-            Node node7 = new Node(7, null, null);
-            Node node20 = new Node(20, node15, node7);
-            Node node9 = new Node(9, null, null);
-            Node root = new Node(3, node9, node20);
-
-            List<List<Integer>> path = levelOrderTraverse(root);
-            System.out.println(path);
-        }
-
-        public static List<List<Integer>> levelOrderTraverse(Node root) {
-            List<Node> traverseQueue = new ArrayList<>();
-            traverseQueue.add(root);
-            List<List<Integer>> result = new ArrayList<>();
-
-            for (int level = 0; traverseQueue.size() > 0; level++) {
-                boolean forward = (level % 2 == 0);
-                List<Integer> inLevelPath = new ArrayList<>();
-                for (int i = traverseQueue.size(); i > 0; --i) {
-                    Node current = forward ? traverseQueue.remove(0) : traverseQueue.remove(i - 1);
-                    if (current.left != null) {
-                        traverseQueue.add(current.left);
-                    }
-                    if (current.right != null) {
-                        traverseQueue.add(current.right);
-                    }
-                    inLevelPath.add(current.value);
-                }
-                result.add(inLevelPath);
-            }
-            return result;
-        }
-
-        public static class Node {
-            private int value;
-            private Node left;
-            private Node right;
-
-            public Node(int value, Node left, Node right) {
-                this.value = value;
-                this.left = left;
-                this.right = right;
-            }
-
-            public String toString() {
-                return "" + value;
-            }
-        }
-
 
 }

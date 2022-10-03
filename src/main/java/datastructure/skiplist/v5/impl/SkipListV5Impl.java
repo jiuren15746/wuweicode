@@ -99,7 +99,7 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
 
     @Override
     public void print() {
-        for (int lv = 0; lv <= maxLevel; ++lv) {
+        for (int lv = maxLevel; lv >= 0; lv--) {
             long count = 0;
             for (Node<V> current = head.getNext(lv); current != null; current = current.getNext(lv)) {
                 count++;
@@ -120,14 +120,11 @@ public class SkipListV5Impl<V> implements SkipListV5<V> {
         Node<V> curNode = head;
         Node<V> nextNode;
         for (int lv = maxLevel; lv >= 0; ) {
-            int compareResult = compare(curNode, target, counter);
-            if (compareResult < 0 && (nextNode = curNode.getNext(lv)) != null) { // 向右走
+            // 向右走
+            if ((nextNode = curNode.getNext(lv)) != null && compare(nextNode, target, counter) <= 0) {
                 curNode = nextNode;
-            } else if (compareResult > 0) { // 走过了，退回去
-                curNode = curNode.getPre(lv);
-                path.add(curNode);
-                lv--;
-            } else { // 向右走不动了，转下一层
+            } else {
+                // 走不动了，转下一层
                 path.add(curNode);
                 lv--;
             }
