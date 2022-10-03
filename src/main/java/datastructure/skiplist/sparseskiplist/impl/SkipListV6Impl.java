@@ -1,8 +1,6 @@
 package datastructure.skiplist.sparseskiplist.impl;
 
 import datastructure.skiplist.sparseskiplist.SkipListV6;
-import datastructure.skiplist.v5.SkipListV5;
-import org.testng.Assert;
 import org.testng.collections.Lists;
 
 import java.util.Comparator;
@@ -10,6 +8,10 @@ import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
+/**
+ * 经过测量，maxDegree=256时，插入性能最好。
+ * @param <V>
+ */
 public class SkipListV6Impl<V> implements SkipListV6<V> {
 
     public static final int MAX_DEGREE = 16;

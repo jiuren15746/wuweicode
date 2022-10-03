@@ -122,7 +122,7 @@ public class SkipListV5ImplTest {
             maxCompareCount = count.get() > maxCompareCount ? count.get() : maxCompareCount;
         }
         long duration = System.currentTimeMillis() - start;
-        System.out.println(duration);
+        System.out.println(duration + " ms");
         System.out.println("avg compare count:" + totalCompareCount / 1000000);
         System.out.println("max compare count:" + maxCompareCount);
     }
