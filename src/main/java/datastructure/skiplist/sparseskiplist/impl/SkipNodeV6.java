@@ -74,6 +74,23 @@ class SkipNodeV6<V> {
         return true;
     }
 
+    protected V delete(long key) {
+        int pos = BinarySearch.binarySearch(keys, 0, size - 1, key);
+        if (keys[pos] != key) {
+            return null;
+        }
+        V result = (V) values[pos];
+        if (pos == size - 1) {
+            keys[pos] = 0;
+            values[pos] = null;
+        } else {
+            System.arraycopy(keys, pos + 1, keys, pos, size - pos - 1);
+            System.arraycopy(values, pos + 1, values, pos, size - pos - 1);
+        }
+        size--;
+        return result;
+    }
+
     protected V find(long key) {
         int pos = BinarySearch.binarySearch(keys, 0, size - 1, key);
         if (keys[pos] == key) {

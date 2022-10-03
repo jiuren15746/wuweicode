@@ -11,6 +11,18 @@ import static org.testng.Assert.assertEquals;
 public class SkipListV6ImplTest {
 
     @Test
+    public void delete() {
+        SkipListV6<Object> skipList = createSkipList(true, 128);
+
+        for (long key = 1; key <= 1000000L; ++key) {
+            skipList.insert(key, "" + key);
+        }
+
+        assertEquals(skipList.delete(990000), "" + 990000);
+        assertEquals(skipList.delete(990000), null);
+    }
+
+    @Test
     public void asc_find_1_to_100w() {
         int[] maxDegrees = {16, 32, 64, 128, 256, 512};
         for (int maxDegree : maxDegrees) {

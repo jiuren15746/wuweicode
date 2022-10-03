@@ -74,7 +74,9 @@ public class SkipListV6Impl<V> implements SkipListV6<V> {
 
     @Override
     public V delete(long key) {
-        return null;
+        List<SkipNodeV6<V>> path = find0(key);
+        SkipNodeV6<V> lastNode = path.get(0);
+        return lastNode.delete(key);
     }
 
     @Override
