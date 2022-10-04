@@ -9,7 +9,6 @@ import static org.testng.Assert.assertTrue;
  * 因为每次路由的决策数字有6bit，所以一个中间节点有2^6即64个子节点。
  * 所有值都挂在叶子节点上。
  *
- * todo 中间节点和叶子节点用不同类型
  * todo 叶子节点以双向链表串联
  * todo 保存最小和最大叶子节点
  */
@@ -82,10 +81,7 @@ public class RadixLongKeyTreeImpl<V> implements RadixLongKeyTree<V> {
         Node<V> current = root;
         for (int i = 0; i < MAX_HEIGHT; ++i) {
             byte routeKey = (byte)((key >> (64 - (i + 1) * 6)) & 0x3F);
-            System.out.println("height=" + i + ", routeKey=" + routeKey);
-            if (null == current.values[routeKey]) {
-                current = current.addChild(routeKey);
-            }
+            current = (null != current.values[routeKey]) ? (Node)current.values[routeKey] : current.addChild(routeKey);
         }
         return current;
     }

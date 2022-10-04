@@ -9,9 +9,9 @@ public class RadixLongKeyTreeImplTest {
 
     @Test
     public void testPutAndFind_KeyGreaterThanZero() {
-        long key = 2;
+        long key = System.nanoTime();
         tree.put(key, "" + key);
-        assertEquals(tree.find(key), "2");
+        assertEquals(tree.find(key), "" + key);
     }
 
     @Test
