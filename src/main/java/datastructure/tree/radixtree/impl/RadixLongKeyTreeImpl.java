@@ -5,9 +5,13 @@ import datastructure.tree.radixtree.RadixLongKeyTree;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Radix tree的高度是固定的。对于一个long型key，每6bit为一组，拆分为N组N=11，树的最大高度就为N（包括N层中间节点，一层叶子节点）。
+ * Radix tree的高度是固定的。对于一个long型key，每6bit为一组，拆分为N组N=11，树的最大高度就为N-1。
  * 因为每次路由的决策数字有6bit，所以一个中间节点有2^6即64个子节点。
  * 所有值都挂在叶子节点上。
+ *
+ * Radix tree的特点：
+ * + radix tree不保存key值。
+ * + 不需要B+树的平衡操作，比如节点拆分、节点合并。
  *
  * 经过测试，100w个key的tree，Radix tree查找100w个key。只需要60ms。比起skipList好非常多。
  *
@@ -21,7 +25,7 @@ public class RadixLongKeyTreeImpl<V> implements RadixLongKeyTree<V> {
         private boolean isLeaf;
 
         /**
-         * 节点高度，根节点高度为0. 实际用byte类型也可以。用于截图long类型key的二进制中的一段。
+         * 节点高度，根节点高度为0。叶子节点高度为10。用于截图long类型key的二进制中的一段。
          */
         private int height;
 
