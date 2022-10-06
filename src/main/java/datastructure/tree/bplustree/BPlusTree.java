@@ -27,19 +27,19 @@ public class BPlusTree<V> {
     private final int minDegree;
 
     @Getter
-    protected Node root;
+    protected BPlusNode root;
     //========
 
     public BPlusTree(int maxDegree) {
         this.maxDegree = maxDegree;
         this.minDegree = (int) Math.ceil(maxDegree / 2.0);
-        this.root = new Node(this, true);
+        this.root = new BPlusNode(this, true);
     }
 
     public void insert(long key, V value) {
         System.out.println("Insert " + key);
         Object[] searchResult = findPosition(key);
-        Node leaf = (Node) searchResult[0];
+        BPlusNode leaf = (BPlusNode) searchResult[0];
         int pos = (int) searchResult[1];
         leaf.insertAt(pos, key, value);
     }
@@ -47,7 +47,7 @@ public class BPlusTree<V> {
     public V delete(long key) {
         System.out.println("Delete " + key);
         Object[] searchResult = findPosition(key);
-        Node leaf = (Node) searchResult[0];
+        BPlusNode leaf = (BPlusNode) searchResult[0];
         int pos = (int) searchResult[1];
 
         if (leaf.getKeys()[pos] == key) {
@@ -63,12 +63,12 @@ public class BPlusTree<V> {
      * @return 返回叶子节点以及key在叶子节点的位置或应该插入的位置。
      */
     private Object[] findPosition(long key) {
-        Node node = root;
+        BPlusNode node = root;
         while (!node.isLeaf()) {
             int pos = node.binarySearch(key);
             // !!!对于中间节点，某些情况下需要对二分查找的下标做调整
             pos = (node.getKeys()[pos] == key || pos == 0) ? pos : pos - 1;
-            node = (Node) node.getChildrenOrData()[pos];
+            node = (BPlusNode) node.getChildrenOrData()[pos];
         }
         int pos = node.getDegree() == 0 ? 0 : node.binarySearch(key);
         return new Object[] {node, pos};
@@ -79,14 +79,14 @@ public class BPlusTree<V> {
      */
     public void print() {
         System.out.println("=== print tree");
-        for (List<Node> visitQueue = Lists.newArrayList(root); visitQueue.size() > 0;) {
+        for (List<BPlusNode> visitQueue = Lists.newArrayList(root); visitQueue.size() > 0;) {
             StringBuilder sb = new StringBuilder();
             for (int i = visitQueue.size(); i > 0; --i) {
-                Node node = visitQueue.remove(0);
+                BPlusNode node = visitQueue.remove(0);
                 sb.append(node).append("  ");
                 if (!node.isLeaf()) {
                     for (int d = 0; d < node.getDegree(); d++) {
-                        visitQueue.add((Node)node.getChildrenOrData()[d]);
+                        visitQueue.add((BPlusNode)node.getChildrenOrData()[d]);
                     }
                 }
             }
@@ -98,13 +98,13 @@ public class BPlusTree<V> {
         checkEachNode(BPlusTree::checkNodeRelationship);
     }
 
-    private void checkEachNode(Consumer<Node> visitNodeLogic) {
-        for (List<Node> visitQueue = Lists.newArrayList(root); visitQueue.size() > 0;) {
+    private void checkEachNode(Consumer<BPlusNode> visitNodeLogic) {
+        for (List<BPlusNode> visitQueue = Lists.newArrayList(root); visitQueue.size() > 0;) {
             for (int i = visitQueue.size(); i > 0; --i) {
-                Node node = visitQueue.remove(0);
+                BPlusNode node = visitQueue.remove(0);
                 if (!node.isLeaf()) {
                     for (int d = 0; d < node.getDegree(); d++) {
-                        visitQueue.add((Node)node.getChildrenOrData()[d]);
+                        visitQueue.add((BPlusNode)node.getChildrenOrData()[d]);
                     }
                 }
                 visitNodeLogic.accept(node);
@@ -112,11 +112,11 @@ public class BPlusTree<V> {
         }
     }
 
-    private static void checkNodeRelationship(Node node) {
+    private static void checkNodeRelationship(BPlusNode node) {
         // check children relationship
         if (!node.isLeaf()) {
             for (int i = 0; i < node.getDegree(); ++i) {
-                Node child = (Node) node.getChildrenOrData()[i];
+                BPlusNode child = (BPlusNode) node.getChildrenOrData()[i];
                 assertTrue(child.getParent() == node);
             }
         }

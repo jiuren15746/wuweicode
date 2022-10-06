@@ -9,7 +9,7 @@ import lombok.Data;
  * # 父子节点之间有双向引用。
  */
 @Data
-class Node {
+class BPlusNode {
     private final BPlusTree tree;
     private final boolean isLeaf;
 
@@ -24,12 +24,12 @@ class Node {
      */
     private Object[] childrenOrData;
 
-    private Node pre;
-    private Node next;
-    private Node parent;
+    private BPlusNode pre;
+    private BPlusNode next;
+    private BPlusNode parent;
     //========
 
-    public Node(BPlusTree tree, boolean isLeaf) {
+    public BPlusNode(BPlusTree tree, boolean isLeaf) {
         this.tree = tree;
         this.isLeaf = isLeaf;
         this.degree = 0;
@@ -75,7 +75,7 @@ class Node {
 
         // populate child relationship
         if (!isLeaf) {
-            ((Node)value).parent = this;
+            ((BPlusNode)value).parent = this;
         }
 
         splitIfNecessary();
@@ -113,7 +113,7 @@ class Node {
      * @param newKey
      */
     private void onFirstKeyChanged(long oldKey, long newKey) {
-        for (Node node = parent; node != null;) {
+        for (BPlusNode node = parent; node != null;) {
             int pos = node.binarySearch(oldKey);
             node.keys[pos] = newKey;
             node = pos == 0 ? node.parent : null;
@@ -133,7 +133,7 @@ class Node {
         // new sibling Node
         int newDegree = degree >> 1;
         int newNodeDegree = degree - newDegree;
-        Node siblingNode = new Node(tree, isLeaf);
+        BPlusNode siblingNode = new BPlusNode(tree, isLeaf);
         System.arraycopy(keys, newDegree, siblingNode.keys, 0, newNodeDegree);
         System.arraycopy(childrenOrData, newDegree, siblingNode.childrenOrData, 0, newNodeDegree);
         siblingNode.degree = newNodeDegree;
@@ -146,7 +146,7 @@ class Node {
 
         // populate parent relationship
         if (null == parent) {
-            tree.root = new Node(tree, false);
+            tree.root = new BPlusNode(tree, false);
             tree.root.insert(keys[0], this);
         }
         parent.insert(siblingNode.keys[0], siblingNode);
@@ -155,7 +155,7 @@ class Node {
         for (int i = degree; i < keys.length; ++i) {
             keys[i] = 0;
             if (!isLeaf) {
-                ((Node) childrenOrData[i]).parent = siblingNode;
+                ((BPlusNode) childrenOrData[i]).parent = siblingNode;
             }
             childrenOrData[i] = null;
         }
