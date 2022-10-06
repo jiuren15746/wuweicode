@@ -89,19 +89,19 @@ class BPlusNode {
         long oldKey = keys[pos];
         Object oldValue = childrenOrData[pos];
 
-        // delete at tail
+        // delete data
         if (pos == degree - 1) {
+            // delete at tail
             keys[degree - 1] = 0;
             childrenOrData[degree - 1] = null;
         } else {
             System.arraycopy(keys, pos + 1, keys, pos, degree - pos - 1);
             System.arraycopy(childrenOrData, pos + 1, childrenOrData, pos, degree - pos - 1);
+            if (pos == 0) {
+                onFirstKeyChanged(oldKey, keys[0]);
+            }
         }
         degree--;
-
-        if (pos == 0) {
-            onFirstKeyChanged(oldKey, keys[0]);
-        }
 
         borrowOrMergeIfNecessary();
         return oldValue;
@@ -171,38 +171,73 @@ class BPlusNode {
             return;
         }
 
-        // try borrow one data from sibling node
-        if (pre != null && pre.parent == parent && pre.degree > tree.getMinDegree()) {
-            // todo borrow
-            insertAt(0, pre.keys[pre.keys.length - 1], pre.childrenOrData[pre.keys.length - 1]);
-            return;
-        }
-        if (next != null && next.parent == parent && next.degree > tree.getMinDegree()) {
-            // todo borrow
-            insertAt(degree, next.keys[0], next.childrenOrData[0]);
+        // try borrow one data from sibling
+        if (borrowFromSibling()) {
             return;
         }
 
         // merge with sibling
-        if (pre != null && pre.parent == parent) {
-            // merge
-            System.arraycopy(keys, 0, pre.keys, pre.degree, degree);
-            System.arraycopy(childrenOrData, 0, pre.childrenOrData, pre.degree, degree);
-            pre.degree += degree;
+        BPlusNode sibling;
+        if ((sibling = leftSibling()) != null) {
+            mergeToSibling(sibling, sibling.degree);
 
-            // populate pre/next
-            if (pre != null) {
-                pre.next = this.next;
-            }
+        } else if ((sibling = rightSibling()) != null) {
+            mergeToSibling(sibling, 0);
+        }
+    }
+
+    private boolean borrowFromSibling() {
+        if (pre != null && pre.parent == parent && pre.degree > tree.getMinDegree()) {
+            int preIdx = pre.keys.length - 1;
+            insertAt(0, pre.keys[preIdx], pre.childrenOrData[preIdx]);
+            pre.deleteAt(preIdx);
+            return true;
+        }
+        else if (next != null && next.parent == parent && next.degree > tree.getMinDegree()) {
+            int nextIdx = 0;
+            insertAt(degree, next.keys[nextIdx], next.childrenOrData[nextIdx]);
+            next.deleteAt(nextIdx);
+            return true;
+        }
+        return false;
+    }
+
+    private void mergeToSibling(BPlusNode sibling, int siblingIdx) {
+        // merge
+        System.arraycopy(keys, 0, sibling.keys, siblingIdx, degree);
+        System.arraycopy(childrenOrData, 0, sibling.childrenOrData, siblingIdx, degree);
+        sibling.degree += degree;
+
+        // populate pre/next
+        if (sibling == pre) {
+            sibling.next = next;
             if (next != null) {
-                next.pre = this.pre;
+                next.pre = sibling;
             }
-            this.pre = this.next = null;
+        } else {
+            sibling.pre = pre;
+            if (pre != null) {
+                pre.next = sibling;
+            }
+        }
+        pre = next = null;
 
-            // delete index from parent
-            parent.delete(keys[0]);
+        // populate children
+        if (!isLeaf) {
+            for (BPlusNode child : (BPlusNode[]) childrenOrData) {
+                child.parent = sibling;
+            }
         }
 
+        // delete index from parent
+        parent.delete(keys[0]);
+    }
+
+    private BPlusNode leftSibling() {
+        return pre != null && pre.parent == this.parent ? pre : null;
+    }
+    private BPlusNode rightSibling() {
+        return next != null && next.parent == this.parent ? next : null;
     }
 
     protected int binarySearch(long target) {
