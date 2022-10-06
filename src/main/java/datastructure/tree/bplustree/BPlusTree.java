@@ -13,9 +13,9 @@ import static org.testng.Assert.assertTrue;
  * 要点：
  *  + 节点degree介于 [minDegree, maxDegree]之间
  *  + 父子节点之间双向引用的维护。
- *  + 对于中间节点，某些情况下需要对二分查找的下标做调整
+ *  + 对于中间节点，某些情况下需要对二分查找的下标做调整. 比如中间节点的keys为[10,20,30]，查找15，二分查找的结果下标为1，需要调整为0.
  *  + 插入数据，如果节点degree>maxDegree，对节点进行拆分，触发父节点递归插入。
- *  + 如果节点degree<minDegree，从sibling节点借数据，或者与sibling节点合并
+ *  + 如果节点degree<minDegree，从sibling节点借数据，或者与sibling节点合并。
  *
  * @param <V>
  * @author wuwei
@@ -66,7 +66,7 @@ public class BPlusTree<V> {
         BPlusNode node = root;
         while (!node.isLeaf()) {
             int pos = node.binarySearch(key);
-            // !!!对于中间节点，某些情况下需要对二分查找的下标做调整
+            // !!!对于中间节点，某些情况下需要对二分查找的下标做调整.
             pos = (node.getKeys()[pos] == key || pos == 0) ? pos : pos - 1;
             node = (BPlusNode) node.getChildrenOrData()[pos];
         }
