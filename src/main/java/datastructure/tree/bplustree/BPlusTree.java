@@ -95,7 +95,7 @@ public class BPlusTree<V> {
     }
 
     public void checkNodeRelationship() {
-        checkEachNode(BPlusTree::checkNodeRelationship);
+        checkEachNode(BPlusNode::checkNodeRelationship);
     }
 
     private void checkEachNode(Consumer<BPlusNode> visitNodeLogic) {
@@ -110,19 +110,6 @@ public class BPlusTree<V> {
                 visitNodeLogic.accept(node);
             }
         }
-    }
-
-    private static void checkNodeRelationship(BPlusNode node) {
-        // check children relationship
-        if (!node.isLeaf()) {
-            for (int i = 0; i < node.getDegree(); ++i) {
-                BPlusNode child = (BPlusNode) node.getChildrenOrData()[i];
-                assertTrue(child.getParent() == node);
-            }
-        }
-        // check pre/next relationship
-        assertTrue(node.getPre() == null || node.getPre().getNext() == node);
-        assertTrue(node.getNext() == null || node.getNext().getPre() == node);
     }
 
 }

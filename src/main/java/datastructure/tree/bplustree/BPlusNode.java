@@ -3,6 +3,8 @@ package datastructure.tree.bplustree;
 import datastructure.array.algo.binarysearch.BinarySearch;
 import lombok.Data;
 
+import static org.testng.Assert.assertTrue;
+
 /**
  * 中间节点和叶子节点结构相同。
  * 要点：
@@ -36,6 +38,20 @@ class BPlusNode {
         // maxDegree+1是为了便于split
         this.keys = new long[tree.getMaxDegree() + 1];
         this.childrenOrData = new Object[tree.getMaxDegree() + 1];
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(isLeaf ? "L[" : "[");
+        for (int i = 0; i < degree; ++i) {
+            sb.append(keys[i]);
+            if (i < degree - 1) {
+                sb.append(",");
+            }
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
     protected void insert(long key, Object value) {
@@ -143,6 +159,7 @@ class BPlusNode {
         siblingNode.pre = this;
         siblingNode.next = this.next;
         this.next = siblingNode;
+        System.out.println(", after split: " + this + ", " + siblingNode);
 
         // populate parent relationship
         if (null == parent) {
@@ -159,8 +176,6 @@ class BPlusNode {
             }
             childrenOrData[i] = null;
         }
-
-        System.out.println(", after split: " + this + ", " + siblingNode);
     }
 
     /**
@@ -203,10 +218,19 @@ class BPlusNode {
     }
 
     private void mergeToSibling(BPlusNode sibling, int siblingIdx) {
-        // merge
+        // merge data
+        long siblingOldKey = sibling.keys[0];
+        if (sibling == next) {
+            System.arraycopy(sibling.keys, 0, sibling.keys, degree, sibling.degree);
+            System.arraycopy(sibling.childrenOrData, 0, sibling.childrenOrData, degree, sibling.degree);
+        }
         System.arraycopy(keys, 0, sibling.keys, siblingIdx, degree);
         System.arraycopy(childrenOrData, 0, sibling.childrenOrData, siblingIdx, degree);
         sibling.degree += degree;
+
+        if (sibling == next) {
+            sibling.onFirstKeyChanged(siblingOldKey, sibling.keys[0]);
+        }
 
         // populate pre/next
         if (sibling == pre) {
@@ -222,7 +246,7 @@ class BPlusNode {
         }
         pre = next = null;
 
-        // populate children
+        // merge children
         if (!isLeaf) {
             for (BPlusNode child : (BPlusNode[]) childrenOrData) {
                 child.parent = sibling;
@@ -244,18 +268,25 @@ class BPlusNode {
         return BinarySearch.binarySearch(keys, 0, degree - 1, target);
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(isLeaf ? "L[" : "[");
-        for (int i = 0; i < degree; ++i) {
-            sb.append(keys[i]);
-            if (i < degree - 1) {
-                sb.append(",");
+    protected void checkNodeRelationship() {
+        // check children relationship
+        if (!isLeaf) {
+            for (int i = 0; i < degree; ++i) {
+                BPlusNode child = (BPlusNode) childrenOrData[i];
+                assertTrue(child.getParent() == this);
             }
         }
-        sb.append("]");
-        return sb.toString();
+
+        // check parent relationship
+        if (parent != null) {
+            int parentIdx = BinarySearch.binarySearch(parent.keys, 0, parent.degree - 1, keys[0]);
+            assertTrue(parentIdx >= 0 && parentIdx < parent.degree);
+            assertTrue(parent.childrenOrData[parentIdx] == this);
+        }
+
+        // check pre/next relationship
+        assertTrue(pre == null || pre.next == this);
+        assertTrue(next == null || next.pre == this);
     }
 
 }
